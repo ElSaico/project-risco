@@ -1,22 +1,20 @@
 import constants
 
 class Territory:
-	owner = ""
-	numberOfArmies = 0
-	def __init__(self, _owner, _numberOfArmies):
-		for i in constants.validColors:
-			if _owner == i:
-				self.owner = _owner
-
-		self.numberOfArmies = _numberOfArmies
+	def __init__(self, owner, numberOfArmies=0):
+		if owner in constants.validColors:
+			self.owner = owner
+		self.numberOfArmies = numberOfArmies
 		
-	def attack(self, _territory):
+	def attack(self, territory, army):
+		if not 0 < army <= 3:
+			raise Exception("Numero invalido de exercitos.")
 		self.owner = ""
 		
-	def addArmies(self, _number):
-		self.numberOfArmies += _number
+	def addArmies(self, number):
+		self.numberOfArmies += number
 	
-	def removeArmies(self, _number):
-		self.numberOfArmies -= _number
+	def removeArmies(self, number):
+		self.numberOfArmies -= number
 		if(self.numberOfArmies < 0):
 			self.numberOfArmies = 0

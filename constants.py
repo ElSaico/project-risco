@@ -1,1 +1,1 @@
-validColors = ["White", "Black", "Green", "Blue", "Red", "Yellow"]
+validColors = ("White", "Black", "Green", "Blue", "Red", "Yellow")

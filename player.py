@@ -1,8 +1,7 @@
 class Player:
-	color = ""
 	cards = []
-	def __init__(self, _color):
-		self.color = _color
+	def __init__(self, color):
+		self.color = color
 		
-	def to_s(self):
+	def __str__(self):
 		return self.color + " player - cards: ..."
