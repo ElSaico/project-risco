@@ -41,6 +41,6 @@ class Territory:
 			print "Ataque:", army, "Defesa:", defender.armySize
 		if defender.armySize == 0:
 			defender.setOwner(self.owner)
-			defender.armySize = army
+			defender.reinforce(army)
 		else:
 			self.reinforce(army)
