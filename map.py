@@ -1,7 +1,7 @@
-from pygraph.classes.Hypergraph import hypergraph
+from pygraph.classes.hypergraph import hypergraph
 from random import shuffle
 from itertools import cycle
-from constants import countries, debug
+from constants import countries, territoryLinks, debug
 from territory import Territory
 
 class Map:
@@ -14,8 +14,8 @@ class Map:
 				self.map.add_node(country)
 				self.map.link(country, continent)
 				self.territories[country] = Territory()
-		# maybe a file with all territory links?
-		# or in constants.py...
+		for link in territoryLinks:
+			self.map.add_edge(link)
 		
 		# owners' sorting
 		sort = self.territories.keys()
