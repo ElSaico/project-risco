@@ -1,17 +1,20 @@
+# coding: utf-8
 validColors = ("White", "Black", "Green", "Blue", "Red", "Yellow")
 validShapes = ("Circle", "Square", "Triangle")
 
-continents = ["South America", "North America", "Europe", "Asia", "Africa", "Australia"]
-countries = {}
-countries["Australia"] = ["New Guinea", "Australia", "Borneo", "Sumatra"]
-countries["South America"] = ["Brazil", "Argentina", "Peru", "Venezuela"]
-countries["North America"] = []
-countries["Asia"] = []
-countries["Africa"] = []
-countries["Europe"] = []
-
-territories  = []
-for c in continents:
-	territories += countries[c]
+continents = ("América do Sul", "América do Norte", "Europa", "Ásia",
+				"África", "Oceania")
+countries = {"Oceania": ("Sumatra", "Borneo", "Nova Guiné", "Austrália"),
+			"América do Norte": ("Alaska", "Mackenzie", "Groenlândia",
+				"Vancouver", "Ottawa", "Labrador", "Califórnia",
+				"Nova York", "México"),
+			"América do Sul": ("Colômbia", "Bolívia", "Brasil", "Argentina"),
+			"Europa": ("Islândia", "Suécia", "Moscou", "Inglaterra",
+				"Alemanha",	"Espanha", "Polônia"),
+			"África": ("Argélia", "Egito", "Sudão", "Congo",
+				"África do Sul", "Madagascar"),
+			"Ásia": ("Oriente Médio", "Aral", "Omsk", "Dudinka", "Sibéria",
+				"Tchita", "Vladvostok", "Mongólia", "Japão", "China",
+				"Índia", "Vietnã")}
 
 debug = True

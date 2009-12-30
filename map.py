@@ -5,15 +5,15 @@ from territory import Territory
 class Map:
 	def __init__(self):
 		self.map = hypergraph()
-		self.map.add_nodes(territories)
 		self.map.add_hyperedges(continents)
-		for continent in continents:
-			for country in countries[continent]:
-				map.link(country, continent)
+		self.territories = {}
+		for continent, lst in continents.items():
+			for country in lst:
+				self.map.add_node(country)
+				self.map.link(country, continent)
+				self.territories[country] = Territory("White")
 		# maybe a file with all territory links?
 		# or in constants.py...
-		map.add_edge(("Portugal","Spain"))
+		map.add_edge(("Portugal","Inglaterra"))
 		# ... and all other edges...
-		self.territories = []
-		for territory in territories:
-			self.territories[territory] = Territory("White")
+		
