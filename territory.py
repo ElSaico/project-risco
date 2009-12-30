@@ -2,9 +2,8 @@ import constants
 from random import randint
 
 class Territory:
-	def __init__(self, owner):
+	def __init__(self):
 		# maybe a reference to the map?
-		self.setOwner(owner)
 		self.armySize = 1
 	
 	def setOwner(self, owner):
