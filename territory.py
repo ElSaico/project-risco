@@ -16,11 +16,11 @@ class Territory:
 		self.armySize += size
 	
 	def relocate(self, neighbour, size):
-		# verify if the other territory is also yours and a neighbour,
-		# if there are enough armies avaliable to relocate, yada, yada,
-		# yada. the most boring part by far (btw, the map is the one to
-		# keep track of the relocations IMO)
-		pass
+		assert (0 < size < self.armySize) and (neighbour.owner == self.owner)
+		neighbour.reinforce(size)
+		self.armySize -= size
+		# still needs to check if the same unit isn't being relocated
+		# twice (map's responsibility)
 
 	def attack(self, defender, army):
 		# verify if they're neighbours
@@ -38,7 +38,7 @@ class Territory:
 			else:
 				defender.armySize -= 1
 		if constants.debug:
-			print "Ataque:", army, "Defesa:", defender.armySize
+			print "Ataque:", self.armySize, "Defesa:", defender.armySize
 		if defender.armySize == 0:
 			defender.setOwner(self.owner)
 			defender.reinforce(army)

@@ -2,9 +2,6 @@ from game import Game
 from player import Player
 from territory import Territory
 
-a = Player("White")
-print a
-
 b = Territory("White")
 b.reinforce(8)
 c = Territory("Blue")
