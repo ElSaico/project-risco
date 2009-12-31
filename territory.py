@@ -5,6 +5,7 @@ class Territory:
 	def __init__(self):
 		# maybe a reference to the map?
 		self.armySize = 1
+		self.owner = ""
 	
 	def setOwner(self, owner):
 		assert owner in constants.validColors
@@ -25,7 +26,7 @@ class Territory:
 		# verify if they're neighbours
 		print self.armySize, defender.armySize, army
 		assert (1 <= army <= 3) and (army < self.armySize) \
-				and (army <= defender.armySize)
+				and (army <= defender.armySize) and (self.owner != defender.owner)
 		self.armySize -= army
 		for i in range(army):
 			diceAtk = randint(1, 6)
