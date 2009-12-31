@@ -11,3 +11,6 @@ class Player:
 		for card in self.cards:
 			str += card + " "
 		return str
+		
+	def receiveCard(self, card):
+		self.cards.append(card)

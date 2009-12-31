@@ -3,7 +3,6 @@ from random import randint
 
 class Territory:
 	def __init__(self):
-		# maybe a reference to the map?
 		self.armySize = 1
 		self.owner = ""
 	
@@ -19,11 +18,11 @@ class Territory:
 		assert (0 < size < self.armySize) and (neighbour.owner == self.owner)
 		neighbour.reinforce(size)
 		self.armySize -= size
-		# still needs to check if the same unit isn't being relocated
-		# twice (map's responsibility)
+		# map checks if the same unit isn't being relocated twice
+		# and if they're neighbours
 
 	def attack(self, defender, army):
-		# verify if they're neighbours
+		# map verifies if they're neighbours
 		print self.armySize, defender.armySize, army
 		assert (1 <= army <= 3) and (army < self.armySize) \
 				and (army <= defender.armySize) and (self.owner != defender.owner)
