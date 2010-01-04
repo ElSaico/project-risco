@@ -1,8 +1,10 @@
+#!/usr/bin/python
 # coding: utf-8
 from game import Game
 from player import Player
 from territory import Territory
 from map import Map
+from card import Card
 from constants import validColors
 
 # b = Territory()
@@ -25,8 +27,12 @@ from constants import validColors
 # d.relocate("Ottawa", "Labrador", 2)
 # change it to 3 and you'll get an assertion error :-)
 
+w = Player("White")
+w.receiveCard(Card("Brasil", "Triangle"))
+w.receiveCard(Card("Argentina", "Square"))
 game = Game()
-game.addPlayer(Player("White"))
+game.addPlayer(w)
 game.addPlayer(Player("Blue"))
 game.setup()
 game.start()
+print w

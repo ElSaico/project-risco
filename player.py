@@ -1,4 +1,5 @@
 import constants
+from itertools import imap
 
 class Player:
 	def __init__(self, color):
@@ -7,10 +8,8 @@ class Player:
 		self.cards = []
 		
 	def __str__(self):
-		str = "Player Color: " + self.color + "\nPlayer Cards: "
-		for card in self.cards:
-			str += card + " "
-		return str
+		return "Player Color: %s\nPlayer Cards:\n" % self.color + \
+				"\n".join(imap(str, self.cards))
 		
 	def receiveCard(self, card):
 		self.cards.append(card)
