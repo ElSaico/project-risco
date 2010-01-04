@@ -27,9 +27,13 @@ class Map:
 		for c in sort:
 			self.territories[c].setOwner(owners.next())
 		if debug:
-			for n, t in self.territories.items():
-				print n, t.owner
-		
+			print self
+				
+	def __str__(self):
+		string = ""
+		for n, t in self.territories.items():
+			string += n + " - " + t.owner + ", " + str(t.armySize) + "\n"
+		return string
 		
 	def attack(self, attacker, defender, army):
 		assert attacker in self.map.neighbors(defender)
