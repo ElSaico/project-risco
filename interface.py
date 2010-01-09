@@ -3,125 +3,114 @@ from pygame.locals import *
 from pygame.sprite import Sprite
 from sys import exit
 from constants import countries, debug
-#if debug:
-#	import cProfile
+from gameSprite import GameSprite
 
-def adjust_image(image, screen):
-	img_w = image.get_width()
-	img_h = image.get_height()
-	scr_aspect = screen.get_width() / screen.get_height()
-	img_aspect = img_w * 1.0 / img_h
-	if img_aspect > scr_aspect:
-		img_w = screen.get_width()
-		img_h = (int)(img_w / img_aspect)
-	else:
-		img_h = screen.get_height()
-		img_w = (int)(img_h * img_aspect)
-	return pygame.transform.smoothscale(image, (img_w,img_h))
+BLACK, WHITE = (0, 0, 0), (255, 255, 255)
+BG_COLOR = BLACK
+WIDTH, HEIGHT = 1024, 768
+FONT_SIZE = 32
+BOARD_POSITION = (0, 0)
+BAR_WIDTH = 10
+LBAR_POSITION = (WIDTH/3, 500)
+LBAR_BORDER_SIZE = 2
 
-class TerritorySprite(Sprite):
-	def __init__(self, name, screen, img, position):
-		Sprite.__init__(self)
-		self.name = name
-		self.screen = screen
-		self.pos = position
-		self.image = img
-		# resize to fit screen
-		self.image = adjust_image(self.image, self.screen)
+class Interface:
+	def __init__(self):
+		pygame.init()
+		self.screen = pygame.display.set_mode((WIDTH, HEIGHT), 0, 32)
+		self.screen.fill(BG_COLOR)
+		pygame.display.set_caption('pyWar Online')
+		self.font = pygame.font.Font("arial.ttf", FONT_SIZE)
+		self.sprite = {}
+		self.loadingBarCounter = 0
+		self.background = None
+		self.foreground = None
+		self.attackSrc = None
+		self.attackDst = None
 	
-	def blitme(self):
-		self.screen.blit(self.image, self.pos)
-
-	def mouse_click_event(self, pos):
-		if self._point_is_inside(pos):
-			print "Clicked inside " + self.name + "!"
+	def clearArea(self, position, size):
+		pygame.draw.rect(self.screen, BG_COLOR, Rect(position, size))
 	
-	def mouse_focusing_event(self, pos):
-		if self._point_is_inside(pos):
-			return self.name
-		return None
-			
-	def _point_is_inside(self, point):
-		try:
-			pix = self.image.get_at(point)
-			return pix[3] > 0
-		except IndexError:
-			return False
-
-
-pygame.init()
-BG_COLOR = (0, 0, 0)
-width = 1024
-height = 768
-screen = pygame.display.set_mode((width,height),0,32)
-pygame.display.set_caption('pyWar Online')
-
-screen.fill(BG_COLOR)
-
-def loadCountries(countries):
-	sprite = {}
-	counter = 0
-	for continent, lst in countries.items():
-		for country in lst:
-			filename = "images/%s.png" % country
-			img = pygame.image.load(filename).convert_alpha()
-			sprite[country] = TerritorySprite(country, screen, img, (0, 0))
-			texto = fonte.render(country, True, (255,255,255), (0, 0, 0))
-			pygame.draw.rect(screen, (0, 0, 0), Rect((300, 400), (225, font_size)))
-			bar_width = 10
-			pygame.draw.rect(screen, (255, 255, 255), Rect((150 + counter*bar_width, 500), (bar_width, font_size)))
-			counter += 1
-			screen.blit(texto, (300,400))
-			pygame.display.update()
-	return sprite
-
-font_size = 32
-fonte = pygame.font.Font("arial.ttf", font_size)
-# params: string, true/false (anti-alias), cor
-texto = fonte.render("Carregando Imagens...", True, (255,255,255))
-screen.blit(texto, (200,300))
-pygame.display.update()
-print "Charging Images..."
-#if debug:
-#	cProfile.run('sprite = loadCountries(countries)', 'loadCountries.prof')
-#else:
-#	sprite = loadCountries(countries)
-sprite = loadCountries(countries)
-print "Images Charged!"
-
-fundo_file = "images/Fundo.png"
-fundo = pygame.image.load(fundo_file).convert_alpha()
-fundo = adjust_image(fundo, screen)
-fundo_w = fundo.get_width()
-fundo_h = fundo.get_height()
-
-topo_file = "images/Topo.png"
-topo = pygame.image.load(topo_file).convert_alpha()
-topo = adjust_image(topo, screen)
-topo_w = fundo.get_width()
-topo_h = fundo.get_height()
-
-def draw_screen(screen, territories, fundo, topo):
-	screen.blit(fundo, (0, 0))
-	for country in territories.keys():
-		territories[country].blitme()
-	screen.blit(topo, (0, 0))
-
-draw_screen(screen, sprite, fundo, topo)
-while True:
-	input = False
-	for event in pygame.event.get():
-		if event.type == QUIT:
-			pygame.quit()
-			exit()
-		elif event.type == MOUSEBUTTONDOWN and pygame.mouse.get_pressed()[0]:
-			for country in sprite.keys():
-				sprite[country].mouse_click_event(pygame.mouse.get_pos())
-			# print "Left Mouse Button clicked!"
+	def writeText(self, text, color, position):
+		# params: string, true/false (anti-alias), cor
+		t = self.font.render(text, True, color)
+		self.screen.blit(t, position)
+		pygame.display.update()
+		
+	def initializeLoadingBar(self):
+		self.loadingBarCounter = 0
+		aaa = countries.keys()
+		x = 0
+		for aa in aaa:
+			x += len(countries[aa])
+		
+		x -= 1
+		# vertical
+		pygame.draw.rect(self.screen, WHITE, Rect((LBAR_POSITION[0]-LBAR_BORDER_SIZE, LBAR_POSITION[1]-LBAR_BORDER_SIZE), (LBAR_BORDER_SIZE, FONT_SIZE + 2*LBAR_BORDER_SIZE)))
+		pygame.draw.rect(self.screen, WHITE, Rect((LBAR_POSITION[0]+x*BAR_WIDTH, LBAR_POSITION[1]-LBAR_BORDER_SIZE), (LBAR_BORDER_SIZE, FONT_SIZE + 2*LBAR_BORDER_SIZE)))
+		
+		# horizontal
+		pygame.draw.rect(self.screen, WHITE, Rect((LBAR_POSITION[0]-LBAR_BORDER_SIZE, LBAR_POSITION[1]-LBAR_BORDER_SIZE), (x*BAR_WIDTH + 2*LBAR_BORDER_SIZE, LBAR_BORDER_SIZE)))
+		pygame.draw.rect(self.screen, WHITE, Rect((LBAR_POSITION[0]-LBAR_BORDER_SIZE, LBAR_POSITION[1]+FONT_SIZE), (x*BAR_WIDTH + 2*LBAR_BORDER_SIZE, LBAR_BORDER_SIZE)))
 	
-	for country in sprite.keys():
-		a = sprite[country].mouse_focusing_event(pygame.mouse.get_pos())
-		if a != None:
-			print a
+	def updateLoadingBar(self):
+		pygame.draw.rect(self.screen, WHITE, Rect((LBAR_POSITION[0] + self.loadingBarCounter*BAR_WIDTH, LBAR_POSITION[1]), (BAR_WIDTH, FONT_SIZE)))
+		self.loadingBarCounter += 1
 
-	pygame.display.update()
+	def loadImages(self, countries):
+		self.writeText("Carregando Imagens...", WHITE, (WIDTH/6, 100))
+		self.initializeLoadingBar()
+		for continent, lst in countries.items():
+			for country in lst:
+				filename = "images/%s.png" % country
+				self.sprite[country] = GameSprite(country, self.screen, filename, BOARD_POSITION)
+				
+				self.clearArea((WIDTH/3, 450), (225, FONT_SIZE+5))
+				self.writeText(country, WHITE, (WIDTH/3, 450))
+				self.updateLoadingBar()
+		
+		self.background = GameSprite(None, self.screen, "images/Fundo.png", BOARD_POSITION)
+		self.foreground = GameSprite(None, self.screen, "images/Topo.png", BOARD_POSITION)
+
+	def draw_screen(self):
+		self.background.blitMe()
+		for country in self.sprite.keys():
+			self.sprite[country].blitMe()
+		self.foreground.blitMe()
+		pygame.display.update()
+		
+	def eventHandler(self):
+		for event in pygame.event.get():
+			if event.type == QUIT:
+				pygame.quit()
+				exit()
+			elif event.type == MOUSEBUTTONDOWN and pygame.mouse.get_pressed()[0]:
+				for country in self.sprite.keys():
+					territory = self.sprite[country].mouseEvent(pygame.mouse.get_pos())
+					if territory != None:
+						# just testing, not done yet...
+						if self.attackSrc == None:
+							self.attackSrc = territory
+							self.clearArea((WIDTH - WIDTH/3, 580), (225, FONT_SIZE+5))
+							self.writeText(territory, WHITE, (WIDTH - WIDTH/3, 580))
+						else:
+							self.attackDst = territory
+							self.clearArea((WIDTH - WIDTH/3, 620), (225, FONT_SIZE+5))
+							self.writeText(territory, WHITE, (WIDTH - WIDTH/3, 620))
+		
+		for country in self.sprite.keys():
+			territory = self.sprite[country].mouseEvent(pygame.mouse.get_pos())
+			if territory != None:
+				# just testing, not done yet...
+				self.clearArea((WIDTH/6, 580), (225, FONT_SIZE+5))
+				self.writeText(territory, WHITE, (WIDTH/6, 580))
+
+	def mainLoop(self):
+		self.loadImages(countries)
+		self.screen.fill(BG_COLOR)
+		self.draw_screen()
+		while True:
+			self.eventHandler()
+
+a = Interface()
+a.mainLoop()
