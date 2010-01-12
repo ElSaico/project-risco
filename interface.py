@@ -39,12 +39,8 @@ class Interface:
 		
 	def initializeLoadingBar(self):
 		self.loadingBarCounter = 0
-		aaa = countries.keys()
-		x = 0
-		for aa in aaa:
-			x += len(countries[aa])
+		x = sum((len(x) for x in countries.values())) - 1
 		
-		x -= 1
 		# vertical
 		pygame.draw.rect(self.screen, WHITE, Rect((LBAR_POSITION[0]-LBAR_BORDER_SIZE, LBAR_POSITION[1]-LBAR_BORDER_SIZE), (LBAR_BORDER_SIZE, FONT_SIZE + 2*LBAR_BORDER_SIZE)))
 		pygame.draw.rect(self.screen, WHITE, Rect((LBAR_POSITION[0]+x*BAR_WIDTH, LBAR_POSITION[1]-LBAR_BORDER_SIZE), (LBAR_BORDER_SIZE, FONT_SIZE + 2*LBAR_BORDER_SIZE)))
@@ -60,8 +56,8 @@ class Interface:
 	def loadImages(self, countries):
 		self.writeText("Carregando Imagens...", WHITE, (WIDTH/6, 100))
 		self.initializeLoadingBar()
-		for continent, lst in countries.items():
-			for country in lst:
+		for continent in countries.values():
+			for country in continent:
 				filename = "images/%s.png" % country
 				self.sprite[country] = GameSprite(country, self.screen, filename, BOARD_POSITION)
 				
@@ -74,8 +70,8 @@ class Interface:
 
 	def draw_screen(self):
 		self.background.blitMe()
-		for country in self.sprite.keys():
-			self.sprite[country].blitMe()
+		for country in self.sprite.values():
+			country.blitMe()
 		self.foreground.blitMe()
 		pygame.display.update()
 		
@@ -85,8 +81,8 @@ class Interface:
 				pygame.quit()
 				exit()
 			elif event.type == MOUSEBUTTONDOWN and pygame.mouse.get_pressed()[0]:
-				for country in self.sprite.keys():
-					territory = self.sprite[country].mouseEvent(pygame.mouse.get_pos())
+				for country in self.sprite.values():
+					territory = country.mouseEvent(pygame.mouse.get_pos())
 					if territory != None:
 						# just testing, not done yet...
 						if self.attackSrc == None:
@@ -98,8 +94,8 @@ class Interface:
 							self.clearArea((WIDTH - WIDTH/3, 620), (225, FONT_SIZE+5))
 							self.writeText(territory, WHITE, (WIDTH - WIDTH/3, 620))
 		
-		for country in self.sprite.keys():
-			territory = self.sprite[country].mouseEvent(pygame.mouse.get_pos())
+		for country in self.sprite.values():
+			territory = country.mouseEvent(pygame.mouse.get_pos())
 			if territory != None:
 				# just testing, not done yet...
 				self.clearArea((WIDTH/6, 580), (225, FONT_SIZE+5))
