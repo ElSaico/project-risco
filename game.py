@@ -13,7 +13,7 @@ class Game:
 			self.players.append(player)
 	
 	def setup(self):
-		colors = [x.color for x in self.players]
+		colors = (x.color for x in self.players)
 		self.worldmap = Map(colors)
 		shuffle(self.players)
 		self.players = cycle(self.players)

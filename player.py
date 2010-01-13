@@ -8,8 +8,8 @@ class Player:
 		self.cards = []
 		
 	def __str__(self):
-		return "Player Color: %s\nPlayer Cards:\n" % self.color + \
-				"\n".join(imap(str, self.cards))
+		return "Player Color: {0}\nPlayer Cards:\n".format(self.color) \
+				+ "\n".join(imap(str, self.cards))
 		
 	def receiveCard(self, card):
 		self.cards.append(card)

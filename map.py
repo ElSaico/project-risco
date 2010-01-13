@@ -1,39 +1,32 @@
 # coding: utf-8
-from pygraph.classes.hypergraph import hypergraph
+from pygraph.readwrite.markup import read_hypergraph
 from random import shuffle
 from itertools import cycle
-from constants import countries, territoryLinks, debug
+from constants import debug
 from territory import Territory
 
 class Map:
 	def __init__(self, players):
-		self.map = hypergraph()
-		self.map.add_hyperedges(countries.keys())
+		with open("map.xml") as m:
+			self.map = read_hypergraph(m.read())
 		self.territories = {}
 		self.relocated = {}
-		for continent, lst in countries.items():
-			for country in lst:
-				self.map.add_node(country)
-				self.map.link(country, continent)
-				self.territories[country] = Territory()
-				self.relocated[country] = 0
-		for link in territoryLinks:
-			self.map.add_edge(link)
+		for c in self.map.nodes():
+			self.territories[c] = Territory()
+			self.relocated[c] = 0
 		
 		# owners' sorting
-		sort = self.territories.keys()
+		sort = self.map.nodes()
 		shuffle(sort)
 		owners = cycle(players)
 		for c in sort:
 			self.territories[c].setOwner(owners.next())
 		if debug:
 			print self
-				
+		
 	def __str__(self):
-		string = ""
-		for n, t in self.territories.items():
-			string += n + " - " + t.owner + ", " + str(t.armySize) + "\n"
-		return string
+		return "\n".join("{0} - {1.owner}, {1.armySize}".format(n, t)
+							for n, t in self.territories.items())
 		
 	def attack(self, attacker, defender, army):
 		assert attacker in self.map.neighbors(defender)
@@ -49,3 +42,6 @@ class Map:
 	def endTurn(self):
 		for c in self.relocated.keys():
 			self.relocated[c] = 0
+	
+	def countries(self):
+		return self.map.nodes()

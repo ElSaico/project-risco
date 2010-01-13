@@ -2,7 +2,8 @@ import pygame
 from pygame.locals import *
 from pygame.sprite import Sprite
 from sys import exit
-from constants import countries, debug
+from constants import debug
+from map import Map
 from gameSprite import GameSprite
 
 BLACK, WHITE = (0, 0, 0), (255, 255, 255)
@@ -37,9 +38,8 @@ class Interface:
 		self.screen.blit(t, position)
 		pygame.display.update()
 		
-	def initializeLoadingBar(self):
+	def initializeLoadingBar(self, x):
 		self.loadingBarCounter = 0
-		x = sum((len(x) for x in countries.values())) - 1
 		
 		# vertical
 		pygame.draw.rect(self.screen, WHITE, Rect((LBAR_POSITION[0]-LBAR_BORDER_SIZE, LBAR_POSITION[1]-LBAR_BORDER_SIZE), (LBAR_BORDER_SIZE, FONT_SIZE + 2*LBAR_BORDER_SIZE)))
@@ -55,15 +55,14 @@ class Interface:
 
 	def loadImages(self, countries):
 		self.writeText("Carregando Imagens...", WHITE, (WIDTH/6, 100))
-		self.initializeLoadingBar()
-		for continent in countries.values():
-			for country in continent:
-				filename = "images/%s.png" % country
-				self.sprite[country] = GameSprite(country, self.screen, filename, BOARD_POSITION)
-				
-				self.clearArea((WIDTH/3, 450), (225, FONT_SIZE+5))
-				self.writeText(country, WHITE, (WIDTH/3, 450))
-				self.updateLoadingBar()
+		self.initializeLoadingBar(len(countries)-1)
+		for c in countries:
+			filename = "images/{0}.png".format(c)
+			self.sprite[c] = GameSprite(c, self.screen, filename, BOARD_POSITION)
+			
+			self.clearArea((WIDTH/3, 450), (225, FONT_SIZE+5))
+			self.writeText(c, WHITE, (WIDTH/3, 450))
+			self.updateLoadingBar()
 		
 		self.background = GameSprite(None, self.screen, "images/Fundo.png", BOARD_POSITION)
 		self.foreground = GameSprite(None, self.screen, "images/Topo.png", BOARD_POSITION)
@@ -102,7 +101,8 @@ class Interface:
 				self.writeText(territory, WHITE, (WIDTH/6, 580))
 
 	def mainLoop(self):
-		self.loadImages(countries)
+		m = Map(["White"])
+		self.loadImages(m.countries())
 		self.screen.fill(BG_COLOR)
 		self.draw_screen()
 		while True:

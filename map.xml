@@ -1,0 +1,211 @@
+<?xml version="1.0" ?>
+<hypergraph>
+	<node id="Madagascar">
+		<link to="Africa"/>
+	</node>
+	<node id="Vladivostok">
+		<link to="Asia"/>
+	</node>
+	<node id="Borneo">
+		<link to="Oceania"/>
+	</node>
+	<node id="Sudao">
+		<link to="Africa"/>
+	</node>
+	<node id="Mongolia">
+		<link to="Asia"/>
+	</node>
+	<node id="Sumatra">
+		<link to="Oceania"/>
+	</node>
+	<node id="Vancouver">
+		<link to="America do Norte"/>
+	</node>
+	<node id="Argentina">
+		<link to="America do Sul"/>
+	</node>
+	<node id="Bolivia">
+		<link to="America do Sul"/>
+	</node>
+	<node id="Groenlandia">
+		<link to="America do Norte"/>
+	</node>
+	<node id="Espanha">
+		<link to="Europa"/>
+	</node>
+	<node id="Australia">
+		<link to="Oceania"/>
+	</node>
+	<node id="Islandia">
+		<link to="Europa"/>
+	</node>
+	<node id="Siberia">
+		<link to="Asia"/>
+	</node>
+	<node id="Moscou">
+		<link to="Europa"/>
+	</node>
+	<node id="California">
+		<link to="America do Norte"/>
+	</node>
+	<node id="Omsk">
+		<link to="Asia"/>
+	</node>
+	<node id="China">
+		<link to="Asia"/>
+	</node>
+	<node id="Suecia">
+		<link to="Europa"/>
+	</node>
+	<node id="Aral">
+		<link to="Asia"/>
+	</node>
+	<node id="Dudinka">
+		<link to="Asia"/>
+	</node>
+	<node id="Nova York">
+		<link to="America do Norte"/>
+	</node>
+	<node id="Oriente Medio">
+		<link to="Asia"/>
+	</node>
+	<node id="Brasil">
+		<link to="America do Sul"/>
+	</node>
+	<node id="Nova Guine">
+		<link to="Oceania"/>
+	</node>
+	<node id="Inglaterra">
+		<link to="Europa"/>
+	</node>
+	<node id="Alaska">
+		<link to="America do Norte"/>
+	</node>
+	<node id="Ottawa">
+		<link to="America do Norte"/>
+	</node>
+	<node id="Argelia">
+		<link to="Africa"/>
+	</node>
+	<node id="Polonia">
+		<link to="Europa"/>
+	</node>
+	<node id="Vietna">
+		<link to="Asia"/>
+	</node>
+	<node id="Tchita">
+		<link to="Asia"/>
+	</node>
+	<node id="Labrador">
+		<link to="America do Norte"/>
+	</node>
+	<node id="Mexico">
+		<link to="America do Norte"/>
+	</node>
+	<node id="India">
+		<link to="Asia"/>
+	</node>
+	<node id="Mackenzie">
+		<link to="America do Norte"/>
+	</node>
+	<node id="Congo">
+		<link to="Africa"/>
+	</node>
+	<node id="Alemanha">
+		<link to="Europa"/>
+	</node>
+	<node id="Colombia">
+		<link to="America do Sul"/>
+	</node>
+	<node id="Japao">
+		<link to="Asia"/>
+	</node>
+	<node id="Africa do Sul">
+		<link to="Africa"/>
+	</node>
+	<node id="Egito">
+		<link to="Africa"/>
+	</node>
+	<hyperedge id="('Vancouver', 'Alaska')"/>
+	<hyperedge id="('Polonia', 'Egito')"/>
+	<hyperedge id="('Bolivia', 'Argentina')"/>
+	<hyperedge id="Oceania"/>
+	<hyperedge id="('Siberia', 'Tchita')"/>
+	<hyperedge id="('Ottawa', 'Labrador')"/>
+	<hyperedge id="('Aral', 'India')"/>
+	<hyperedge id="('Inglaterra', 'Suecia')"/>
+	<hyperedge id="('Ottawa', 'Mackenzie')"/>
+	<hyperedge id="('Vietna', 'China')"/>
+	<hyperedge id="Asia"/>
+	<hyperedge id="('Omsk', 'Dudinka')"/>
+	<hyperedge id="('Argelia', 'Egito')"/>
+	<hyperedge id="('Australia', 'Sumatra')"/>
+	<hyperedge id="('Alaska', 'Mackenzie')"/>
+	<hyperedge id="('China', 'Japao')"/>
+	<hyperedge id="('Australia', 'Nova Guine')"/>
+	<hyperedge id="('Moscou', 'Suecia')"/>
+	<hyperedge id="('Brasil', 'Colombia')"/>
+	<hyperedge id="('Vancouver', 'Mackenzie')"/>
+	<hyperedge id="('Oriente Medio', 'Egito')"/>
+	<hyperedge id="('Polonia', 'Oriente Medio')"/>
+	<hyperedge id="('Vancouver', 'Ottawa')"/>
+	<hyperedge id="('Dudinka', 'Tchita')"/>
+	<hyperedge id="('Mexico', 'California')"/>
+	<hyperedge id="('Sudao', 'Congo')"/>
+	<hyperedge id="Europa"/>
+	<hyperedge id="('Mongolia', 'Tchita')"/>
+	<hyperedge id="('Oriente Medio', 'Aral')"/>
+	<hyperedge id="('Islandia', 'Inglaterra')"/>
+	<hyperedge id="('Siberia', 'Vladivostok')"/>
+	<hyperedge id="('Dudinka', 'Siberia')"/>
+	<hyperedge id="('Moscou', 'Oriente Medio')"/>
+	<hyperedge id="('California', 'Vancouver')"/>
+	<hyperedge id="('Brasil', 'Argelia')"/>
+	<hyperedge id="('Dudinka', 'Mongolia')"/>
+	<hyperedge id="('Labrador', 'Groenlandia')"/>
+	<hyperedge id="America do Sul"/>
+	<hyperedge id="('Colombia', 'Mexico')"/>
+	<hyperedge id="('Tchita', 'Vladivostok')"/>
+	<hyperedge id="('Brasil', 'Bolivia')"/>
+	<hyperedge id="('Vietna', 'Borneo')"/>
+	<hyperedge id="('California', 'Ottawa')"/>
+	<hyperedge id="('Mexico', 'Nova York')"/>
+	<hyperedge id="('India', 'Vietna')"/>
+	<hyperedge id="('Congo', 'Africa do Sul')"/>
+	<hyperedge id="('China', 'Omsk')"/>
+	<hyperedge id="America do Norte"/>
+	<hyperedge id="('Espanha', 'Polonia')"/>
+	<hyperedge id="('Aral', 'Omsk')"/>
+	<hyperedge id="('Aral', 'China')"/>
+	<hyperedge id="('Moscou', 'Aral')"/>
+	<hyperedge id="('Mackenzie', 'Groenlandia')"/>
+	<hyperedge id="('Brasil', 'Argentina')"/>
+	<hyperedge id="('Moscou', 'Omsk')"/>
+	<hyperedge id="('Nova York', 'Ottawa')"/>
+	<hyperedge id="('Groenlandia', 'Islandia')"/>
+	<hyperedge id="('Polonia', 'Alemanha')"/>
+	<hyperedge id="('Polonia', 'Moscou')"/>
+	<hyperedge id="('Borneo', 'Australia')"/>
+	<hyperedge id="('India', 'China')"/>
+	<hyperedge id="('Africa do Sul', 'Madagascar')"/>
+	<hyperedge id="('China', 'Vladivostok')"/>
+	<hyperedge id="('Espanha', 'Argelia')"/>
+	<hyperedge id="('Alaska', 'Vladivostok')"/>
+	<hyperedge id="('Sudao', 'Madagascar')"/>
+	<hyperedge id="('Inglaterra', 'Espanha')"/>
+	<hyperedge id="('Borneo', 'Nova Guine')"/>
+	<hyperedge id="('Egito', 'Sudao')"/>
+	<hyperedge id="Africa"/>
+	<hyperedge id="('Nova York', 'California')"/>
+	<hyperedge id="('Japao', 'Vladivostok')"/>
+	<hyperedge id="('Argelia', 'Congo')"/>
+	<hyperedge id="('India', 'Sumatra')"/>
+	<hyperedge id="('Argelia', 'Sudao')"/>
+	<hyperedge id="('Inglaterra', 'Alemanha')"/>
+	<hyperedge id="('Nova York', 'Labrador')"/>
+	<hyperedge id="('Espanha', 'Alemanha')"/>
+	<hyperedge id="('Oriente Medio', 'India')"/>
+	<hyperedge id="('China', 'Mongolia')"/>
+	<hyperedge id="('Bolivia', 'Colombia')"/>
+	<hyperedge id="('Espanha', 'Egito')"/>
+</hypergraph>

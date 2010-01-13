@@ -8,4 +8,4 @@ class Card:
 		self.name = name
 	
 	def __str__(self):
-		return "%s (%s)" % (self.name, self.shape)
+		return "{0} ({1})".format(self.name, self.shape)
