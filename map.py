@@ -2,7 +2,7 @@
 from pygraph.readwrite.markup import read_hypergraph
 from random import shuffle
 from itertools import cycle
-from constants import debug
+from globals import debug
 from territory import Territory
 
 class Map:
@@ -28,6 +28,9 @@ class Map:
 		return "\n".join("{0} - {1.owner}, {1.armySize}".format(n, t)
 							for n, t in self.territories.items())
 		
+	def reinforce(self, target, army):
+		self.territories[target].reinforce(army)
+	
 	def attack(self, attacker, defender, army):
 		assert attacker in self.map.neighbors(defender)
 		self.territories[attacker].attack(self.territories[defender], army)
@@ -44,4 +47,13 @@ class Map:
 			self.relocated[c] = 0
 	
 	def countries(self):
-		return self.map.nodes()
+		return self.map.nodes()	
+	def owner(self, t):
+		return self.territories[t].owner
+	
+	def continent(self, c):
+		return self.map.edge_links[c]
+	
+	def continents(self):
+		# ordinary edges are represented by ('node1', 'node2')
+		return filter(lambda x: x[:2] != "('", self.map.hyperedges())

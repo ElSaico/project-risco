@@ -1,8 +1,8 @@
-import constants
-
 class Card:
+	validShapes = ("Circle", "Square", "Triangle")
+	
 	def __init__(self, name, shape):
-		assert shape in constants.validShapes
+		assert shape in self.validShapes
 		self.shape = shape
 		#assert name in constants.territories
 		self.name = name

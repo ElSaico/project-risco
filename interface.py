@@ -2,7 +2,7 @@ import pygame
 from pygame.locals import *
 from pygame.sprite import Sprite
 from sys import exit
-from constants import debug
+from globals import debug
 from map import Map
 from gameSprite import GameSprite
 

@@ -2,7 +2,6 @@ import pygame
 from pygame.locals import *
 from pygame.sprite import Sprite
 
-
 class GameSprite(Sprite):
 	def __init__(self, name, screen, img_filename, position):
 		Sprite.__init__(self)
@@ -35,8 +34,8 @@ class GameSprite(Sprite):
 		img_aspect = img_w * 1.0 / img_h
 		if img_aspect > scr_aspect:
 			img_w = self.screen.get_width()
-			img_h = (int)(img_w / img_aspect)
+			img_h = int(img_w / img_aspect)
 		else:
 			img_h = self.screen.get_height()
-			img_w = (int)(img_h * img_aspect)
+			img_w = int(img_h * img_aspect)
 		self.image = pygame.transform.smoothscale(self.image, (img_w,img_h))

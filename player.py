@@ -1,9 +1,9 @@
-import constants
+import globals
 from itertools import imap
 
 class Player:
 	def __init__(self, color):
-		assert color in constants.validColors
+		assert color in globals.validColors
 		self.color = color
 		self.cards = []
 		
@@ -13,3 +13,8 @@ class Player:
 		
 	def receiveCard(self, card):
 		self.cards.append(card)
+	
+	def dropCards(self, cards):
+		assert len(cards) == 3
+		for c in cards:
+			self.cards.remove(c)
