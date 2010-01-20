@@ -25,18 +25,23 @@ class Game:
 	def nextStep(self):
 		self.step = self.steps.next()
 		if self.step == "Trade":
-			self.reinforce = len(filter(
-									lambda x: self.worldmap.owner(x) == self.turn,
-									self.worldmap.countries())) / 2
+			self.reinforce = self.territoryCount(self.turn) / 2
 			for c in self.worldmap.continents():
-				if all(self.worldmap.owner(x) == self.turn
-						for x in self.worldmap.continent(c)):
+				if self.ownContinent(self.turn, c):
 					# continental bonus: where to store it is still undefined
 					# hypergraphs don't export edge attributes :(
 					pass
 		elif self.step == "End":
 			self.turn = self.players.next().color
 			self.step = self.steps.next()
+	
+	def ownContinent(self, player, continent):
+		return all(self.worldmap.owner(x) == player
+				for x in self.worldmap.continent(continent))
+	
+	def territoryCount(self, player):
+		return len(filter(lambda x: self.worldmap.owner(x) == self.turn,
+									self.worldmap.countries()))
 	
 	def reinforce(self, target, army):
 		assert self.worldmap.owner(target) == self.turn and army <= self.reinforce

@@ -1,10 +1,9 @@
 class Card:
-	validShapes = ("Circle", "Square", "Triangle")
+	validShapes = ("Circle", "Square", "Triangle", "All")
 	
 	def __init__(self, name, shape):
 		assert shape in self.validShapes
 		self.shape = shape
-		#assert name in constants.territories
 		self.name = name
 	
 	def __str__(self):
