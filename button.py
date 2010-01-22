@@ -22,7 +22,7 @@ class Button(GameSprite):
 	def blitMe(self):
 		self.screen.blit(self.image, self.pos)
 		t = Button.font.render(self.name, True, (0, 0, 0))
-		self.screen.blit(t, (self.pos[0] + self.image.get_width()/4, self.pos[1] + self.image.get_height()/4))
+		self.screen.blit(t, (self.pos[0] + (self.image.get_width() - t.get_width())/2, self.pos[1] + (self.image.get_height() - t.get_height())/2))
 		pygame.display.update()
 		
 	def mouseEvent(self, pos):

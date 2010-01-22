@@ -27,7 +27,7 @@ class Interface:
 		self.loadingBarCounter = 0
 		self.background = None
 		self.foreground = None
-		self.panel = None
+		self.panel = {}
 		self.attackSrc = None
 		self.attackDst = None
 		self.atkButton = None
@@ -68,25 +68,36 @@ class Interface:
 			self.writeText(c, WHITE, (WIDTH/3, 450))
 			self.updateLoadingBar()
 		
-		self.panel = GameSprite(None, self.screen, pygame.image.load("images/gui.png").convert_alpha(), (0, 565))
+		self.panel["Top"] = GameSprite(None, self.screen, pygame.image.load("images/panel-top.png").convert_alpha(), (0, 565))
+		self.panel["BG"] = GameSprite(None, self.screen, pygame.image.load("images/panel.png").convert_alpha(), (0, 595))
+		self.panel["Dices"] = GameSprite(None, self.screen, pygame.image.load("images/panel-dices.png").convert_alpha(), (756, 565))
+		text_area = pygame.image.load("images/text-area.png").convert_alpha()
+		self.textFrom = GameSprite(None, self.screen, text_area, (70, 615))
+		self.textTo = GameSprite(None, self.screen, text_area, (70, 645))
 		self.background = GameSprite(None, self.screen, pygame.image.load("images/Fundo.png").convert_alpha(), BOARD_POSITION)
 		self.foreground = GameSprite(None, self.screen, pygame.image.load("images/Topo.png").convert_alpha(), BOARD_POSITION)
-		# gambiarra for now - need to create a button class...
-		self.atkButton = Button("Attack", self.screen, (600, 615)) #GameSprite("atkButton", self.screen, "images/button.png", (600, 615))
-		self.cancelButton = Button("Cancel", self.screen, (600, 655)) #GameSprite("atkButton", self.screen, "images/button.png", (600, 655))
+		
+		self.atkButton = Button("Atacar", self.screen, (600, 615))
+		self.relocateButton = Button("Movimentar", self.screen, (600, 655))
+		self.cancelButton = Button("Cancelar", self.screen, (600, 695))
 
 	def draw_screen(self):
 		self.background.blitMe()
 		for country in self.sprite.values():
 			country.blitMe()
 		self.foreground.blitMe()
-		self.panel.blitMe()
+		for element in self.panel.values():
+			element.blitMe()
 		self.drawPanel()
 		pygame.display.update()
 		
 	def drawPanel(self):
-		self.panel.blitMe()
+		for element in self.panel.values():
+			element.blitMe()
+		self.textTo.blitMe()
+		self.textFrom.blitMe()
 		self.atkButton.blitMe()
+		self.relocateButton.blitMe()
 		self.cancelButton.blitMe()
 		pygame.display.update()
 		
@@ -96,20 +107,32 @@ class Interface:
 				pygame.quit()
 				exit()
 			elif event.type == MOUSEBUTTONDOWN and pygame.mouse.get_pressed()[0]:
-				for country in self.sprite.values():
-					territory = country.mouseEvent(pygame.mouse.get_pos())
-					if territory != None:
-						# just testing, not done yet...
-						if self.attackSrc == None:
-							self.attackSrc = territory
-							self.drawPanel()
-							self.writeText(territory, WHITE, (WIDTH - WIDTH/3, 580))
-						else:
-							self.attackDst = territory
-							self.drawPanel()
-							self.writeText(territory, WHITE, (WIDTH - WIDTH/3, 620))
+				button = self.atkButton.mouseEvent(pygame.mouse.get_pos()) ###
+				button = self.relocateButton.mouseEvent(pygame.mouse.get_pos()) ###
+				button = self.cancelButton.mouseEvent(pygame.mouse.get_pos()) ###
+				
+				if button == "Cancelar":
+					self.attackSrc = None
+					self.attackDst = None
+					self.textFrom.blitMe()
+					self.textTo.blitMe()
+					pygame.display.update()
+				else:
+					for country in self.sprite.values():
+						territory = country.mouseEvent(pygame.mouse.get_pos())
+						if territory != None:
+							# just testing, not done yet...
+							if self.attackSrc == None:
+								self.attackSrc = territory
+								self.textFrom.blitMe()
+								self.writeText(territory, WHITE, (90, 620))
+							else:
+								self.attackDst = territory
+								self.textTo.blitMe()
+								self.writeText(territory, WHITE, (90, 650))
 		
 		self.atkButton.mouseEvent(pygame.mouse.get_pos()) ###
+		self.relocateButton.mouseEvent(pygame.mouse.get_pos()) ###
 		self.cancelButton.mouseEvent(pygame.mouse.get_pos()) ###
 		
 		for country in self.sprite.values():
@@ -117,7 +140,7 @@ class Interface:
 			if territory != None:
 				if territory != self.lastHover:
 					# just testing, not done yet...
-					self.drawPanel()
+					self.panel["Top"].blitMe()
 					self.writeText(territory, WHITE, (10, 572))
 					self.lastHover = territory
 				break

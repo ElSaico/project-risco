@@ -31,12 +31,13 @@ class GameSprite(Sprite):
 	def adjustImage(self):
 		img_w = self.image.get_width()
 		img_h = self.image.get_height()
-		scr_aspect = self.screen.get_width() / self.screen.get_height()
-		img_aspect = img_w * 1.0 / img_h
-		if img_aspect > scr_aspect:
-			img_w = self.screen.get_width()
-			img_h = int(img_w / img_aspect)
-		else:
-			img_h = self.screen.get_height()
-			img_w = int(img_h * img_aspect)
-		self.image = pygame.transform.smoothscale(self.image, (img_w,img_h))
+		if img_w > self.screen.get_width() or img_h > self.screen.get_height():
+			scr_aspect = self.screen.get_width() / self.screen.get_height()
+			img_aspect = img_w * 1.0 / img_h
+			if img_aspect > scr_aspect:
+				img_w = self.screen.get_width()
+				img_h = int(img_w / img_aspect)
+			else:
+				img_h = self.screen.get_height()
+				img_w = int(img_h * img_aspect)
+			self.image = pygame.transform.smoothscale(self.image, (img_w,img_h))
