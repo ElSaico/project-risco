@@ -5,6 +5,7 @@ from sys import exit
 from globals import debug
 from map import Map
 from gameSprite import GameSprite
+from button import Button
 
 BLACK, WHITE = (0, 0, 0), (255, 255, 255)
 BG_COLOR = BLACK
@@ -26,8 +27,11 @@ class Interface:
 		self.loadingBarCounter = 0
 		self.background = None
 		self.foreground = None
+		self.panel = None
 		self.attackSrc = None
 		self.attackDst = None
+		self.atkButton = None
+		self.cancelButton = None
 	
 	def clearArea(self, position, size):
 		pygame.draw.rect(self.screen, BG_COLOR, Rect(position, size))
@@ -58,20 +62,32 @@ class Interface:
 		self.initializeLoadingBar(len(countries)-1)
 		for c in countries:
 			filename = "images/{0}.png".format(c)
-			self.sprite[c] = GameSprite(c, self.screen, filename, BOARD_POSITION)
+			self.sprite[c] = GameSprite(c, self.screen, pygame.image.load(filename).convert_alpha(), BOARD_POSITION)
 			
 			self.clearArea((WIDTH/3, 450), (225, FONT_SIZE+5))
 			self.writeText(c, WHITE, (WIDTH/3, 450))
 			self.updateLoadingBar()
 		
-		self.background = GameSprite(None, self.screen, "images/Fundo.png", BOARD_POSITION)
-		self.foreground = GameSprite(None, self.screen, "images/Topo.png", BOARD_POSITION)
+		self.panel = GameSprite(None, self.screen, pygame.image.load("images/gui.png").convert_alpha(), (0, 565))
+		self.background = GameSprite(None, self.screen, pygame.image.load("images/Fundo.png").convert_alpha(), BOARD_POSITION)
+		self.foreground = GameSprite(None, self.screen, pygame.image.load("images/Topo.png").convert_alpha(), BOARD_POSITION)
+		# gambiarra for now - need to create a button class...
+		self.atkButton = Button("Attack", self.screen, (600, 615)) #GameSprite("atkButton", self.screen, "images/button.png", (600, 615))
+		self.cancelButton = Button("Cancel", self.screen, (600, 655)) #GameSprite("atkButton", self.screen, "images/button.png", (600, 655))
 
 	def draw_screen(self):
 		self.background.blitMe()
 		for country in self.sprite.values():
 			country.blitMe()
 		self.foreground.blitMe()
+		self.panel.blitMe()
+		self.drawPanel()
+		pygame.display.update()
+		
+	def drawPanel(self):
+		self.panel.blitMe()
+		self.atkButton.blitMe()
+		self.cancelButton.blitMe()
 		pygame.display.update()
 		
 	def eventHandler(self):
@@ -86,24 +102,32 @@ class Interface:
 						# just testing, not done yet...
 						if self.attackSrc == None:
 							self.attackSrc = territory
-							self.clearArea((WIDTH - WIDTH/3, 580), (225, FONT_SIZE+5))
+							self.drawPanel()
 							self.writeText(territory, WHITE, (WIDTH - WIDTH/3, 580))
 						else:
 							self.attackDst = territory
-							self.clearArea((WIDTH - WIDTH/3, 620), (225, FONT_SIZE+5))
+							self.drawPanel()
 							self.writeText(territory, WHITE, (WIDTH - WIDTH/3, 620))
+		
+		self.atkButton.mouseEvent(pygame.mouse.get_pos()) ###
+		self.cancelButton.mouseEvent(pygame.mouse.get_pos()) ###
 		
 		for country in self.sprite.values():
 			territory = country.mouseEvent(pygame.mouse.get_pos())
 			if territory != None:
-				# just testing, not done yet...
-				self.clearArea((WIDTH/6, 580), (225, FONT_SIZE+5))
-				self.writeText(territory, WHITE, (WIDTH/6, 580))
+				if territory != self.lastHover:
+					# just testing, not done yet...
+					self.drawPanel()
+					self.writeText(territory, WHITE, (10, 572))
+					self.lastHover = territory
+				break
 
 	def mainLoop(self):
 		m = Map(["White"])
+		self.lastHover = None #tirar depois...
 		self.loadImages(m.countries())
 		self.screen.fill(BG_COLOR)
+		self.font = pygame.font.Font("arial.ttf", 16)
 		self.draw_screen()
 		while True:
 			self.eventHandler()

@@ -3,14 +3,15 @@ from pygame.locals import *
 from pygame.sprite import Sprite
 
 class GameSprite(Sprite):
-	def __init__(self, name, screen, img_filename, position):
+	def __init__(self, name, screen, img, position, adjust=True):
 		Sprite.__init__(self)
 		self.name = name
 		self.screen = screen
 		self.pos = position
-		self.image = pygame.image.load(img_filename).convert_alpha()
+		self.image = img
 		# resize to fit screen
-		self.adjustImage()
+		if self.image != None and adjust:
+			self.adjustImage()
 	
 	def blitMe(self):
 		self.screen.blit(self.image, self.pos)
@@ -22,7 +23,7 @@ class GameSprite(Sprite):
 			
 	def pointIsInside(self, point):
 		try:
-			pix = self.image.get_at(point)
+			pix = self.image.get_at((point[0] - self.pos[0], point[1] - self.pos[1]))
 			return pix[3] > 0
 		except IndexError:
 			return False
