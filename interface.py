@@ -24,14 +24,11 @@ class Interface:
 		pygame.display.set_caption('pyWar Online')
 		self.font = pygame.font.Font("arial.ttf", FONT_SIZE)
 		self.sprite = {}
-		self.loadingBarCounter = 0
-		self.background = None
-		self.foreground = None
 		self.panel = {}
-		self.attackSrc = None
-		self.attackDst = None
-		self.atkButton = None
-		self.cancelButton = None
+		self.source = None
+		self.destination = None
+		self.attacking = False
+		self.relocating = False
 	
 	def clearArea(self, position, size):
 		pygame.draw.rect(self.screen, BG_COLOR, Rect(position, size))
@@ -43,30 +40,34 @@ class Interface:
 		pygame.display.update()
 		
 	def initializeLoadingBar(self, x):
-		self.loadingBarCounter = 0
-		
 		# vertical
-		pygame.draw.rect(self.screen, WHITE, Rect((LBAR_POSITION[0]-LBAR_BORDER_SIZE, LBAR_POSITION[1]-LBAR_BORDER_SIZE), (LBAR_BORDER_SIZE, FONT_SIZE + 2*LBAR_BORDER_SIZE)))
-		pygame.draw.rect(self.screen, WHITE, Rect((LBAR_POSITION[0]+x*BAR_WIDTH, LBAR_POSITION[1]-LBAR_BORDER_SIZE), (LBAR_BORDER_SIZE, FONT_SIZE + 2*LBAR_BORDER_SIZE)))
+		pygame.draw.rect(self.screen, WHITE, Rect((LBAR_POSITION[0]-LBAR_BORDER_SIZE, LBAR_POSITION[1]-LBAR_BORDER_SIZE), \
+													(LBAR_BORDER_SIZE, FONT_SIZE + 2*LBAR_BORDER_SIZE)))
+		pygame.draw.rect(self.screen, WHITE, Rect((LBAR_POSITION[0]+x*BAR_WIDTH, LBAR_POSITION[1]-LBAR_BORDER_SIZE), \
+													(LBAR_BORDER_SIZE, FONT_SIZE + 2*LBAR_BORDER_SIZE)))
 		
 		# horizontal
-		pygame.draw.rect(self.screen, WHITE, Rect((LBAR_POSITION[0]-LBAR_BORDER_SIZE, LBAR_POSITION[1]-LBAR_BORDER_SIZE), (x*BAR_WIDTH + 2*LBAR_BORDER_SIZE, LBAR_BORDER_SIZE)))
-		pygame.draw.rect(self.screen, WHITE, Rect((LBAR_POSITION[0]-LBAR_BORDER_SIZE, LBAR_POSITION[1]+FONT_SIZE), (x*BAR_WIDTH + 2*LBAR_BORDER_SIZE, LBAR_BORDER_SIZE)))
+		pygame.draw.rect(self.screen, WHITE, Rect((LBAR_POSITION[0]-LBAR_BORDER_SIZE, LBAR_POSITION[1]-LBAR_BORDER_SIZE), \
+													(x*BAR_WIDTH + 2*LBAR_BORDER_SIZE, LBAR_BORDER_SIZE)))
+		pygame.draw.rect(self.screen, WHITE, Rect((LBAR_POSITION[0]-LBAR_BORDER_SIZE, LBAR_POSITION[1]+FONT_SIZE), \
+													(x*BAR_WIDTH + 2*LBAR_BORDER_SIZE, LBAR_BORDER_SIZE)))
+		
+		return 0
 	
-	def updateLoadingBar(self):
-		pygame.draw.rect(self.screen, WHITE, Rect((LBAR_POSITION[0] + self.loadingBarCounter*BAR_WIDTH, LBAR_POSITION[1]), (BAR_WIDTH, FONT_SIZE)))
-		self.loadingBarCounter += 1
+	def updateLoadingBar(self, loadingBarCounter):
+		pygame.draw.rect(self.screen, WHITE, Rect((LBAR_POSITION[0] + loadingBarCounter*BAR_WIDTH, LBAR_POSITION[1]), (BAR_WIDTH, FONT_SIZE)))
+		return loadingBarCounter + 1
 
 	def loadImages(self, countries):
 		self.writeText("Carregando Imagens...", WHITE, (WIDTH/6, 100))
-		self.initializeLoadingBar(len(countries)-1)
+		loadingBarCounter = self.initializeLoadingBar(len(countries)-1)
 		for c in countries:
 			filename = "images/{0}.png".format(c)
 			self.sprite[c] = GameSprite(c, self.screen, pygame.image.load(filename).convert_alpha(), BOARD_POSITION)
 			
 			self.clearArea((WIDTH/3, 450), (225, FONT_SIZE+5))
 			self.writeText(c, WHITE, (WIDTH/3, 450))
-			self.updateLoadingBar()
+			loadingBarCounter = self.updateLoadingBar(loadingBarCounter)
 		
 		self.panel["Top"] = GameSprite(None, self.screen, pygame.image.load("images/panel-top.png").convert_alpha(), (0, 565))
 		self.panel["BG"] = GameSprite(None, self.screen, pygame.image.load("images/panel.png").convert_alpha(), (0, 595))
@@ -86,8 +87,6 @@ class Interface:
 		for country in self.sprite.values():
 			country.blitMe()
 		self.foreground.blitMe()
-		for element in self.panel.values():
-			element.blitMe()
 		self.drawPanel()
 		pygame.display.update()
 		
@@ -107,27 +106,39 @@ class Interface:
 				pygame.quit()
 				exit()
 			elif event.type == MOUSEBUTTONDOWN and pygame.mouse.get_pressed()[0]:
-				button = self.atkButton.mouseEvent(pygame.mouse.get_pos()) ###
-				button = self.relocateButton.mouseEvent(pygame.mouse.get_pos()) ###
-				button = self.cancelButton.mouseEvent(pygame.mouse.get_pos()) ###
+				button = None
+				button = button or self.atkButton.mouseEvent(pygame.mouse.get_pos()) ###
+				button = button or self.relocateButton.mouseEvent(pygame.mouse.get_pos()) ###
+				button = button or self.cancelButton.mouseEvent(pygame.mouse.get_pos()) ###
 				
-				if button == "Cancelar":
-					self.attackSrc = None
-					self.attackDst = None
+				if button == "Atacar":
+					self.attacking = True
+					self.atkButton.block()
+					self.relocateButton.block()
+				elif button == "Movimentar":
+					self.relocating = True
+					self.atkButton.block()
+					self.relocateButton.block()
+				elif button == "Cancelar":
+					self.source = None
+					self.destination = None
 					self.textFrom.blitMe()
 					self.textTo.blitMe()
-					pygame.display.update()
-				else:
+					self.atkButton.unblock()
+					self.relocateButton.unblock()
+					self.attacking = False
+					self.relocating = False
+				elif self.attacking or self.relocating:
 					for country in self.sprite.values():
 						territory = country.mouseEvent(pygame.mouse.get_pos())
 						if territory != None:
 							# just testing, not done yet...
-							if self.attackSrc == None:
-								self.attackSrc = territory
+							if self.source == None:
+								self.source = territory
 								self.textFrom.blitMe()
 								self.writeText(territory, WHITE, (90, 620))
 							else:
-								self.attackDst = territory
+								self.destination = territory
 								self.textTo.blitMe()
 								self.writeText(territory, WHITE, (90, 650))
 		
@@ -148,12 +159,36 @@ class Interface:
 	def mainLoop(self):
 		m = Map(["White"])
 		self.lastHover = None #tirar depois...
+		self.screen.fill(BG_COLOR)
 		self.loadImages(m.countries())
 		self.screen.fill(BG_COLOR)
 		self.font = pygame.font.Font("arial.ttf", 16)
 		self.draw_screen()
 		while True:
 			self.eventHandler()
+			
+	def menu(self):
+		bg = GameSprite(None, self.screen, pygame.image.load("images/menu_bg.png").convert_alpha(), (0, 0))
+		logo_img = pygame.image.load("images/logo.png").convert_alpha()
+		logo = GameSprite(None, self.screen, logo_img, ((WIDTH - logo_img.get_width())/2, (HEIGHT - logo_img.get_height())/4))
+		newgame = Button("Novo Jogo", self.screen, (450, 590))
+		
+		bg.blitMe()
+		logo.blitMe()
+		newgame.blitMe()
+		pygame.display.update()
+		
+		while True:
+			button = newgame.mouseEvent(pygame.mouse.get_pos())
+			for event in pygame.event.get():
+				if event.type == QUIT:
+					pygame.quit()
+					exit()
+				elif event.type == MOUSEBUTTONDOWN and pygame.mouse.get_pressed()[0]:
+					if button == "Novo Jogo":
+						self.mainLoop()
+			
 
 a = Interface()
-a.mainLoop()
+a.menu()
+#a.mainLoop()

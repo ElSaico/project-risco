@@ -17,16 +17,21 @@ class Button(GameSprite):
 			Button.img_hover = pygame.image.load("images/button_hover.png").convert_alpha()
 		if Button.font == None:
 			Button.font = pygame.font.Font("arial.ttf", Button.font_size)
+		self.blocked = False
 		GameSprite.__init__(self, name, screen, Button.img, position, False)
 	
 	def blitMe(self):
 		self.screen.blit(self.image, self.pos)
-		t = Button.font.render(self.name, True, (0, 0, 0))
+		if self.blocked:
+			fontColor = (128, 128, 128)
+		else:
+			fontColor = (0, 0, 0)
+		t = Button.font.render(self.name, True, fontColor)
 		self.screen.blit(t, (self.pos[0] + (self.image.get_width() - t.get_width())/2, self.pos[1] + (self.image.get_height() - t.get_height())/2))
 		pygame.display.update()
 		
 	def mouseEvent(self, pos):
-		if self.pointIsInside(pos):
+		if self.pointIsInside(pos) and not self.blocked:
 			self.swapState(True)
 			return self.name
 		self.swapState(False)
@@ -44,3 +49,13 @@ class Button(GameSprite):
 		if updated:
 			self.blitMe()
 			self.hover = not self.hover
+	
+	def block(self):
+		self.blocked = True
+		self.blitMe()
+		pygame.display.update()
+	
+	def unblock(self):
+		self.blocked = False
+		self.blitMe()
+		pygame.display.update()
