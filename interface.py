@@ -137,7 +137,7 @@ class Interface:
 								self.source = territory
 								self.textFrom.blitMe()
 								self.writeText(territory, WHITE, (90, 620))
-							else:
+							elif self.m.neighbors(self.source, territory):
 								self.destination = territory
 								self.textTo.blitMe()
 								self.writeText(territory, WHITE, (90, 650))
@@ -157,10 +157,10 @@ class Interface:
 				break
 
 	def mainLoop(self):
-		m = Map(["White"])
+		self.m = Map(["White"])
 		self.lastHover = None #tirar depois...
 		self.screen.fill(BG_COLOR)
-		self.loadImages(m.countries())
+		self.loadImages(self.m.countries())
 		self.screen.fill(BG_COLOR)
 		self.font = pygame.font.Font("arial.ttf", 16)
 		self.draw_screen()

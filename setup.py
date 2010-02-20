@@ -34,33 +34,33 @@ class BuildExe:
         self.script = "interface.py"
  
         #Name of program
-        self.project_name = "TesteWar"
+        self.project_name = "pyWar Online"
  
         #Project url
-        self.project_url = "about:none"
+        self.project_url = "http://pywaronline.googlecode.com"
  
         #Version of program
         self.project_version = "0.0"
  
         #License of the program
-        self.license = "MyApps License"
+        self.license = "MIT License"
  
         #Auhor of program
-        self.author_name = "Me"
-        self.author_email = "example@example.com"
-        self.copyright = "Copyright (c) 2009 Me."
+        self.author_name = "Bruno Jurkovski and Bruno Marques"
+        self.author_email = "bjurkovski@gmail.com and bm2290@gmail.com"
+        self.copyright = "Copyright (c) 2009 Bruno Jurkovski and Bruno Marques."
  
         #Description
-        self.project_description = "MyApps Description"
+        self.project_description = "Online version of War (brazillian Risk-alike game)"
  
         #Icon file (None will use pygame default icon)
         self.icon_file = None
 		
         #Extra files/dirs copied to game
-        self.extra_datas = ["images", "arial.ttf", pygame_path + "SDL.dll", pygame_path + "SDL_ttf.dll", pygame_path + "libfreetype-6.dll", pygame_path + "zlib1.dll"]
+        self.extra_datas = ["images", "map.xml", "arial.ttf", pygame_path + "SDL.dll", pygame_path + "SDL_ttf.dll", pygame_path + "libfreetype-6.dll", pygame_path + "zlib1.dll"]
  
         #Extra/excludes python modules
-        self.extra_modules = ["constants", "pygame.font"]
+        self.extra_modules = ["globals", "pygame.font"]#, "map", "sys", "gameSprite", "button"]
         self.exclude_modules = []
         
         #DLL Excludes

@@ -27,16 +27,25 @@ class Map:
 	def __str__(self):
 		return "\n".join("{0} - {1.owner}, {1.armySize}".format(n, t)
 							for n, t in self.territories.items())
+	
+	def neighbors(self, t1, t2):
+		edge1 = "('{0}', '{1}')".format(t1, t2)
+		edge2 = "('{0}', '{1}')".format(t2, t1)
+		if edge1 in self.map.edges() \
+			or edge2 in self.map.edges():
+			return True
+		else:
+			return False
 		
 	def reinforce(self, target, army):
 		self.territories[target].reinforce(army)
 	
 	def attack(self, attacker, defender, army):
-		assert attacker in self.map.neighbors(defender)
+		assert self.neighbors(attacker, defender)
 		self.territories[attacker].attack(self.territories[defender], army)
 		
 	def relocate(self, source, destination, size):
-		assert (source in self.map.neighbors(destination)) \
+		assert self.neighbors(source, destination) \
 				and (size <= self.territories[source].armySize - self.relocated[source])
 		self.territories[source].relocate(self.territories[destination], size)
 		# this keeps track of units already relocated in the same turn
