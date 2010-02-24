@@ -1,5 +1,5 @@
 # coding: utf-8
-from pygraph.readwrite.markup import read_hypergraph
+from generic_json import read_hypergraph
 from random import shuffle
 from itertools import cycle
 from globals import debug
@@ -7,7 +7,7 @@ from territory import Territory
 
 class Map:
 	def __init__(self, players):
-		with open("map.xml") as m:
+		with open("map.json") as m:
 			self.map = read_hypergraph(m.read())
 		self.territories = {}
 		self.relocated = {}
@@ -31,11 +31,7 @@ class Map:
 	def neighbors(self, t1, t2):
 		edge1 = "('{0}', '{1}')".format(t1, t2)
 		edge2 = "('{0}', '{1}')".format(t2, t1)
-		if edge1 in self.map.edges() \
-			or edge2 in self.map.edges():
-			return True
-		else:
-			return False
+		return edge1 in self.map.edges() or edge2 in self.map.edges()
 		
 	def reinforce(self, target, army):
 		self.territories[target].reinforce(army)
