@@ -1,5 +1,5 @@
 # coding: utf-8
-from generic_json import read_hypergraph
+from map_json import read_map
 from random import shuffle
 from itertools import cycle
 from globals import debug
@@ -8,7 +8,7 @@ from territory import Territory
 class Map:
 	def __init__(self, players):
 		with open("map.json") as m:
-			self.map = read_hypergraph(m.read())
+			self.map = read_map(m.read())
 		self.territories = {}
 		self.relocated = {}
 		for c in self.map.nodes():
