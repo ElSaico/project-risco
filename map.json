@@ -1,314 +1,86 @@
 {
     "borders": [
-        [
-            "Moscou", 
-            "Oriente Medio"
-        ], 
-        [
-            "Inglaterra", 
-            "Espanha"
-        ], 
-        [
-            "China", 
-            "Vladivostok"
-        ], 
-        [
-            "Borneo", 
-            "Nova Guine"
-        ], 
-        [
-            "Aral", 
-            "India"
-        ], 
-        [
-            "Vancouver", 
-            "Alaska"
-        ], 
-        [
-            "Sudao", 
-            "Madagascar"
-        ], 
-        [
-            "Tchita", 
-            "Vladivostok"
-        ], 
-        [
-            "China", 
-            "Omsk"
-        ], 
-        [
-            "Siberia", 
-            "Tchita"
-        ], 
-        [
-            "Labrador", 
-            "Groenlandia"
-        ], 
-        [
-            "Aral", 
-            "China"
-        ], 
-        [
-            "Alaska", 
-            "Vladivostok"
-        ], 
-        [
-            "Omsk", 
-            "Dudinka"
-        ], 
-        [
-            "Polonia", 
-            "Alemanha"
-        ], 
-        [
-            "Moscou", 
-            "Suecia"
-        ], 
-        [
-            "Islandia", 
-            "Inglaterra"
-        ], 
-        [
-            "India", 
-            "Sumatra"
-        ], 
-        [
-            "Espanha", 
-            "Alemanha"
-        ], 
-        [
-            "Brasil", 
-            "Bolivia"
-        ], 
-        [
-            "Vancouver", 
-            "Ottawa"
-        ], 
-        [
-            "Vancouver", 
-            "Mackenzie"
-        ], 
-        [
-            "Japao", 
-            "Vladivostok"
-        ], 
-        [
-            "Vietna", 
-            "Borneo"
-        ], 
-        [
-            "Congo", 
-            "Africa do Sul"
-        ], 
-        [
-            "Alaska", 
-            "Mackenzie"
-        ], 
-        [
-            "Inglaterra", 
-            "Alemanha"
-        ], 
-        [
-            "California", 
-            "Vancouver"
-        ], 
-        [
-            "India", 
-            "Vietna"
-        ], 
-        [
-            "Polonia", 
-            "Egito"
-        ], 
-        [
-            "Colombia", 
-            "Mexico"
-        ], 
-        [
-            "Egito", 
-            "Sudao"
-        ], 
-        [
-            "Mackenzie", 
-            "Groenlandia"
-        ], 
-        [
-            "Moscou", 
-            "Omsk"
-        ], 
-        [
-            "Bolivia", 
-            "Colombia"
-        ], 
-        [
-            "Ottawa", 
-            "Labrador"
-        ], 
-        [
-            "Espanha", 
-            "Egito"
-        ], 
-        [
-            "Vietna", 
-            "China"
-        ], 
-        [
-            "Nova York", 
-            "California"
-        ], 
-        [
-            "Inglaterra", 
-            "Suecia"
-        ], 
-        [
-            "Nova York", 
-            "Ottawa"
-        ], 
-        [
-            "Bolivia", 
-            "Argentina"
-        ], 
-        [
-            "Polonia", 
-            "Oriente Medio"
-        ], 
-        [
-            "Polonia", 
-            "Moscou"
-        ], 
-        [
-            "China", 
-            "Japao"
-        ], 
-        [
-            "Brasil", 
-            "Argentina"
-        ], 
-        [
-            "India", 
-            "China"
-        ], 
-        [
-            "Borneo", 
-            "Australia"
-        ], 
-        [
-            "Brasil", 
-            "Argelia"
-        ], 
-        [
-            "California", 
-            "Ottawa"
-        ], 
-        [
-            "Mexico", 
-            "Nova York"
-        ], 
-        [
-            "Mexico", 
-            "California"
-        ], 
-        [
-            "Brasil", 
-            "Colombia"
-        ], 
-        [
-            "Ottawa", 
-            "Mackenzie"
-        ], 
-        [
-            "Argelia", 
-            "Congo"
-        ], 
-        [
-            "Australia", 
-            "Nova Guine"
-        ], 
-        [
-            "Mongolia", 
-            "Tchita"
-        ], 
-        [
-            "Siberia", 
-            "Vladivostok"
-        ], 
-        [
-            "Africa do Sul", 
-            "Madagascar"
-        ], 
-        [
-            "Groenlandia", 
-            "Islandia"
-        ], 
-        [
-            "Sudao", 
-            "Congo"
-        ], 
-        [
-            "Oriente Medio", 
-            "Aral"
-        ], 
-        [
-            "Oriente Medio", 
-            "Egito"
-        ], 
-        [
-            "Espanha", 
-            "Argelia"
-        ], 
-        [
-            "Espanha", 
-            "Polonia"
-        ], 
-        [
-            "Nova York", 
-            "Labrador"
-        ], 
-        [
-            "Oriente Medio", 
-            "India"
-        ], 
-        [
-            "Moscou", 
-            "Aral"
-        ], 
-        [
-            "China", 
-            "Mongolia"
-        ], 
-        [
-            "Argelia", 
-            "Sudao"
-        ], 
-        [
-            "Dudinka", 
-            "Tchita"
-        ], 
-        [
-            "Argelia", 
-            "Egito"
-        ], 
-        [
-            "Dudinka", 
-            "Siberia"
-        ], 
-        [
-            "Australia", 
-            "Sumatra"
-        ], 
-        [
-            "Dudinka", 
-            "Mongolia"
-        ], 
-        [
-            "Aral", 
-            "Omsk"
-        ]
+        ["Moscou", "Oriente Medio"],
+        ["Inglaterra", "Espanha"],
+        ["China", "Vladivostok"],
+        ["Borneo", "Nova Guine"],
+        ["Aral", "India"],
+        ["Vancouver", "Alaska"],
+        ["Sudao", "Madagascar"],
+        ["Tchita", "Vladivostok"],
+        ["China", "Omsk"],
+        ["Siberia", "Tchita"],
+        ["Labrador", "Groenlandia"],
+        ["Aral", "China"],
+        ["Alaska", "Vladivostok"],
+        ["Omsk", "Dudinka"],
+        ["Polonia", "Alemanha"],
+        ["Moscou", "Suecia"],
+        ["Islandia", "Inglaterra"],
+        ["India", "Sumatra"],
+        ["Espanha", "Alemanha"],
+        ["Brasil", "Bolivia"],
+        ["Vancouver", "Ottawa"],
+        ["Vancouver", "Mackenzie"],
+        ["Japao", "Vladivostok"],
+        ["Vietna", "Borneo"],
+        ["Congo", "Africa do Sul"],
+        ["Alaska", "Mackenzie"],
+        ["Inglaterra", "Alemanha"],
+        ["California", "Vancouver"],
+        ["India", "Vietna"],
+        ["Polonia", "Egito"],
+        ["Colombia", "Mexico"],
+        ["Egito", "Sudao"],
+        ["Mackenzie", "Groenlandia"],
+        ["Moscou", "Omsk"],
+        ["Bolivia", "Colombia"],
+        ["Ottawa", "Labrador"],
+        ["Espanha", "Egito"],
+        ["Vietna", "China"],
+        ["Nova York", "California"],
+        ["Inglaterra", "Suecia"],
+        ["Nova York", "Ottawa"],
+        ["Bolivia", "Argentina"],
+        ["Polonia", "Oriente Medio"],
+        ["Polonia", "Moscou"],
+        ["China", "Japao"],
+        ["Brasil", "Argentina"],
+        ["India", "China"],
+        ["Borneo", "Australia"],
+        ["Brasil", "Argelia"],
+        ["California", "Ottawa"],
+        ["Mexico", "Nova York"],
+        ["Mexico", "California"],
+        ["Brasil", "Colombia"],
+        ["Ottawa", "Mackenzie"],
+        ["Argelia", "Congo"],
+        ["Australia", "Nova Guine"],
+        ["Mongolia", "Tchita"],
+        ["Siberia", "Vladivostok"],
+        ["Africa do Sul", "Madagascar"],
+        ["Groenlandia", "Islandia"],
+        ["Sudao", "Congo"],
+        ["Oriente Medio", "Aral"],
+        ["Oriente Medio", "Egito"],
+        ["Espanha", "Argelia"],
+        ["Espanha", "Polonia"],
+        ["Nova York", "Labrador"],
+        ["Oriente Medio", "India"],
+        ["Moscou", "Aral"],
+        ["China", "Mongolia"],
+        ["Argelia", "Sudao"],
+        ["Dudinka", "Tchita"],
+        ["Argelia", "Egito"],
+        ["Dudinka", "Siberia"],
+        ["Australia", "Sumatra"],
+        ["Dudinka", "Mongolia"],
+        ["Aral", "Omsk"]
     ], 
     "continents": [
         {
-            "bonus": 2, 
-            "name": "Oceania", 
+            "name": "Oceania",
+            "bonus": 2,
             "countries": [
                 "Borneo", 
                 "Sumatra", 
@@ -317,8 +89,8 @@
             ]
         }, 
         {
-            "bonus": 7, 
-            "name": "Asia", 
+            "name": "Asia",
+            "bonus": 7,
             "countries": [
                 "Vladivostok", 
                 "Mongolia", 
@@ -335,8 +107,8 @@
             ]
         }, 
         {
+            "name": "Europa",
             "bonus": 5, 
-            "name": "Europa", 
             "countries": [
                 "Espanha", 
                 "Islandia", 
@@ -348,8 +120,8 @@
             ]
         }, 
         {
+            "name": "America do Norte",
             "bonus": 5, 
-            "name": "America do Norte", 
             "countries": [
                 "Vancouver", 
                 "Groenlandia", 
@@ -363,8 +135,8 @@
             ]
         }, 
         {
+            "name": "Africa",
             "bonus": 3, 
-            "name": "Africa", 
             "countries": [
                 "Madagascar", 
                 "Sudao", 
@@ -375,8 +147,8 @@
             ]
         }, 
         {
+            "name": "America do Sul",
             "bonus": 2, 
-            "name": "America do Sul", 
             "countries": [
                 "Argentina", 
                 "Bolivia", 
