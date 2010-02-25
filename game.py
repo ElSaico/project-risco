@@ -24,8 +24,11 @@ class Game:
 	
 	def nextStep(self):
 		self.step = self.steps.next()
+		print self.step
 		if self.step == "Trade":
 			self.reinforce = self.territoryCount(self.turn) / 2
+			if self.reinforce < 3:
+				self.reinforce = 3
 			for c in self.worldmap.continents():
 				if self.ownContinent(self.turn, c):
 					self.reinforce += self.map.continentBonus(c)
@@ -40,6 +43,25 @@ class Game:
 	def territoryCount(self, player):
 		return len(filter(lambda x: self.worldmap.owner(x) == self.turn,
 									self.worldmap.countries()))
+									
+	def trade(self, cards):
+		cardsCount = {"Circle": 0, "Square": 0, "Triangle": 0, "All": 0}
+		for c in cards:
+			cardsCount[c.shape] += 1
+		
+		# maybe trying to find a more elegant way to check this...
+		assert cardsCount["Circle"] == 3 or cardsCount["Square"] == 3 or cardsCount["Triangle"] == 3 \
+				or cardsCount["Circle"] + cardsCount["All"] == 3 \
+				or cardsCount["Square"] + cardsCount["All"] == 3 \
+				or cardsCount["Triangle"] + cardsCount["All"] == 3 \
+				or (cardsCount["Circle"] == 1 and cardsCount["Square"] == 1 and cardsCount["Triangle"] == 1) \
+				or (cardsCount["Circle"] == 1 and cardsCount["Square"] == 1 and cardsCount["All"] == 1) \
+				or (cardsCount["Circle"] == 1 and cardsCount["All"] == 1 and cardsCount["Triangle"] == 1) \
+				or (cardsCount["All"] == 1 and cardsCount["Square"] == 1 and cardsCount["Triangle"] == 1)
+		
+		for c in cards:
+			if c.name in filter(lambda x: self.worldmap.owner(x) == self.turn, self.worldmap.countries()):
+				self.worldmap.territories[c.name].reinforce(2)
 	
 	def reinforce(self, target, army):
 		assert self.worldmap.owner(target) == self.turn and army <= self.reinforce

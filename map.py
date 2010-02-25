@@ -29,9 +29,12 @@ class Map:
 							for n, t in self.territories.items())
 	
 	def neighbors(self, t1, t2):
-		edge1 = "('{0}', '{1}')".format(t1, t2)
-		edge2 = "('{0}', '{1}')".format(t2, t1)
-		return edge1 in self.map.edges() or edge2 in self.map.edges()
+		for edge in self.map.edges():
+			if (t1 == edge[0] and t2 == edge[1]) \
+				or (t2 == edge[0] and t1 == edge[1]):
+				return True
+		
+		return False
 		
 	def reinforce(self, target, army):
 		self.territories[target].reinforce(army)

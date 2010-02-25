@@ -3,7 +3,8 @@ from pygame.locals import *
 from pygame.sprite import Sprite
 from sys import exit
 from globals import debug
-from map import Map
+from game import Game
+from player import Player
 from gameSprite import GameSprite
 from button import Button
 
@@ -112,13 +113,25 @@ class Interface:
 				button = button or self.cancelButton.mouseEvent(pygame.mouse.get_pos()) ###
 				
 				if button == "Atacar":
-					self.attacking = True
-					self.atkButton.block()
-					self.relocateButton.block()
+					if self.attacking:
+						self.game.attack(self.source, self.destination, 1)
+						self.attacking = False
+						self.atkButton.block()
+						self.relocateButton.unblock()
+					else:
+						self.attacking = True
+						self.atkButton.block()
+						self.relocateButton.block()
 				elif button == "Movimentar":
-					self.relocating = True
-					self.atkButton.block()
-					self.relocateButton.block()
+					if self.relocating:
+						self.game.relocate(self.source, self.destination, 0)
+						self.relocating = False
+						self.relocateButton.block()
+						self.atkButton.block()
+					else:
+						self.relocating = True
+						self.atkButton.block()
+						self.relocateButton.block()
 				elif button == "Cancelar":
 					self.source = None
 					self.destination = None
@@ -137,10 +150,14 @@ class Interface:
 								self.source = territory
 								self.textFrom.blitMe()
 								self.writeText(territory, WHITE, (90, 620))
-							elif self.m.neighbors(self.source, territory):
+							elif self.game.worldmap.neighbors(self.source, territory):
 								self.destination = territory
 								self.textTo.blitMe()
 								self.writeText(territory, WHITE, (90, 650))
+								if self.attacking:
+									self.atkButton.unblock()
+								elif self.relocating:
+									self.relocateButton.unblock()
 		
 		self.atkButton.mouseEvent(pygame.mouse.get_pos()) ###
 		self.relocateButton.mouseEvent(pygame.mouse.get_pos()) ###
@@ -152,15 +169,17 @@ class Interface:
 				if territory != self.lastHover:
 					# just testing, not done yet...
 					self.panel["Top"].blitMe()
-					self.writeText(territory, WHITE, (10, 572))
+					self.writeText("{0} ({1.armySize}) - {1.owner}".format(territory, self.game.worldmap.territories[territory]), WHITE, (10, 572))
 					self.lastHover = territory
 				break
 
 	def mainLoop(self):
-		self.m = Map(["White"])
+		self.game = Game(False)
+		self.game.addPlayer(Player("White"))
+		self.game.start()
 		self.lastHover = None #tirar depois...
 		self.screen.fill(BG_COLOR)
-		self.loadImages(self.m.countries())
+		self.loadImages(self.game.worldmap.countries())
 		self.screen.fill(BG_COLOR)
 		self.font = pygame.font.Font("arial.ttf", 16)
 		self.draw_screen()

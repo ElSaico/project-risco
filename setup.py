@@ -57,7 +57,7 @@ class BuildExe:
         self.icon_file = None
 		
         #Extra files/dirs copied to game
-        self.extra_datas = ["images", "map.xml", "arial.ttf", pygame_path + "SDL.dll", pygame_path + "SDL_ttf.dll", pygame_path + "libfreetype-6.dll", pygame_path + "zlib1.dll"]
+        self.extra_datas = ["images", "map.json", "arial.ttf", pygame_path + "SDL.dll", pygame_path + "SDL_ttf.dll", pygame_path + "libfreetype-6.dll", pygame_path + "zlib1.dll"]
  
         #Extra/excludes python modules
         self.extra_modules = ["globals", "pygame.font"]#, "map", "sys", "gameSprite", "button"]
