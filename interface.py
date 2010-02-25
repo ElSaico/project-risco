@@ -169,12 +169,12 @@ class Interface:
 				if territory != self.lastHover:
 					# just testing, not done yet...
 					self.panel["Top"].blitMe()
-					self.writeText("{0} ({1.armySize}) - {1.owner}".format(territory, self.game.worldmap.territories[territory]), WHITE, (10, 572))
+					self.writeText("{0} ({1.armySize}) - {1.owner}".format(territory, self.game.worldmap.country(territory)), WHITE, (10, 572))
 					self.lastHover = territory
 				break
 
 	def mainLoop(self):
-		self.game = Game(False)
+		self.game = Game("map.json", False)
 		self.game.addPlayer(Player("White"))
 		self.game.start()
 		self.lastHover = None #tirar depois...

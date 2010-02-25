@@ -7,8 +7,9 @@ class Game:
 	turnCount = 1
 	steps = cycle(("Trade", "Reinforce", "Attack", "Relocate", "End"))
 	
-	def __init__(self, globalTrade):
+	def __init__(self, mapfile, globalTrade):
 		self.globalTrade = globalTrade
+		self._mapfile = mapfile
 	
 	def addPlayer(self, player):
 		if not player in self.players:
@@ -16,7 +17,7 @@ class Game:
 	
 	def start(self):
 		colors = (x.color for x in self.players)
-		self.worldmap = Map(colors)
+		self.worldmap = Map(self._mapfile, colors)
 		shuffle(self.players)
 		self.players = cycle(self.players)
 		self.turn = self.players.next().color
@@ -29,9 +30,10 @@ class Game:
 			self.reinforce = self.territoryCount(self.turn) / 2
 			if self.reinforce < 3:
 				self.reinforce = 3
-			for c in self.worldmap.continents():
-				if self.ownContinent(self.turn, c):
-					self.reinforce += self.map.continentBonus(c)
+			# TODO: make it continent-only
+			#for c in self.worldmap.continents():
+			#	if self.ownContinent(self.turn, c):
+			#		self.reinforce += self.map.continentBonus(c)
 		elif self.step == "End":
 			self.turn = self.players.next().color
 			self.step = self.steps.next()

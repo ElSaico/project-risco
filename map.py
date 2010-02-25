@@ -1,70 +1,81 @@
 # coding: utf-8
-from map_json import read_map
 from random import shuffle
-from itertools import cycle
+from itertools import cycle, chain
+from json import loads, dumps
 from globals import debug
 from territory import Territory
 
 class Map:
-	def __init__(self, players):
-		with open("map.json") as m:
-			self.map = read_map(m.read())
-		self.territories = {}
-		self.relocated = {}
-		for c in self.map.nodes():
-			self.territories[c] = Territory()
-			self.relocated[c] = 0
+	def __init__(self, mapfile, players):
+		with open(mapfile) as m:
+			self.map = self.load(m.read())
+		self._countries = {}
+		self._relocated = {}
+		countries = list(chain.from_iterable(self._continents.values()))
+		for c in countries:
+			self._countries[c] = Territory()
+			self._relocated[c] = 0
 		
 		# owners' sorting
-		sort = self.map.nodes()
-		shuffle(sort)
+		shuffle(countries)
 		owners = cycle(players)
-		for c in sort:
-			self.territories[c].setOwner(owners.next())
+		for c in countries:
+			self._countries[c].setOwner(owners.next())
 		if debug:
 			print self
 		
+	def load(self, string):
+		doc = loads(string)
+		self._borders = set(map(tuple, doc["borders"]))
+		self._bonus = dict((x["name"], x["bonus"]) for x in doc["continents"])
+		self._continents = dict((x["name"], x["countries"]) for x in doc["continents"])
+
 	def __str__(self):
 		return "\n".join("{0} - {1.owner}, {1.armySize}".format(n, t)
-							for n, t in self.territories.items())
+							for n, t in self._countries.items())
 	
 	def neighbors(self, t1, t2):
-		for edge in self.map.edges():
-			if (t1 == edge[0] and t2 == edge[1]) \
-				or (t2 == edge[0] and t1 == edge[1]):
-				return True
-		
-		return False
+		return (t1, t2) in self._borders or (t2, t1) in self._borders
 		
 	def reinforce(self, target, army):
-		self.territories[target].reinforce(army)
+		self._countries[target].reinforce(army)
 	
 	def attack(self, attacker, defender, army):
 		assert self.neighbors(attacker, defender)
-		self.territories[attacker].attack(self.territories[defender], army)
+		self._countries[attacker].attack(self._countries[defender], army)
 		
 	def relocate(self, source, destination, size):
 		assert self.neighbors(source, destination) \
-				and (size <= self.territories[source].armySize - self.relocated[source])
-		self.territories[source].relocate(self.territories[destination], size)
+				and (size <= self._countries[source].armySize - self._relocated[source])
+		self._countries[source].relocate(self._countries[destination], size)
 		# this keeps track of units already relocated in the same turn
 		self.relocated[destination] += size
 	
 	def endTurn(self):
-		for c in self.relocated.keys():
-			self.relocated[c] = 0
+		for c in self._relocated.keys():
+			self._relocated[c] = 0
+	
+	def country(self, t):
+		return self._countries[t]
 	
 	def countries(self):
-		return self.map.nodes()	
+		return self._countries.keys()	
 	def owner(self, t):
-		return self.territories[t].owner
+		return self._countries[t].owner
 	
 	def continent(self, c):
-		return self.map.edge_links[c]
+		return self._continents[c]
 	
 	def continents(self):
-		# ordinary edges are represented by ('node1', 'node2')
-		return filter(lambda x: x[:2] != "('", self.map.hyperedges())
+		return self._continents.keys()
 	
 	def continentBonus(self, c):
-		return self.map.get_edge_properties(c)["bonus"]
+		return self._bonus[c]
+	
+	def json(self):
+		struct = {"continents": [], "borders": list(self._borders)}
+		for c in self.continents():
+			struct["continents"].append({"name": c,
+				                        "bonus": self._bonus[c],
+				                    "countries": self._continents[c]})
+		return dumps(struct, indent=4)
