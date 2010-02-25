@@ -62,3 +62,6 @@ class Map:
 	def continents(self):
 		# ordinary edges are represented by ('node1', 'node2')
 		return filter(lambda x: x[:2] != "('", self.map.hyperedges())
+	
+	def continentBonus(self, c):
+		return self.map.get_edge_properties(c)["bonus"]

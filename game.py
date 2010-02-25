@@ -28,9 +28,7 @@ class Game:
 			self.reinforce = self.territoryCount(self.turn) / 2
 			for c in self.worldmap.continents():
 				if self.ownContinent(self.turn, c):
-					# continental bonus: where to store it is still undefined
-					# hypergraphs don't export edge attributes :(
-					pass
+					self.reinforce += self.map.continentBonus(c)
 		elif self.step == "End":
 			self.turn = self.players.next().color
 			self.step = self.steps.next()
