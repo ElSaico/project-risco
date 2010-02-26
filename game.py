@@ -9,6 +9,7 @@ class Game:
 	
 	def __init__(self, mapfile, globalTrade):
 		self.globalTrade = globalTrade
+		self.reinforcements = 0
 		self._mapfile = mapfile
 	
 	def addPlayer(self, player):
@@ -27,9 +28,9 @@ class Game:
 		self.step = self.steps.next()
 		print self.step
 		if self.step == "Trade":
-			self.reinforce = self.territoryCount(self.turn) / 2
-			if self.reinforce < 3:
-				self.reinforce = 3
+			self.reinforcements = self.territoryCount(self.turn) / 2
+			if self.reinforcements < 3:
+				self.reinforcements = 3
 			# TODO: make it continent-only
 			#for c in self.worldmap.continents():
 			#	if self.ownContinent(self.turn, c):
@@ -37,6 +38,7 @@ class Game:
 		elif self.step == "End":
 			self.turn = self.players.next().color
 			self.step = self.steps.next()
+			self.reinforcements = 0
 	
 	def ownContinent(self, player, continent):
 		return all(self.worldmap.owner(x) == player
@@ -66,9 +68,9 @@ class Game:
 				self.worldmap.territories[c.name].reinforce(2)
 	
 	def reinforce(self, target, army):
-		assert self.worldmap.owner(target) == self.turn and army <= self.reinforce
+		assert self.worldmap.owner(target) == self.turn and army <= self.reinforcements
 		self.worldmap.reinforce(target, army)
-		self.reinforce -= army
+		self.reinforcements -= army
 	
 	def attack(self, attacker, defender, army):
 		assert self.worldmap.owner(attacker) == self.turn \

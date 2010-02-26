@@ -6,19 +6,31 @@ from gameSprite import GameSprite
 class Button(GameSprite):
 	img = None
 	img_hover = None
+	cimg = None
+	cimg_hover = None
 	font_size = 16
 	font = None
-	def __init__(self, name, screen, position):
+	def __init__(self, name, screen, position, type=None):
 		self.hover = False
+		self.blocked = False
 		pygame.init()
-		if Button.img == None:
-			Button.img = pygame.image.load("images/button.png").convert_alpha()
-		if Button.img_hover == None:
-			Button.img_hover = pygame.image.load("images/button_hover.png").convert_alpha()
 		if Button.font == None:
 			Button.font = pygame.font.Font("arial.ttf", Button.font_size)
-		self.blocked = False
-		GameSprite.__init__(self, name, screen, Button.img, position, False)
+			
+		if type == "circular":
+			if Button.cimg == None:
+				Button.cimg = pygame.image.load("images/circularbutton.png").convert_alpha()
+			if Button.cimg_hover == None:
+				Button.cimg_hover = pygame.image.load("images/circularbutton_hover.png").convert_alpha()
+			GameSprite.__init__(self, name, screen, Button.cimg, position, False)
+		else:
+			if Button.img == None:
+				Button.img = pygame.image.load("images/button.png").convert_alpha()
+			if Button.img_hover == None:
+				Button.img_hover = pygame.image.load("images/button_hover.png").convert_alpha()
+			GameSprite.__init__(self, name, screen, Button.img, position, False)
+		
+		self.type = type
 	
 	def blitMe(self):
 		self.screen.blit(self.image, self.pos)
@@ -40,10 +52,16 @@ class Button(GameSprite):
 	def swapState(self, mouseIsInside):
 		updated = False
 		if mouseIsInside and not self.hover:
-			self.image = Button.img_hover
+			if self.type == "circular":
+				self.image = Button.cimg_hover
+			else:
+				self.image = Button.img_hover
 			updated = True
 		elif not mouseIsInside and self.hover:
-			self.image = Button.img
+			if self.type == "circular":
+				self.image = Button.cimg
+			else:
+				self.image = Button.img
 			updated = True
 		
 		if updated:

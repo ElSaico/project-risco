@@ -23,7 +23,7 @@ class Territory:
 
 	def attack(self, defender, army):
 		# map verifies if they're neighbours
-		if constants.debug:
+		if globals.debug:
 			print self.armySize, defender.armySize, army
 		assert (1 <= army <= 3) and (army < self.armySize) \
 				and (army <= defender.armySize) and (self.owner != defender.owner)
@@ -31,7 +31,7 @@ class Territory:
 		for i in range(army):
 			diceAtk = randint(1, 6)
 			diceDef = randint(1, 6)
-			if constants.debug:
+			if globals.debug:
 				print "Dados:", diceAtk, diceDef
 			if diceDef >= diceAtk:
 				army -= 1
