@@ -238,12 +238,8 @@ class Interface:
 	def mainLoop(self):
 		self.game = Game("map.json", False)
 		self.game.addPlayer(Player("White"))
-<<<<<<< .mine
 		self.game.addPlayer(Player("Black"))
 		self.game.start()
-=======
-		self.game.start()
->>>>>>> .r57
 		self.lastHover = None #tirar depois...
 		self.counter = 0
 		self.screen.fill(BG_COLOR)
