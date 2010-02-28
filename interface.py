@@ -76,7 +76,7 @@ class Interface:
 		text_area = pygame.image.load("images/text-area.png").convert_alpha()
 		self.textFrom = GameSprite(None, self.screen, text_area, (70, 615))
 		self.textTo = GameSprite(None, self.screen, text_area, (70, 645))
-		#self.textCounter = GameSprite(None, self.screen, pygame.image.load("images/smalltext-area.png").convert_alpha(), (431, 617))
+		self.textCounter = GameSprite(None, self.screen, pygame.image.load("images/smalltext-area.png").convert_alpha(), (431, 617))
 		self.background = GameSprite(None, self.screen, pygame.image.load("images/Fundo.png").convert_alpha(), BOARD_POSITION)
 		self.foreground = GameSprite(None, self.screen, pygame.image.load("images/Topo.png").convert_alpha(), BOARD_POSITION)
 		
@@ -100,7 +100,7 @@ class Interface:
 			element.blitMe()
 		self.textTo.blitMe()
 		self.textFrom.blitMe()
-		#self.textCounter.blitMe()
+		self.textCounter.blitMe()
 		self.atkButton.blitMe()
 		self.relocateButton.blitMe()
 		self.cancelButton.blitMe()
@@ -130,7 +130,7 @@ class Interface:
 						self.attacking = False
 						self.atkButton.block()
 						self.relocateButton.unblock()
-						#self.textCounter.blitMe()
+						self.textCounter.blitMe()
 					else:
 						self.attacking = True
 						self.atkButton.block()
@@ -141,7 +141,7 @@ class Interface:
 						self.relocating = False
 						self.relocateButton.block()
 						self.atkButton.block()
-						#self.textCounter.blitMe()
+						self.textCounter.blitMe()
 					else:
 						self.relocating = True
 						self.atkButton.block()
@@ -155,7 +155,7 @@ class Interface:
 					self.relocateButton.unblock()
 					self.attacking = False
 					self.relocating = False
-					#self.textCounter.blitMe()
+					self.textCounter.blitMe()
 				elif self.game.step == "Trade" and button == "Proxima Etapa":
 					self.game.nextStep()
 				elif self.game.step == "Reinforce":
@@ -223,7 +223,7 @@ class Interface:
 								self.atkButton.unblock()
 						if self.counter >= self.game.worldmap.country(self.source).armySize:
 							self.counter = self.game.worldmap.country(self.source).armySize - 1
-						#self.textCounter.blitMe()
+						self.textCounter.blitMe()
 						self.writeText(str(self.counter), WHITE, (450, 621))
 					elif button == "-" and self.destination != None:
 						self.counter -= 1
@@ -233,7 +233,7 @@ class Interface:
 								self.atkButton.block()
 							if self.relocating and not self.relocateButton.blocked:
 								self.relocateButton.block()
-						#self.textCounter.blitMe()
+						self.textCounter.blitMe()
 						self.writeText(str(self.counter), WHITE, (450, 621))
 		
 		self.atkButton.mouseEvent(pygame.mouse.get_pos()) ###
