@@ -17,7 +17,7 @@ class Button(GameSprite):
 		if Button.font == None:
 			Button.font = pygame.font.Font("arial.ttf", Button.font_size)
 			
-		if type == "circular":
+		if False: # if type == "circular":
 			if Button.cimg == None:
 				Button.cimg = pygame.image.load("images/circularbutton.png").convert_alpha()
 			if Button.cimg_hover == None:
@@ -52,13 +52,13 @@ class Button(GameSprite):
 	def swapState(self, mouseIsInside):
 		updated = False
 		if mouseIsInside and not self.hover:
-			if self.type == "circular":
+			if False: # if self.type == "circular":
 				self.image = Button.cimg_hover
 			else:
 				self.image = Button.img_hover
 			updated = True
 		elif not mouseIsInside and self.hover:
-			if self.type == "circular":
+			if False: # if self.type == "circular":
 				self.image = Button.cimg
 			else:
 				self.image = Button.img

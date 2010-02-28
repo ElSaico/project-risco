@@ -40,12 +40,15 @@ class Game:
 			self.step = self.steps.next()
 			self.reinforcements = 0
 	
+	def ownCountry(self, player, country):
+		return self.worldmap.owner(country) == player
+	
 	def ownContinent(self, player, continent):
-		return all(self.worldmap.owner(x) == player
+		return all(self.ownCountry(player, x)
 				for x in self.worldmap.continent(continent))
 	
 	def territoryCount(self, player):
-		return len(filter(lambda x: self.worldmap.owner(x) == self.turn,
+		return len(filter(lambda x: self.ownCountry(player, x),
 									self.worldmap.countries()))
 									
 	def trade(self, cards):
