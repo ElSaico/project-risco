@@ -41,7 +41,7 @@ class Map:
 	
 	def attack(self, attacker, defender, army):
 		assert self.neighbors(attacker, defender)
-		self._countries[attacker].attack(self._countries[defender], army)
+		return self._countries[attacker].attack(self._countries[defender], army)
 		
 	def relocate(self, source, destination, size):
 		assert self.neighbors(source, destination) \

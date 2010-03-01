@@ -68,7 +68,7 @@ class Game:
 		assert self.worldmap.owner(attacker) == self.turn \
 		   and self.worldmap.owner(defender) != self.turn \
 		   and self.step == "Attack"
-		self.worldmap.attack(attacker, defender, army)
+		return self.worldmap.attack(attacker, defender, army)
 	
 	def relocate(self, source, destination, army):
 		assert self.worldmap.owner(source) == self.turn \

@@ -25,6 +25,7 @@ class pyWar:
 		self.lstCountry["yscrollcommand"] = self.scrCountry.set
 		self.scrCountry["command"] = self.lstCountry.yview
 		self.country.pack(side=LEFT, fill=BOTH, padx="5m", pady="5m")
+		self.country.config(background="#EEEEEE")
 		
 		self.neighbor = LabelFrame(master, label="Neighbors")
 		self.lstNeighbor = Listbox(self.neighbor.frame)
@@ -34,6 +35,7 @@ class pyWar:
 		self.lstNeighbor["yscrollcommand"] = self.scrNeighbor.set
 		self.scrNeighbor["command"] = self.lstNeighbor.yview
 		self.neighbor.pack(side=RIGHT, fill=BOTH, padx="5m", pady="5m")
+		self.neighbor.config(background="#EEEEEE")
 	
 	def importMap(self):
 		pass

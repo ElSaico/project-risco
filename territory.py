@@ -24,19 +24,38 @@ class Territory:
 		if globals.debug:
 			print self.armySize, defender.armySize, army
 		assert (1 <= army <= 3) and (army < self.armySize) \
-				and (army <= defender.armySize) and (self.owner != defender.owner)
+				and (self.owner != defender.owner)
 		self.armySize -= army
+		
+		diceAtk = [0, 0, 0]
+		diceDef = [0, 0, 0]
 		for i in range(army):
-			diceAtk = randint(1, 6)
-			diceDef = randint(1, 6)
-			if globals.debug:
-				print "Dados:", diceAtk, diceDef
-			if diceDef >= diceAtk:
+			diceAtk[i] = randint(1, 6)
+		
+		defSize = defender.armySize		
+		if defSize > 3:
+			defSize = 3
+			
+		for i in range(defSize):
+			diceDef[i] = randint(1, 6)
+			
+		diceAtk.sort(reverse=True)
+		diceDef.sort(reverse=True)
+		
+		size = min([army, defSize])
+		for i in range(size):
+			if diceDef[i] >= diceAtk[i]:
 				army -= 1
 			else:
 				defender.armySize -= 1
+		
+		conquer = None
 		if defender.armySize == 0:
 			defender.setOwner(self.owner)
 			defender.reinforce(army)
+			conquer = True
 		else:
 			self.reinforce(army)
+			conquer = False
+			
+		return (conquer, diceAtk, diceDef)
