@@ -72,7 +72,7 @@ class Interface:
 		
 		self.panel["Top"] = GameSprite(None, self.screen, pygame.image.load("images/panel-top.png").convert_alpha(), (0, 565))
 		self.panel["BG"] = GameSprite(None, self.screen, pygame.image.load("images/panel.png").convert_alpha(), (0, 595))
-		self.panel["Dices"] = GameSprite(None, self.screen, pygame.image.load("images/panel-dices.png").convert_alpha(), (756, 565))
+		self.panel["Dice"] = GameSprite(None, self.screen, pygame.image.load("images/panel-dice.png").convert_alpha(), (756, 565))
 		text_area = pygame.image.load("images/text-area.png").convert_alpha()
 		self.textFrom = GameSprite(None, self.screen, text_area, (70, 615))
 		self.textTo = GameSprite(None, self.screen, text_area, (70, 645))
@@ -87,11 +87,11 @@ class Interface:
 		self.plusButton = Button("+", self.screen, (500, 617), "circular")
 		self.nextStepButton = Button("Proxima Etapa", self.screen, (400, 655))
 		
-		self.redDices = []
-		self.yellowDices = []
+		self.redDice = []
+		self.yellowDice = []
 		for i in range(6):
-			self.redDices.append(GameSprite(None, self.screen, pygame.image.load("images/red{0}.png".format(i+1)).convert_alpha(), (0, 0)))
-			self.yellowDices.append(GameSprite(None, self.screen, pygame.image.load("images/yellow{0}.png".format(i+1)).convert_alpha(), (0, 0)))
+			self.redDice.append(GameSprite(None, self.screen, pygame.image.load("images/red{0}.png".format(i+1)).convert_alpha(), (0, 0)))
+			self.yellowDice.append(GameSprite(None, self.screen, pygame.image.load("images/yellow{0}.png".format(i+1)).convert_alpha(), (0, 0)))
 			
 
 	def draw_screen(self):
@@ -117,22 +117,16 @@ class Interface:
 		
 		pygame.display.update()
 		
-	def cleanDices(self):
+	def cleanDice(self):
 		pass
 		
-	def printDices(self, dicesAtk, dicesDef):
-		counter = 0
-		for i in dicesAtk:
-			if i != 0:
-				self.redDices[i-1].pos = (780 + counter*70, 600)
-				self.redDices[i-1].blitMe()
-				counter += 1
-		counter = 0
-		for i in dicesDef:
-			if i != 0:
-				self.yellowDices[i-1].pos = (780 + counter*70, 675)
-				self.yellowDices[i-1].blitMe()
-				counter += 1
+	def printDice(self, diceAtk, diceDef):
+		for i, v in enumerate(diceAtk):
+			self.redDice[v-1].pos = (780 + i*70, 600)
+			self.redDice[v-1].blitMe()
+		for i, v in enumerate(diceDef):
+			self.yellowDice[v-1].pos = (780 + i*70, 675)
+			self.yellowDice[v-1].blitMe()
 		
 	def eventHandler(self):
 		for event in pygame.event.get():
@@ -300,7 +294,7 @@ class Interface:
 					if self.game.step == "Attack":
 						if button == "Atacar":
 							atkReturn = self.game.attack(self.source, self.destination, self.counter)
-							self.printDices(atkReturn[1], atkReturn[2])
+							self.printDice(atkReturn[1], atkReturn[2])
 							self.minusButton.block()
 							self.plusButton.unblock()
 							self.counter = 0

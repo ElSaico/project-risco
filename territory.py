@@ -21,35 +21,27 @@ class Territory:
 
 	def attack(self, defender, army):
 		# map verifies if they're neighbours
-		if globals.debug:
-			print self.armySize, defender.armySize, army
 		assert (1 <= army <= 3) and (army < self.armySize) \
 				and (self.owner != defender.owner)
 		self.armySize -= army
 		
-		diceAtk = [0, 0, 0]
-		diceDef = [0, 0, 0]
+		diceAtk = []
 		for i in range(army):
-			diceAtk[i] = randint(1, 6)
+			diceAtk.append(randint(1, 6))
 		
-		defSize = defender.armySize		
-		if defSize > 3:
-			defSize = 3
-			
-		for i in range(defSize):
-			diceDef[i] = randint(1, 6)
-			
+		diceDef = []
+		for i in range(min(defender.armySize, 3)):
+			diceDef.append(randint(1, 6))
+		
 		diceAtk.sort(reverse=True)
 		diceDef.sort(reverse=True)
 		
-		size = min([army, defSize])
-		for i in range(size):
-			if diceDef[i] >= diceAtk[i]:
+		for df, at in zip(diceDef, diceAtk):
+			if df >= at:
 				army -= 1
 			else:
 				defender.armySize -= 1
 		
-		conquer = None
 		if defender.armySize == 0:
 			defender.setOwner(self.owner)
 			defender.reinforce(army)
