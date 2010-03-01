@@ -1,6 +1,7 @@
 {
 	"colors": ["White", "Black", "Green", "Blue", "Red", "Yellow"],
 	"shapes": ["Circle", "Square", "Triangle"],
+	"trade": [[4, 6, 8, 10, 12, 15], 5],
     "borders": [
         ["Moscou", "Oriente Medio"],
         ["Inglaterra", "Espanha"],
