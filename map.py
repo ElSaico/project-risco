@@ -2,7 +2,6 @@
 from random import shuffle
 from itertools import cycle, chain
 from json import loads, dumps
-from globals import debug
 from territory import Territory
 
 class Map:
@@ -21,14 +20,14 @@ class Map:
 		owners = cycle(players)
 		for c in countries:
 			self._countries[c].setOwner(owners.next())
-		if debug:
-			print self
 		
 	def load(self, string):
 		doc = loads(string)
 		self._borders = set(map(tuple, doc["borders"]))
 		self._bonus = dict((x["name"], x["bonus"]) for x in doc["continents"])
 		self._continents = dict((x["name"], x["countries"]) for x in doc["continents"])
+		self.colors = tuple(doc["colors"])
+		self.shapes = tuple(doc["shapes"])
 
 	def __str__(self):
 		return "\n".join("{0} - {1.owner}, {1.armySize}".format(n, t)
@@ -73,7 +72,8 @@ class Map:
 		return self._bonus[c]
 	
 	def json(self):
-		struct = {"continents": [], "borders": list(self._borders)}
+		struct = {"continents": [], "borders": list(self._borders),
+		          "colors": self.colors, "shapes": self.shapes}
 		for c in self.continents():
 			struct["continents"].append({"name": c,
 				                        "bonus": self._bonus[c],

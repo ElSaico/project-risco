@@ -1,4 +1,6 @@
 {
+	"colors": ["White", "Black", "Green", "Blue", "Red", "Yellow"],
+	"shapes": ["Circle", "Square", "Triangle"],
     "borders": [
         ["Moscou", "Oriente Medio"],
         ["Inglaterra", "Espanha"],
@@ -156,5 +158,8 @@
                 "Colombia"
             ]
         }
+    ],
+    "victory": [
+    
     ]
 }

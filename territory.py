@@ -1,4 +1,3 @@
-import globals
 from random import randint
 
 class Territory:
@@ -7,7 +6,6 @@ class Territory:
 		self.owner = ""
 	
 	def setOwner(self, owner):
-		assert owner in globals.validColors
 		self.owner = owner
 	
 	def reinforce(self, size):

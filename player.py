@@ -1,9 +1,7 @@
-import globals
 from itertools import imap
 
 class Player:
 	def __init__(self, color):
-		assert color in globals.validColors
 		self.color = color
 		self.cards = []
 		

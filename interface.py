@@ -2,7 +2,6 @@ import pygame
 from pygame.locals import *
 from pygame.sprite import Sprite
 from sys import exit
-from globals import debug
 from game import Game
 from player import Player
 from gameSprite import GameSprite
@@ -16,6 +15,7 @@ BOARD_POSITION = (0, 0)
 BAR_WIDTH = 10
 LBAR_POSITION = (WIDTH/3, 500)
 LBAR_BORDER_SIZE = 2
+debug = True
 
 class Interface:
 	def __init__(self):
