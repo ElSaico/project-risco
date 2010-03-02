@@ -15,8 +15,6 @@ class Map:
 			self._countries[c] = Territory()
 			self._relocated[c] = 0
 		
-		self.relocated = dict((x, 0) for x in self.countries())
-		
 		# owners' sorting
 		shuffle(countries)
 		owners = cycle(players)
@@ -50,7 +48,7 @@ class Map:
 				and (size <= self._countries[source].armySize - self._relocated[source])
 		self._countries[source].relocate(self._countries[destination], size)
 		# this keeps track of units already relocated in the same turn
-		self.relocated[destination] += size
+		self._relocated[destination] += size
 	
 	def endTurn(self):
 		for c in self._relocated.keys():
