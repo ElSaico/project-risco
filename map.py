@@ -15,6 +15,8 @@ class Map:
 			self._countries[c] = Territory()
 			self._relocated[c] = 0
 		
+		self.relocated = dict((x, 0) for x in self.countries())
+		
 		# owners' sorting
 		shuffle(countries)
 		owners = cycle(players)

@@ -37,8 +37,8 @@ class Game:
 			#		self.reinforce += self.map.continentBonus(c)
 		elif self.step == "End":
 			self.turn = self.players.next().color
-			self.step = self.steps.next()
 			self.reinforcements = 0
+			self.nextStep()
 	
 	def ownCountry(self, player, country):
 		return self.worldmap.owner(country) == player

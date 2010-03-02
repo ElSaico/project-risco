@@ -76,6 +76,7 @@ class Interface:
 		text_area = pygame.image.load("images/text-area.png").convert_alpha()
 		self.textFrom = GameSprite(None, self.screen, text_area, (70, 615))
 		self.textTo = GameSprite(None, self.screen, text_area, (70, 645))
+		self.textTurn = GameSprite(None, self.screen, text_area, (70, 695))
 		self.textCounter = GameSprite(None, self.screen, pygame.image.load("images/smalltext-area.png").convert_alpha(), (431, 617))
 		self.background = GameSprite(None, self.screen, pygame.image.load("images/Fundo.png").convert_alpha(), BOARD_POSITION)
 		self.foreground = GameSprite(None, self.screen, pygame.image.load("images/Topo.png").convert_alpha(), BOARD_POSITION)
@@ -108,6 +109,7 @@ class Interface:
 		self.textTo.blitMe()
 		self.textFrom.blitMe()
 		self.textCounter.blitMe()
+		self.textTurn.blitMe()
 		self.atkButton.blitMe()
 		self.relocateButton.blitMe()
 		self.cancelButton.blitMe()
@@ -118,210 +120,222 @@ class Interface:
 		pygame.display.update()
 		
 	def cleanDice(self):
-		pass
+		self.panel["Dice"].blitMe()
 		
 	def printDice(self, diceAtk, diceDef):
+		self.cleanDice()
 		for i, v in enumerate(diceAtk):
 			self.redDice[v-1].pos = (780 + i*70, 600)
 			self.redDice[v-1].blitMe()
 		for i, v in enumerate(diceDef):
 			self.yellowDice[v-1].pos = (780 + i*70, 675)
 			self.yellowDice[v-1].blitMe()
+			
+	def trade(self, button):
+		self.atkButton.block()
+		self.relocateButton.block()
+		if button == "Proxima Etapa":
+			self.minusButton.block()
+			self.plusButton.block()
+			self.game.nextStep()
+			self.textTurn.blitMe()
+			self.writeText("{0} - {1}".format(self.game.turn, self.game.step), WHITE, (90, 700))
+		
+	def reinforce(self, button):
+		if button == "Proxima Etapa":
+			for t, n in self.toReinforce.items():
+				if self.game.ownCountry(self.game.turn, t):
+					self.game.reinforce(t, n)
+				self.toReinforce[t] = 0
+			self.source = None
+			self.destination = None
+			self.textTo.blitMe()
+			self.plusButton.block()
+			self.minusButton.block()
+			self.game.nextStep()
+			self.textTurn.blitMe()
+			self.writeText("{0} - {1}".format(self.game.turn, self.game.step), WHITE, (90, 700))
+			
+		if debug:
+			print self.game.turn, self.toReinforce.values()
+			
+		for country in self.sprite.values():
+			territory = country.mouseEvent(pygame.mouse.get_pos())
+			if territory:
+				self.destination = territory
+				break
+			
+		if self.destination and \
+		   self.game.ownCountry(self.game.turn, self.destination):
+			self.textTo.blitMe()
+			self.writeText(self.destination, WHITE, (90, 650))
+			if button == "+" and not self.plusButton.blocked:
+				self.toReinforce[self.destination] += 1
+			elif button == "-" and not self.minusButton.blocked:
+				self.toReinforce[self.destination] -= 1
+			self.textCounter.blitMe()
+			self.writeText(str(self.toReinforce[self.destination]), WHITE, (450, 621))
+		else:
+			self.plusButton.block()
+			self.minusButton.block()
+			self.textTo.blitMe()
+			self.textCounter.blitMe()
+		
+		if sum(self.toReinforce.values()) >= self.game.reinforcements:
+			self.plusButton.block()
+		elif self.plusButton.blocked:
+			self.plusButton.unblock()
+		
+		if sum(self.toReinforce.values()) <= 0 or \
+			  (self.destination and \
+			   self.toReinforce[self.destination] <= 0):
+			self.minusButton.block()
+		elif self.minusButton.blocked:
+			self.minusButton.unblock()
+		
+	def attack_or_relocate(self, button):
+		if button == "Proxima Etapa":
+			if self.game.step == "Attack":
+				self.cleanDice()
+				self.atkButton.block()
+			elif self.game.step == "Relocate":
+				self.relocateButton.block()
+			self.source = None
+			self.destination = None
+			self.textFrom.blitMe()
+			self.textTo.blitMe()
+			self.plusButton.block()
+			self.minusButton.block()
+			self.game.nextStep()
+			self.textTurn.blitMe()
+			self.writeText("{0} - {1}".format(self.game.turn, self.game.step), WHITE, (90, 700))
+			
+		for country in self.sprite.values():
+			territory = country.mouseEvent(pygame.mouse.get_pos())
+			if territory:
+				if not self.source:
+					self.source = territory
+					break
+				elif self.source and self.game.ownCountry(self.game.turn, territory) and self.game.step == "Attack":
+					self.source = territory
+					self.destination = None
+					break
+				elif self.game.worldmap.neighbors(self.source, territory):
+					self.counter = 0
+					self.textCounter.blitMe()
+					self.writeText(str(self.counter), WHITE, (450, 621))
+					self.plusButton.unblock()
+					self.destination = territory
+					break
+					
+		if button == "Cancelar":
+			self.source = None
+			self.destination = None
+			self.textFrom.blitMe()
+			self.textTo.blitMe()
+			self.textCounter.blitMe()
+					
+		if self.source and \
+			self.game.ownCountry(self.game.turn, self.source):
+				self.textFrom.blitMe()
+				self.writeText(self.source, WHITE, (90, 620))
+		else:
+			self.source = None
+			self.textFrom.blitMe()
+		
+		if self.destination and \
+			((self.game.step == "Attack" and not self.game.ownCountry(self.game.turn, self.destination)) \
+			or (self.game.step == "Relocate" and self.game.ownCountry(self.game.turn, self.destination))):
+				self.textTo.blitMe()
+				self.writeText(self.destination, WHITE, (90, 650))
+				
+				if button == "+":
+					self.counter += 1
+					if self.minusButton.blocked:
+						self.minusButton.unblock()
+					if self.game.step == "Relocate" and self.relocateButton.blocked:
+						self.relocateButton.unblock()
+					
+				elif button == "-":
+					self.counter -= 1
+					if self.plusButton.blocked:
+						self.plusButton.unblock()
+				
+				if self.game.step == "Attack":
+					if self.counter >= 3:
+						self.counter = 3
+						self.plusButton.block()
+					if self.counter > 0 and self.atkButton.blocked:
+						self.atkButton.unblock()
+				elif self.game.step == "Relocate":
+					if self.counter > 0 and self.relocateButton.blocked:
+						self.relocateButton.unblock()
+						
+				if self.counter >= self.game.worldmap.country(self.source).armySize:
+					self.counter = self.game.worldmap.country(self.source).armySize - 1
+					self.plusButton.block()
+				
+				if self.counter <= 0:
+					self.counter = 0
+					self.minusButton.block()
+					if self.game.step == "Attack" and not self.atkButton.blocked:
+						self.atkButton.block()
+					if self.game.step == "Relocate" and not self.relocateButton.blocked:
+						self.relocateButton.block()
+						
+				self.textCounter.blitMe()
+				self.writeText(str(self.counter), WHITE, (450, 621))
+		else:
+			self.destination = None
+			self.textTo.blitMe()
+			
+		if self.game.step == "Attack":
+			if button == "Atacar":
+				atkReturn = self.game.attack(self.source, self.destination, self.counter)
+				self.printDice(atkReturn[1], atkReturn[2])
+				if atkReturn[0]:
+					self.destination = None
+					self.textTo.blitMe()
+				self.atkButton.block()
+				self.minusButton.block()
+				self.plusButton.unblock()
+				self.counter = 0
+				self.textCounter.blitMe()
+				self.writeText(str(self.counter), WHITE, (450, 621))
+		elif self.game.step == "Relocate":
+			if button == "Movimentar":
+				self.game.relocate(self.source, self.destination, self.counter)
+				self.relocateButton.block()
+				self.atkButton.block()
+				self.textCounter.blitMe()
 		
 	def eventHandler(self):
+		button = None
+		button = button or self.atkButton.mouseEvent(pygame.mouse.get_pos()) ###
+		button = button or self.relocateButton.mouseEvent(pygame.mouse.get_pos()) ###
+		button = button or self.cancelButton.mouseEvent(pygame.mouse.get_pos()) ###
+		button = button or self.minusButton.mouseEvent(pygame.mouse.get_pos()) ###
+		button = button or self.plusButton.mouseEvent(pygame.mouse.get_pos()) ###
+		button = button or self.nextStepButton.mouseEvent(pygame.mouse.get_pos()) ###
+		
 		for event in pygame.event.get():
 			if event.type == QUIT:
 				pygame.quit()
 				exit()
-			elif event.type == MOUSEBUTTONDOWN and pygame.mouse.get_pressed()[0]:
-				button = None
-				button = button or self.atkButton.mouseEvent(pygame.mouse.get_pos()) ###
-				button = button or self.relocateButton.mouseEvent(pygame.mouse.get_pos()) ###
-				button = button or self.cancelButton.mouseEvent(pygame.mouse.get_pos()) ###
-				button = button or self.minusButton.mouseEvent(pygame.mouse.get_pos()) ###
-				button = button or self.plusButton.mouseEvent(pygame.mouse.get_pos()) ###
-				button = button or self.nextStepButton.mouseEvent(pygame.mouse.get_pos()) ###
-				
-					
+			elif event.type == MOUSEBUTTONDOWN and pygame.mouse.get_pressed()[0]:	
 				if self.game.step == "Trade":
-					self.atkButton.block()
-					self.relocateButton.block()
-					if button == "Proxima Etapa":
-						self.minusButton.block()
-						self.plusButton.block()
-						self.game.nextStep()
+					self.trade(button)
 				elif self.game.step == "Reinforce":
-					if button == "Proxima Etapa":
-						for t, n in self.toReinforce.items():
-							if self.game.ownCountry(self.game.turn, t):
-								self.game.reinforce(t, n)
-							self.toReinforce[t] = 0
-						self.source = None
-						self.destination = None
-						self.textTo.blitMe()
-						self.plusButton.block()
-						self.minusButton.block()
-						self.game.nextStep()
-						
-					if debug:
-						print self.game.turn, self.toReinforce.values()
-						
-					for country in self.sprite.values():
-						territory = country.mouseEvent(pygame.mouse.get_pos())
-						if territory:
-							self.destination = territory
-							break
-						
-					if self.destination and \
-					   self.game.ownCountry(self.game.turn, self.destination):
-						self.textTo.blitMe()
-						self.writeText(self.destination, WHITE, (90, 650))
-						if button == "+" and not self.plusButton.blocked:
-							self.toReinforce[self.destination] += 1
-						elif button == "-" and not self.minusButton.blocked:
-							self.toReinforce[self.destination] -= 1
-						self.textCounter.blitMe()
-						self.writeText(str(self.toReinforce[self.destination]), WHITE, (450, 621))
-					else:
-						self.plusButton.block()
-						self.minusButton.block()
-						self.textTo.blitMe()
-						self.textCounter.blitMe()
-					
-					if sum(self.toReinforce.values()) >= self.game.reinforcements:
-						self.plusButton.block()
-					elif self.plusButton.blocked:
-						self.plusButton.unblock()
-					
-					if sum(self.toReinforce.values()) <= 0 or \
-					      (self.destination and \
-					       self.toReinforce[self.destination] <= 0):
-						self.minusButton.block()
-					elif self.minusButton.blocked:
-						self.minusButton.unblock()
+					self.reinforce(button)
 				elif self.game.step == "Attack" or self.game.step == "Relocate":
-					if button == "Proxima Etapa":
-						if self.game.step == "Attack":
-							self.atkButton.block()
-						elif self.game.step == "Relocate":
-							self.relocateButton.block()
-						self.source = None
-						self.destination = None
-						self.textFrom.blitMe()
-						self.textTo.blitMe()
-						self.plusButton.block()
-						self.minusButton.block()
-						self.game.nextStep()
-						
-					for country in self.sprite.values():
-						territory = country.mouseEvent(pygame.mouse.get_pos())
-						if territory:
-							if not self.source:
-								self.source = territory
-								break
-							elif self.source and self.game.ownCountry(self.game.turn, territory):
-								self.source = territory
-								self.destination = None
-								break
-							elif self.game.worldmap.neighbors(self.source, territory):
-								self.counter = 0
-								self.textCounter.blitMe()
-								self.writeText(str(self.counter), WHITE, (450, 621))
-								self.plusButton.unblock()
-								self.destination = territory
-								break
-								
-					if button == "Cancelar":
-						self.source = None
-						self.destination = None
-						self.textFrom.blitMe()
-						self.textTo.blitMe()
-						self.textCounter.blitMe()
-								
-					if self.source and \
-						self.game.ownCountry(self.game.turn, self.source):
-							self.textFrom.blitMe()
-							self.writeText(self.source, WHITE, (90, 620))
-					else:
-						self.source = None
-						self.textFrom.blitMe()
-					
-					if self.destination and \
-						not self.game.ownCountry(self.game.turn, self.destination):
-							self.textTo.blitMe()
-							self.writeText(self.destination, WHITE, (90, 650))
-							
-							if button == "+":
-								self.counter += 1
-								if self.minusButton.blocked:
-									self.minusButton.unblock()
-								if self.game.step == "Relocate" and self.relocateButton.blocked:
-									self.relocateButton.unblock()
-								self.textCounter.blitMe()
-								self.writeText(str(self.counter), WHITE, (450, 621))
-							elif button == "-":
-								self.counter -= 1
-								if self.plusButton.blocked:
-									self.plusButton.unblock()
-								self.textCounter.blitMe()
-								self.writeText(str(self.counter), WHITE, (450, 621))
-							
-							if self.game.step == "Attack":
-								if self.counter >= 3:
-									self.counter = 3
-									self.plusButton.block()
-								if self.counter > 0 and self.atkButton.blocked:
-									self.atkButton.unblock()
-							elif self.game.step == "Relocate":
-								if self.counter > 0 and self.relocateButton.blocked:
-									self.relocateButton.unblock()
-									
-							if self.counter >= self.game.worldmap.country(self.source).armySize:
-								self.counter = self.game.worldmap.country(self.source).armySize - 1
-								self.plusButton.block()
-							
-							if self.counter <= 0:
-								self.counter = 0
-								self.minusButton.block()
-								if self.game.step == "Attack" and not self.atkButton.blocked:
-									self.atkButton.block()
-								if self.game.step == "Relocate" and not self.relocateButton.blocked:
-									self.relocateButton.block()
-					else:
-						self.destination = None
-						self.textTo.blitMe()
-						
-					if self.game.step == "Attack":
-						if button == "Atacar":
-							atkReturn = self.game.attack(self.source, self.destination, self.counter)
-							self.printDice(atkReturn[1], atkReturn[2])
-							self.minusButton.block()
-							self.plusButton.unblock()
-							self.counter = 0
-							self.textCounter.blitMe()
-							self.writeText(str(self.counter), WHITE, (450, 621))
-					elif self.game.step == "Relocate":
-						if button == "Movimentar":
-							self.game.relocate(self.source, self.destination, self.counter)
-							self.relocateButton.block()
-							self.atkButton.block()
-							self.textCounter.blitMe()
-		
-		self.atkButton.mouseEvent(pygame.mouse.get_pos()) ###
-		self.relocateButton.mouseEvent(pygame.mouse.get_pos()) ###
-		self.cancelButton.mouseEvent(pygame.mouse.get_pos()) ###
-		self.minusButton.mouseEvent(pygame.mouse.get_pos()) ###
-		self.plusButton.mouseEvent(pygame.mouse.get_pos()) ###
-		self.nextStepButton.mouseEvent(pygame.mouse.get_pos()) ###
+					self.attack_or_relocate(button)
 		
 		for country in self.sprite.values():
 			territory = country.mouseEvent(pygame.mouse.get_pos())
 			if territory != None:
-				if territory != self.lastHover:
-					# just testing, not done yet...
-					self.panel["Top"].blitMe()
-					self.writeText("{0} ({1.armySize}) - {1.owner}".format(territory, self.game.worldmap.country(territory)), WHITE, (10, 572))
-					self.lastHover = territory
+				# just testing, not done yet...
+				self.panel["Top"].blitMe()
+				self.writeText("{0} ({1.armySize}) - {1.owner}".format(territory, self.game.worldmap.country(territory)), WHITE, (10, 572))
 				break
 
 	def mainLoop(self):
@@ -329,13 +343,13 @@ class Interface:
 		self.game.addPlayer(Player("White"))
 		self.game.addPlayer(Player("Black"))
 		self.game.start()
-		self.lastHover = None #tirar depois...
 		self.counter = 0
 		self.screen.fill(BG_COLOR)
 		self.loadImages(self.game.worldmap.countries())
 		self.screen.fill(BG_COLOR)
 		self.font = pygame.font.Font("arial.ttf", 16)
 		self.draw_screen()
+		self.writeText("{0} - {1}".format(self.game.turn, self.game.step), WHITE, (90, 700))
 		self.toReinforce = dict((x, 0) for x in self.game.worldmap.countries())
 		while True:
 			self.eventHandler()
