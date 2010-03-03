@@ -6,6 +6,7 @@ from game import Game
 from player import Player
 from gameSprite import GameSprite
 from button import Button
+from entry import Entry
 
 BLACK, WHITE = (0, 0, 0), (255, 255, 255)
 BG_COLOR = BLACK
@@ -354,19 +355,48 @@ class Interface:
 		while True:
 			self.eventHandler()
 			
-	def menu(self):
-		bg = GameSprite(None, self.screen, pygame.image.load("images/menu_bg.png").convert_alpha(), (0, 0))
-		logo_img = pygame.image.load("images/logo.png").convert_alpha()
-		logo = GameSprite(None, self.screen, logo_img, ((WIDTH - logo_img.get_width())/2, (HEIGHT - logo_img.get_height())/4))
-		newgame = Button("Novo Jogo", self.screen, (450, 590))
+	def enterGame(self):
+		ipEntry = Entry(self.screen, (425, 400))
+		ok = Button("OK", self.screen, (450, 490))
 		
-		bg.blitMe()
-		logo.blitMe()
+		self.bg.blitMe()
+		self.logo.blitMe()
+		ok.blitMe()
+		ipEntry.blitMe()
+		
+		while True:
+			button = ok.mouseEvent(pygame.mouse.get_pos())
+			for event in pygame.event.get():
+				if event.type == QUIT:
+					pygame.quit()
+					exit()
+				elif event.type == MOUSEBUTTONDOWN and pygame.mouse.get_pressed()[0]:
+					ipEntry.mouseEvent(pygame.mouse.get_pos())
+					if button == "OK":
+						self.mainLoop()
+				elif event.type == KEYDOWN:
+					ipEntry.keyPressed(event.key)
+				
+			if ipEntry.selected:
+				ipEntry.blitMe()
+		
+			
+	def menu(self):
+		self.bg = GameSprite(None, self.screen, pygame.image.load("images/menu_bg.png").convert_alpha(), (0, 0))
+		logo_img = pygame.image.load("images/logo.png").convert_alpha()
+		self.logo = GameSprite(None, self.screen, logo_img, ((WIDTH - logo_img.get_width())/2, (HEIGHT - logo_img.get_height())/4))
+		newgame = Button("Novo Jogo", self.screen, (450, 590))
+		entergame = Button("Entrar em Jogo", self.screen, (450, 635))
+		
+		self.bg.blitMe()
+		self.logo.blitMe()
 		newgame.blitMe()
+		entergame.blitMe()
 		pygame.display.update()
 		
 		while True:
 			button = newgame.mouseEvent(pygame.mouse.get_pos())
+			button = button or entergame.mouseEvent(pygame.mouse.get_pos())
 			for event in pygame.event.get():
 				if event.type == QUIT:
 					pygame.quit()
@@ -374,6 +404,10 @@ class Interface:
 				elif event.type == MOUSEBUTTONDOWN and pygame.mouse.get_pressed()[0]:
 					if button == "Novo Jogo":
 						self.mainLoop()
+					elif button == "Entrar em Jogo":
+						self.enterGame()
+						
+						
 			
 
 a = Interface()

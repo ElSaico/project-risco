@@ -60,7 +60,7 @@ class BuildExe:
         self.extra_datas = ["images", "map.json", "arial.ttf", pygame_path + "SDL.dll", pygame_path + "SDL_ttf.dll", pygame_path + "libfreetype-6.dll", pygame_path + "zlib1.dll"]
  
         #Extra/excludes python modules
-        self.extra_modules = ["globals", "pygame.font"]#, "map", "sys", "gameSprite", "button"]
+        self.extra_modules = ["pygame.font"]#, "map", "sys", "gameSprite", "button"]
         self.exclude_modules = []
         
         #DLL Excludes
