@@ -3,6 +3,7 @@ from pygame.locals import *
 from pygame.sprite import Sprite
 from gameSprite import GameSprite
 import time
+import string
 
 WHITE = (255, 255, 255)
 
@@ -10,7 +11,7 @@ class Entry(GameSprite):
 	img = None
 	font_size = 16
 	font = None
-	maxLen = 18
+	maxLen = 15
 	timerFreq = 1.0
 	def __init__(self, screen, position):
 		self.selected = False
@@ -40,12 +41,14 @@ class Entry(GameSprite):
 			self.selected = self.pointIsInside(pos)
 			self.blitMe()
 		
-	def keyPressed(self, key):
+	def keyPressed(self, key, caps=False):
 		if self.selected and 0 < key < 256:
 			if key == K_BACKSPACE:
 				self.text = self.text[:len(self.text)-1]
 			elif len(self.text) < Entry.maxLen:
-				self.text += chr(key)
+				c = chr(key)
+				if caps: c = string.upper(c)
+				self.text += c
 			self.blitMe()
 			
 	def getTime(self):

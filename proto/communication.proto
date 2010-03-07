@@ -45,6 +45,11 @@ message ServerToClient {
 		required uint32 size = 3;
 	}
 	
+	message Edge {
+		required string node1 = 1;
+		required string node2 = 2;
+	}
+	
 	message AttackReply {
 		required bool success = 1;
 		repeated uint32 red_dices = 2;
@@ -57,9 +62,10 @@ message ServerToClient {
 	}
 	
 	repeated TerritoryInfo territory_info = 1;
-	optional AttackReply attack_reply = 2;
-	optional TurnInfo turn_info = 3;
-	repeated Card cards = 4;
+	repeated Edge edge = 2;
+	optional AttackReply attack_reply = 3;
+	optional TurnInfo turn_info = 4;
+	repeated Card cards = 5;
 	
 	// include game history, error message, objectives, victory message, map?
 }

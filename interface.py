@@ -7,6 +7,7 @@ from player import Player
 from gameSprite import GameSprite
 from button import Button
 from entry import Entry
+from label import Label
 from socket import *
 from communication.communication_pb2 import ClientToServer, ServerToClient
 
@@ -80,11 +81,10 @@ class Interface:
 		self.panel["Top"] = GameSprite(None, self.screen, pygame.image.load("images/panel-top.png").convert_alpha(), (0, 565))
 		self.panel["BG"] = GameSprite(None, self.screen, pygame.image.load("images/panel.png").convert_alpha(), (0, 595))
 		self.panel["Dice"] = GameSprite(None, self.screen, pygame.image.load("images/panel-dice.png").convert_alpha(), (756, 565))
-		text_area = pygame.image.load("images/text-area.png").convert_alpha()
-		self.textFrom = GameSprite(None, self.screen, text_area, (70, 615))
-		self.textTo = GameSprite(None, self.screen, text_area, (70, 645))
-		self.textTurn = GameSprite(None, self.screen, text_area, (70, 695))
-		self.textCounter = GameSprite(None, self.screen, pygame.image.load("images/smalltext-area.png").convert_alpha(), (431, 617))
+		self.textFrom = Label(self.screen, (70, 615))
+		self.textTo = Label(self.screen, (70, 645))
+		self.textTurn = Label(self.screen, (70, 695))
+		self.textCounter = Label(self.screen, (431, 617), "small")
 		self.background = GameSprite(None, self.screen, pygame.image.load("images/Fundo.png").convert_alpha(), BOARD_POSITION)
 		self.foreground = GameSprite(None, self.screen, pygame.image.load("images/Topo.png").convert_alpha(), BOARD_POSITION)
 		
@@ -145,8 +145,7 @@ class Interface:
 			self.minusButton.block()
 			self.plusButton.block()
 			self.game.nextStep()
-			self.textTurn.blitMe()
-			self.writeText("{0} - {1}".format(self.game.turn, self.game.step), WHITE, (90, 700))
+			self.textTurn.setText("{0} - {1}".format(self.game.turn, self.game.step))
 		
 	def reinforce(self, button):
 		if button == "Proxima Etapa":
@@ -160,8 +159,7 @@ class Interface:
 			self.plusButton.block()
 			self.minusButton.block()
 			self.game.nextStep()
-			self.textTurn.blitMe()
-			self.writeText("{0} - {1}".format(self.game.turn, self.game.step), WHITE, (90, 700))
+			self.textTurn.setText("{0} - {1}".format(self.game.turn, self.game.step))
 			
 		if debug:
 			print self.game.turn, self.toReinforce.values()
@@ -174,19 +172,17 @@ class Interface:
 			
 		if self.destination and \
 		   self.game.ownCountry(self.game.turn, self.destination):
-			self.textTo.blitMe()
-			self.writeText(self.destination, WHITE, (90, 650))
+			self.textTo.setText(self.destination)
 			if button == "+" and not self.plusButton.blocked:
 				self.toReinforce[self.destination] += 1
 			elif button == "-" and not self.minusButton.blocked:
 				self.toReinforce[self.destination] -= 1
-			self.textCounter.blitMe()
-			self.writeText(str(self.toReinforce[self.destination]), WHITE, (450, 621))
+			self.textCounter.setText(str(self.toReinforce[self.destination]))
 		else:
 			self.plusButton.block()
 			self.minusButton.block()
-			self.textTo.blitMe()
-			self.textCounter.blitMe()
+			self.textTo.clear()
+			self.textCounter.clear()
 		
 		if sum(self.toReinforce.values()) >= self.game.reinforcements:
 			self.plusButton.block()
@@ -209,13 +205,12 @@ class Interface:
 				self.relocateButton.block()
 			self.source = None
 			self.destination = None
-			self.textFrom.blitMe()
-			self.textTo.blitMe()
+			self.textFrom.clear()
+			self.textTo.clear()
 			self.plusButton.block()
 			self.minusButton.block()
 			self.game.nextStep()
-			self.textTurn.blitMe()
-			self.writeText("{0} - {1}".format(self.game.turn, self.game.step), WHITE, (90, 700))
+			self.textTurn.setText("{0} - {1}".format(self.game.turn, self.game.step))
 			
 		for country in self.sprite.values():
 			territory = country.mouseEvent(pygame.mouse.get_pos())
@@ -229,8 +224,7 @@ class Interface:
 					break
 				elif self.game.worldmap.neighbors(self.source, territory):
 					self.counter = 0
-					self.textCounter.blitMe()
-					self.writeText(str(self.counter), WHITE, (450, 621))
+					self.textCounter.setText(str(self.counter))
 					self.plusButton.unblock()
 					self.destination = territory
 					break
@@ -238,23 +232,21 @@ class Interface:
 		if button == "Cancelar":
 			self.source = None
 			self.destination = None
-			self.textFrom.blitMe()
-			self.textTo.blitMe()
-			self.textCounter.blitMe()
+			self.textFrom.clear()
+			self.textTo.clear()
+			self.textCounter.clear()
 					
 		if self.source and \
 			self.game.ownCountry(self.game.turn, self.source):
-				self.textFrom.blitMe()
-				self.writeText(self.source, WHITE, (90, 620))
+				self.textFrom.setText(self.source)
 		else:
 			self.source = None
-			self.textFrom.blitMe()
+			self.textFrom.clear()
 		
 		if self.destination and \
 			((self.game.step == "Attack" and not self.game.ownCountry(self.game.turn, self.destination)) \
 			or (self.game.step == "Relocate" and self.game.ownCountry(self.game.turn, self.destination))):
-				self.textTo.blitMe()
-				self.writeText(self.destination, WHITE, (90, 650))
+				self.textTo.setText(self.destination)
 				
 				if button == "+":
 					self.counter += 1
@@ -290,11 +282,10 @@ class Interface:
 					if self.game.step == "Relocate" and not self.relocateButton.blocked:
 						self.relocateButton.block()
 						
-				self.textCounter.blitMe()
-				self.writeText(str(self.counter), WHITE, (450, 621))
+				self.textCounter.setText(str(self.counter))
 		else:
 			self.destination = None
-			self.textTo.blitMe()
+			self.textTo.clear()
 			
 		if self.game.step == "Attack":
 			if button == "Atacar":
@@ -302,19 +293,18 @@ class Interface:
 				self.printDice(atkReturn[1], atkReturn[2])
 				if atkReturn[0]:
 					self.destination = None
-					self.textTo.blitMe()
+					self.textTo.clear()
 				self.atkButton.block()
 				self.minusButton.block()
 				self.plusButton.unblock()
 				self.counter = 0
-				self.textCounter.blitMe()
-				self.writeText(str(self.counter), WHITE, (450, 621))
+				self.textCounter.setText(str(self.counter))
 		elif self.game.step == "Relocate":
 			if button == "Movimentar":
 				self.game.relocate(self.source, self.destination, self.counter)
 				self.relocateButton.block()
 				self.atkButton.block()
-				self.textCounter.blitMe()
+				self.textCounter.clear()
 		
 	def eventHandler(self):
 		button = None
@@ -351,13 +341,32 @@ class Interface:
 			for c in self.clients:
 				self.game.addPlayer(Player(c[COLOR]))
 			self.game.start()
+			stc = ServerToClient()
+			assert len(stc.territory_info) == 0
+			for name, territory in self.game.worldmap._countries.items():
+				t = stc.territory_info.add()
+				t.name = name
+				t.owner = territory.owner
+				t.size = territory.armySize
+			assert len(stc.territory_info) == len(self.game.worldmap._countries)
+			assert len(stc.edge) == 0
+			for link1, link2 in self.game.worldmap._borders:
+				e = stc.edge.add()
+				e.node1 = link1
+				e.node2 = link2
+			assert len(stc.edge) == 0
+			stcS = stc.SerializeToString()
+			for c in self.clients:
+				c[SOCKET].send(stcS)
+		elif self.type == "Client":
+			pass
 		self.counter = 0
 		self.screen.fill(BG_COLOR)
 		self.loadImages(self.game.worldmap.countries())
 		self.screen.fill(BG_COLOR)
 		self.font = pygame.font.Font("arial.ttf", 16)
 		self.draw_screen()
-		self.writeText("{0} - {1}".format(self.game.turn, self.game.step), WHITE, (90, 700))
+		self.textTurn.setText("{0} - {1}".format(self.game.turn, self.game.step))
 		self.toReinforce = dict((x, 0) for x in self.game.worldmap.countries())
 		while True:
 			self.receiveInfo()
@@ -379,6 +388,7 @@ class Interface:
 		colorEntry.blitMe()
 		self.writeText("Color:", WHITE, (370, 363))
 		self.writeText("IP:", WHITE, (390, 403))
+		pygame.key.set_repeat(150, 75)
 		
 		while True:
 			button = ok.mouseEvent(pygame.mouse.get_pos())
@@ -399,8 +409,8 @@ class Interface:
 						self.client.send(cts.SerializeToString())
 						self.mainLoop()
 				elif event.type == KEYDOWN:
-					ipEntry.keyPressed(event.key)
-					colorEntry.keyPressed(event.key)
+					ipEntry.keyPressed(event.key, pygame.key.get_mods() & (KMOD_CAPS | KMOD_SHIFT))
+					colorEntry.keyPressed(event.key, pygame.key.get_mods() & (KMOD_CAPS | KMOD_SHIFT))
 					if ipEntry.text != "" and colorEntry.text != "" and ok.blocked:
 						ok.unblock()
 					elif (ipEntry.text == "" or colorEntry.text == "") and not ok.blocked:
@@ -417,7 +427,8 @@ class Interface:
 		self.server.listen(2)
 		self.server.settimeout(0.0)
 		self.clients = []
-		
+		self.clients.append(("Juca", "127.0.0.1", "White"))
+		self.mainLoop()
 		ok = Button("OK", self.screen, (450, 490))
 		
 		self.bg.blitMe()
