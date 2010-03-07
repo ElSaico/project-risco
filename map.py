@@ -62,6 +62,9 @@ class Map:
 	def owner(self, t):
 		return self._countries[t].owner
 	
+	def army(self, t):
+		return self._countries[t].armySize
+	
 	def continent(self, c):
 		return self._continents[c]
 	
@@ -78,4 +81,17 @@ class Map:
 			struct["continents"].append({"name": c,
 				                        "bonus": self._bonus[c],
 				                    "countries": self._continents[c]})
-		return dumps(struct, indent=4)
+		return dumps(struct, indent=4)	
+	def jsonDump(self):
+		struct = {"continents": [], "borders": list(self._borders),
+		          "colors": self.colors, "shapes": self.shapes}
+		for c in self.continents():
+			struct["continents"].append({"name": c,
+				                        "bonus": self._bonus[c],
+				                    "countries": []})
+		for ctn in struct["continents"]:
+			for cty in self.continent(ctn["name"]):
+				ctn["countries"].append({"name": cty,
+				                        "owner": self.owner(cty),
+				                         "army": self.army(cty)})
+		return dumps(struct)	

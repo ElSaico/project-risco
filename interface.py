@@ -1,4 +1,4 @@
-import pygame
+import pygame, bz2
 from pygame.locals import *
 from pygame.sprite import Sprite
 from sys import exit
@@ -341,21 +341,26 @@ class Interface:
 			for c in self.clients:
 				self.game.addPlayer(Player(c[COLOR]))
 			self.game.start()
-			stc = ServerToClient()
-			assert len(stc.territory_info) == 0
-			for name, territory in self.game.worldmap._countries.items():
-				t = stc.territory_info.add()
-				t.name = name
-				t.owner = territory.owner
-				t.size = territory.armySize
-			assert len(stc.territory_info) == len(self.game.worldmap._countries)
-			assert len(stc.edge) == 0
-			for link1, link2 in self.game.worldmap._borders:
-				e = stc.edge.add()
-				e.node1 = link1
-				e.node2 = link2
-			assert len(stc.edge) == 0
-			stcS = stc.SerializeToString()
+			# protobuf solution
+			#stc = ServerToClient()
+			#assert len(stc.territory_info) == 0
+			#for c in self.game.worldmap.countries():
+			#	t = stc.territory_info.add()
+			#	t.name = c
+			#	t.owner = self.game.worldmap.owner(c)
+			#	t.size = self.game.worldmap.army(c)
+			#assert len(stc.territory_info) == len(self.game.worldmap.countries())
+			#assert len(stc.edge) == 0
+			#for link1, link2 in self.game.worldmap.borders():
+			#	e = stc.edge.add()
+			#	e.node1 = link1
+			#	e.node2 = link2
+			#stcS = stc.SerializeToString()
+			stc = bz2.BZ2Compressor()
+			stc.compress(self.game.mapDump())
+			stcS = stc.flush()
+			if debug:
+				print "Map size: ", len(stcS)
 			for c in self.clients:
 				c[SOCKET].send(stcS)
 		elif self.type == "Client":
@@ -427,8 +432,6 @@ class Interface:
 		self.server.listen(2)
 		self.server.settimeout(0.0)
 		self.clients = []
-		self.clients.append(("Juca", "127.0.0.1", "White"))
-		self.mainLoop()
 		ok = Button("OK", self.screen, (450, 490))
 		
 		self.bg.blitMe()

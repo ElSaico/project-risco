@@ -75,3 +75,6 @@ class Game:
 		   and self.worldmap.owner(destination) == self.turn \
 		   and self.step == "Relocate"
 		self.worldmap.relocate(source, destination, army)
+	
+	def mapDump(self):
+		return self.worldmap.jsonDump()
