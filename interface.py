@@ -11,8 +11,6 @@ from label import Label
 from socket import *
 from communication.communication_pb2 import ClientToServer, ServerToClient
 
-import struct
-
 BLACK, WHITE = (0, 0, 0), (255, 255, 255)
 BG_COLOR = BLACK
 WIDTH, HEIGHT = 1024, 768
@@ -341,24 +339,7 @@ class Interface:
 			for c in self.clients:
 				self.game.addPlayer(Player(c[COLOR]))
 			self.game.start()
-			# protobuf solution
-			#stc = ServerToClient()
-			#assert len(stc.territory_info) == 0
-			#for c in self.game.worldmap.countries():
-			#	t = stc.territory_info.add()
-			#	t.name = c
-			#	t.owner = self.game.worldmap.owner(c)
-			#	t.size = self.game.worldmap.army(c)
-			#assert len(stc.territory_info) == len(self.game.worldmap.countries())
-			#assert len(stc.edge) == 0
-			#for link1, link2 in self.game.worldmap.borders():
-			#	e = stc.edge.add()
-			#	e.node1 = link1
-			#	e.node2 = link2
-			#stcS = stc.SerializeToString()
-			stc = bz2.BZ2Compressor()
-			stc.compress(self.game.mapDump())
-			stcS = stc.flush()
+			stcS = bz2.compress(self.game.worldmap.toClient())
 			if debug:
 				print "Map size: ", len(stcS)
 			for c in self.clients:

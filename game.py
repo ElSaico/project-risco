@@ -1,6 +1,6 @@
 from random import shuffle
 from itertools import cycle
-from map import Map
+from servermap import ServerMap
 
 class Game:
 	players = []
@@ -18,7 +18,8 @@ class Game:
 	
 	def start(self):
 		colors = (x.color for x in self.players)
-		self.worldmap = Map(self._mapfile, colors)
+		with open(self._mapfile) as m:
+			self.worldmap = ServerMap(m.read(), colors)
 		shuffle(self.players)
 		self.players = cycle(self.players)
 		self.turn = self.players.next().color
@@ -75,6 +76,3 @@ class Game:
 		   and self.worldmap.owner(destination) == self.turn \
 		   and self.step == "Relocate"
 		self.worldmap.relocate(source, destination, army)
-	
-	def mapDump(self):
-		return self.worldmap.jsonDump()

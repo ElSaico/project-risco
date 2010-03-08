@@ -1,9 +1,9 @@
 from random import randint
 
 class Territory:
-	def __init__(self):
-		self.armySize = 1
-		self.owner = ""
+	def __init__(self, army=1, owner=""):
+		self.armySize = army
+		self.owner = owner		
 	
 	def setOwner(self, owner):
 		self.owner = owner
