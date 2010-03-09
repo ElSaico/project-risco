@@ -1,45 +1,58 @@
 #!/usr/bin/env python
 # coding=utf-8
-from map import Map
+from servermap import ServerMap
 from Tkinter import *
 import tkFileDialog, tkMessageBox, tkSimpleDialog
 
-class pyWar:
+class TkServer:
 	def __init__(self, master):
 		self.root = master
 		self.root.title("pyWar")
 		
 		self.file = Menubutton(self.root, text="File")
-		self.file.pack(anchor=W)
 		self.file.menu = Menu(self.file, tearoff=0)
 		self.file["menu"] = self.file.menu
 		self.file.menu.add_command(label="Import map", command=self.importMap)
 		self.file.menu.add_command(label="Export map", command=self.exportMap)
 		self.file.menu.add_separator()
 		self.file.menu.add_command(label="Exit", command=self.exit)
+		self.file.grid(sticky=W)
 		
-		self.country = LabelFrame(self.root, text="Countries")
-		self.countries = StringVar(self.root)
-		self.lstCountry = Listbox(self.country, listvariable=self.countries)
-		self.lstCountry.bind("<ButtonRelease-1>", self.updateNeighbors)
-		self.lstCountry.bind("<KeyRelease-Up>", self.updateNeighbors)
-		self.lstCountry.bind("<KeyRelease-Down>", self.updateNeighbors)
-		self.lstCountry.pack(side=LEFT, expand=YES, fill=BOTH)
-		self.scrCountry = Scrollbar(self.country, orient=VERTICAL)
-		self.scrCountry.pack(side=LEFT, fill=Y)
-		self.lstCountry["yscrollcommand"] = self.scrCountry.set
-		self.scrCountry["command"] = self.lstCountry.yview
-		self.country.pack(side=LEFT, fill=BOTH, padx="5m", pady="5m")
+		self.connections = Frame(self.root)
 		
-		self.neighbor = LabelFrame(self.root, text="Neighbors")
-		self.neighbors = StringVar(self.root)
-		self.lstNeighbor = Listbox(self.neighbor, listvariable=self.neighbors)
-		self.lstNeighbor.pack(side=LEFT, expand=YES, fill=BOTH)
-		self.scrNeighbor = Scrollbar(self.neighbor, orient=VERTICAL)
-		self.scrNeighbor.pack(side=LEFT, fill=Y)
-		self.lstNeighbor["yscrollcommand"] = self.scrNeighbor.set
-		self.scrNeighbor["command"] = self.lstNeighbor.yview
-		self.neighbor.pack(side=RIGHT, fill=BOTH, padx="5m", pady="5m")
+		self.users = LabelFrame(self.connections, text="Online users")
+		self.varUsers = StringVar()
+		self.lstUsers = Listbox(self.users, listvariable=self.varUsers)
+		self.bindList(self.lstUsers, self.updateCards)
+		self.lstUsers.grid()
+		self.scrUsers = Scrollbar(self.users, orient=VERTICAL)
+		self.scrUsers.grid(row=0, column=1, sticky=N+S)
+		self.lstUsers["yscrollcommand"] = self.scrUsers.set
+		self.scrUsers["command"] = self.lstUsers.yview
+		self.users.grid(row=0, sticky=N+S)
+		
+		self.cards = LabelFrame(self.connections, text="Cards")
+		self.varCards = StringVar()
+		self.lstCards = Listbox(self.cards, listvariable=self.varCards)
+		self.lstCards.grid()
+		self.cards.grid(row=1, sticky=S)
+		
+		self.logs = LabelFrame(self.connections, text="Logs")
+		self.varLogs = StringVar()
+		self.lblLogs = Label(self.logs, textvariable=self.varLogs, width=80)
+		self.lblLogs.grid()
+		self.scrLogs = Scrollbar(self.logs, orient=VERTICAL)
+		self.scrLogs.grid(row=0, column=1, sticky=N+S)
+		#self.lblLogs["yscrollcommand"] = self.scrLogs.set
+		#self.scrLogs["command"] = self.lblLogs.yview
+		self.logs.grid(row=0, rowspan=2, column=1, sticky=N+S)
+		
+		self.connections.grid(sticky=S)
+	
+	def bindList(self, l, f):
+		l.bind("<ButtonRelease-1>", f)
+		l.bind("<KeyRelease-Up>", f)
+		l.bind("<KeyRelease-Down>", f)
 	
 	def importMap(self):
 		mapfile = tkFileDialog.askopenfilename()
@@ -61,10 +74,13 @@ class pyWar:
 		# neighbors[int(val[0])], blah blah blah... 
 		print self.lstCountry.curselection()
 	
+	def updateCards(self, e):
+		pass
+	
 	def exit(self):
 		pass
 
 if __name__ == '__main__':
 	root = Tk()
-	prog = pyWar(root)
+	prog = TkServer(root)
 	root.mainloop()
