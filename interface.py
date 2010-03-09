@@ -20,6 +20,7 @@ BAR_WIDTH = 10
 LBAR_POSITION = (WIDTH/3, 500)
 LBAR_BORDER_SIZE = 2
 SOCKET, IP, COLOR = 0, 1, 2
+BUFSIZE = 4096
 debug = True
 
 class Interface:
@@ -313,16 +314,21 @@ class Interface:
 		button = button or self.plusButton.mouseEvent(pygame.mouse.get_pos()) ###
 		button = button or self.nextStepButton.mouseEvent(pygame.mouse.get_pos()) ###
 		
+		if self.type == "Server":
+			self.step = self.game.step
+			self.turn = self.game.turn
+			self.worldmap = self.game.worldmap
+		
 		for event in pygame.event.get():
 			if event.type == QUIT:
 				pygame.quit()
 				exit()
 			elif event.type == MOUSEBUTTONDOWN and pygame.mouse.get_pressed()[0]:	
-				if self.game.step == "Trade":
+				if self.step == "Trade":
 					self.trade(button)
-				elif self.game.step == "Reinforce":
+				elif self.step == "Reinforce":
 					self.reinforce(button)
-				elif self.game.step == "Attack" or self.game.step == "Relocate":
+				elif self.step == "Attack" or self.step == "Relocate":
 					self.attack_or_relocate(button)
 		
 		for country in self.sprite.values():
@@ -330,7 +336,7 @@ class Interface:
 			if territory != None:
 				# just testing, not done yet...
 				self.panel["Top"].blitMe()
-				self.writeText("{0} ({1.armySize}) - {1.owner}".format(territory, self.game.worldmap.country(territory)), WHITE, (10, 572))
+				self.writeText("{0} ({1.armySize}) - {1.owner}".format(territory, self.worldmap.country(territory)), WHITE, (10, 572))
 				break
 
 	def mainLoop(self):
@@ -339,21 +345,40 @@ class Interface:
 			for c in self.clients:
 				self.game.addPlayer(Player(c[COLOR]))
 			self.game.start()
-			stcS = bz2.compress(self.game.worldmap.toClient())
+			stc = ServerToClient()
+			#stc.map_info = bz2.compress(self.game.worldmap.toClient())
+			stc.map_info = self.game.worldmap.toClient()
+			stc.turn_info.player = self.game.turn
+			stc.turn_info.step = self.game.step
 			if debug:
-				print "Map size: ", len(stcS)
+				print "Map size: ", len(stc.map_info)
 			for c in self.clients:
-				c[SOCKET].send(stcS)
+				c[SOCKET].send(stc.SerializeToString())
 		elif self.type == "Client":
-			pass
+			data = self.client.recv(BUFSIZE)
+			while not data:
+				data = self.client.recv(BUFSIZE)
+			stc = ServerToClient()
+			stc.ParseFromString(data)
+			assert stc.HasField("map_info") and stc.HasField("turn_info")
+			#mapJson = bz2.decompress(stc.map_info)
+			mapJson = stc.map_info
+			self.worldmap = ClientMap(mapJson)
+			self.turn = stc.turn_info.player
+			self.step = stc.turn_info.step
+			
 		self.counter = 0
 		self.screen.fill(BG_COLOR)
 		self.loadImages(self.game.worldmap.countries())
 		self.screen.fill(BG_COLOR)
 		self.font = pygame.font.Font("arial.ttf", 16)
 		self.draw_screen()
-		self.textTurn.setText("{0} - {1}".format(self.game.turn, self.game.step))
-		self.toReinforce = dict((x, 0) for x in self.game.worldmap.countries())
+		if self.type == "Server":
+			self.turn = self.game.turn
+			self.step = self.game.step
+			self.worldmap = self.game.worldmap
+		self.textTurn.setText("{0} - {1}".format(self.turn, self.step))
+		self.toReinforce = dict((x, 0) for x in self.worldmap.countries())
 		while True:
 			self.receiveInfo()
 			self.eventHandler()
@@ -418,7 +443,7 @@ class Interface:
 		self.bg.blitMe()
 		self.logo.blitMe()
 		ok.block()
-		BUFSIZE = 4096
+		
 		while True:
 			#print "waiting for connection..."
 			try:

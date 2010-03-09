@@ -45,11 +45,6 @@ message ServerToClient {
 		required uint32 size = 3;
 	}
 	
-	message Edge {
-		required string node1 = 1;
-		required string node2 = 2;
-	}
-	
 	message AttackReply {
 		required bool success = 1;
 		repeated uint32 red_dices = 2;
@@ -62,7 +57,7 @@ message ServerToClient {
 	}
 	
 	repeated TerritoryInfo territory_info = 1;
-	repeated Edge edge = 2;
+	optional string map_info = 2;
 	optional AttackReply attack_reply = 3;
 	optional TurnInfo turn_info = 4;
 	repeated Card cards = 5;
