@@ -49,8 +49,7 @@ class ServerMap(BaseMap):
 	
 	def toClient(self):
 		struct = {"continents": [], "borders": list(self._borders),
-		          "colors": self.colors, "shapes": self.shapes,
-		          "players": self._players}
+		          "colors": self.colors, "shapes": self.shapes}
 		for c in self.continents():
 			struct["continents"].append({"name": c,
 				                        "bonus": self._bonus[c],

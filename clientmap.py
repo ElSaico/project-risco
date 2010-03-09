@@ -1,3 +1,4 @@
+from json import loads
 from basemap import BaseMap
 
 class ClientMap(BaseMap):
