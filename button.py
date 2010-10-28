@@ -13,10 +13,9 @@ class Button(GameSprite):
 	def __init__(self, name, screen, position, type=None):
 		self.hover = False
 		self.blocked = False
-		pygame.init()
 		if Button.font == None:
-			Button.font = pygame.font.Font("arial.ttf", Button.font_size)
-			
+			Button.font = pygame.font.Font(None, Button.font_size)
+		
 		if type == "circular":
 			if Button.cimg == None:
 				Button.cimg = pygame.image.load("images/circularbutton.png").convert_alpha()
@@ -40,7 +39,6 @@ class Button(GameSprite):
 			fontColor = (0, 0, 0)
 		t = Button.font.render(self.name, True, fontColor)
 		self.screen.blit(t, (self.pos[0] + (self.image.get_width() - t.get_width())/2, self.pos[1] + (self.image.get_height() - t.get_height())/2))
-		pygame.display.update()
 		
 	def mouseEvent(self, pos):
 		if self.pointIsInside(pos) and not self.blocked:

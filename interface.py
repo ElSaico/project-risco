@@ -1,4 +1,6 @@
-import pygame, bz2
+#!/usr/bin/env python
+
+import pygame
 from pygame.locals import *
 from pygame.sprite import Sprite
 from sys import exit
@@ -8,8 +10,9 @@ from gameSprite import GameSprite
 from button import Button
 from entry import Entry
 from label import Label
-from socket import *
-from communication.communication_pb2 import ClientToServer, ServerToClient
+from server import Server
+from client import Client
+from clientmap import ClientMap
 
 BLACK, WHITE = (0, 0, 0), (255, 255, 255)
 BG_COLOR = BLACK
@@ -19,9 +22,7 @@ BOARD_POSITION = (0, 0)
 BAR_WIDTH = 10
 LBAR_POSITION = (WIDTH/3, 500)
 LBAR_BORDER_SIZE = 2
-SOCKET, IP, COLOR = 0, 1, 2
-BUFSIZE = 4096
-debug = True
+DEBUG = True
 
 class Interface:
 	def __init__(self):
@@ -29,7 +30,7 @@ class Interface:
 		self.screen = pygame.display.set_mode((WIDTH, HEIGHT), 0, 32)
 		self.screen.fill(BG_COLOR)
 		pygame.display.set_caption('pyWar Online')
-		self.font = pygame.font.Font("arial.ttf", FONT_SIZE)
+		self.font = pygame.font.Font(None, FONT_SIZE)
 		self.sprite = {}
 		self.panel = {}
 		self.source = None
@@ -66,7 +67,7 @@ class Interface:
 		return loadingBarCounter + 1
 
 	def loadImages(self, countries):
-		self.font = pygame.font.Font("arial.ttf", FONT_SIZE)
+		self.font = pygame.font.Font(None, FONT_SIZE)
 		self.writeText("Carregando Imagens...", WHITE, (WIDTH/6, 100))
 		loadingBarCounter = self.initializeLoadingBar(len(countries)-1)
 		for c in countries:
@@ -160,7 +161,7 @@ class Interface:
 			self.game.nextStep()
 			self.textTurn.setText("{0} - {1}".format(self.game.turn, self.game.step))
 			
-		if debug:
+		if DEBUG:
 			print self.game.turn, self.toReinforce.values()
 			
 		for country in self.sprite.values():
@@ -210,7 +211,7 @@ class Interface:
 			self.minusButton.block()
 			self.game.nextStep()
 			self.textTurn.setText("{0} - {1}".format(self.game.turn, self.game.step))
-			
+		
 		for country in self.sprite.values():
 			territory = country.mouseEvent(pygame.mouse.get_pos())
 			if territory:
@@ -227,14 +228,14 @@ class Interface:
 					self.plusButton.unblock()
 					self.destination = territory
 					break
-					
+		
 		if button == "Cancelar":
 			self.source = None
 			self.destination = None
 			self.textFrom.clear()
 			self.textTo.clear()
 			self.textCounter.clear()
-					
+		
 		if self.source and \
 			self.game.ownCountry(self.game.turn, self.source):
 				self.textFrom.setText(self.source)
@@ -306,13 +307,12 @@ class Interface:
 				self.textCounter.clear()
 		
 	def eventHandler(self):
-		button = None
-		button = button or self.atkButton.mouseEvent(pygame.mouse.get_pos()) ###
-		button = button or self.relocateButton.mouseEvent(pygame.mouse.get_pos()) ###
-		button = button or self.cancelButton.mouseEvent(pygame.mouse.get_pos()) ###
-		button = button or self.minusButton.mouseEvent(pygame.mouse.get_pos()) ###
-		button = button or self.plusButton.mouseEvent(pygame.mouse.get_pos()) ###
-		button = button or self.nextStepButton.mouseEvent(pygame.mouse.get_pos()) ###
+		button = self.atkButton.mouseEvent(pygame.mouse.get_pos()) \
+		      or self.relocateButton.mouseEvent(pygame.mouse.get_pos()) \
+		      or self.cancelButton.mouseEvent(pygame.mouse.get_pos()) \
+		      or self.minusButton.mouseEvent(pygame.mouse.get_pos()) \
+		      or self.plusButton.mouseEvent(pygame.mouse.get_pos()) \
+		      or self.nextStepButton.mouseEvent(pygame.mouse.get_pos())
 		
 		if self.type == "Server":
 			self.step = self.game.step
@@ -342,55 +342,39 @@ class Interface:
 	def mainLoop(self):
 		if self.type == "Server":
 			self.game = Game("map.json", False)
-			for c in self.clients:
-				self.game.addPlayer(Player(c[COLOR]))
+			for c in self.server.clients():
+				self.game.addPlayer(Player(c))
 			self.game.start()
-			stc = ServerToClient()
-			#stc.map_info = bz2.compress(self.game.worldmap.toClient())
-			stc.map_info = self.game.worldmap.toClient()
-			stc.turn_info.player = self.game.turn
-			stc.turn_info.step = self.game.step
-			if debug:
-				print "Map size: ", len(stc.map_info)
-			for c in self.clients:
-				c[SOCKET].send(stc.SerializeToString())
-		elif self.type == "Client":
-			data = self.client.recv(BUFSIZE)
-			while not data:
-				data = self.client.recv(BUFSIZE)
-			stc = ServerToClient()
-			stc.ParseFromString(data)
-			assert stc.HasField("map_info") and stc.HasField("turn_info")
-			#mapJson = bz2.decompress(stc.map_info)
-			mapJson = stc.map_info
-			self.worldmap = ClientMap(mapJson)
-			self.turn = stc.turn_info.player
-			self.step = stc.turn_info.step
-			
-		self.counter = 0
-		self.screen.fill(BG_COLOR)
-		self.loadImages(self.game.worldmap.countries())
-		self.screen.fill(BG_COLOR)
-		self.font = pygame.font.Font("arial.ttf", 16)
-		self.draw_screen()
-		if self.type == "Server":
+			self.server.sendMap(self.game)
 			self.turn = self.game.turn
 			self.step = self.game.step
 			self.worldmap = self.game.worldmap
+		elif self.type == "Client":
+			self.client.receiveMap()
+			self.turn = self.client.turn()
+			self.step = self.client.step()
+			self.worldmap = ClientMap(self.client.map(), self.client.players())
+		
+		self.counter = 0
+		self.screen.fill(BG_COLOR)
+		self.loadImages(self.worldmap.countries())
+		self.screen.fill(BG_COLOR)
+		self.font = pygame.font.Font(None, 16)
+		self.draw_screen()
 		self.textTurn.setText("{0} - {1}".format(self.turn, self.step))
 		self.toReinforce = dict((x, 0) for x in self.worldmap.countries())
 		while True:
 			self.receiveInfo()
 			self.eventHandler()
-			
+	
 	def receiveInfo(self):
 		pass
-			
+	
 	def enterGame(self):
 		colorEntry = Entry(self.screen, (425, 360))
 		ipEntry = Entry(self.screen, (425, 400))
 		ok = Button("OK", self.screen, (450, 490))
-		self.font = pygame.font.Font("arial.ttf", 20)
+		self.font = pygame.font.Font(None, 20)
 		
 		self.bg.blitMe()
 		self.logo.blitMe()
@@ -411,13 +395,7 @@ class Interface:
 					ipEntry.mouseEvent(pygame.mouse.get_pos())
 					colorEntry.mouseEvent(pygame.mouse.get_pos())
 					if button == "OK":
-						self.client = socket(AF_INET, SOCK_STREAM)
-						self.client.connect((ipEntry.text, 2300))
-						cts = ClientToServer()
-						assert not cts.HasField("player_info")
-						cts.player_info.color = colorEntry.text
-						assert cts.HasField("player_info")
-						self.client.send(cts.SerializeToString())
+						self.client = Client(ipEntry.text, 2300, colorEntry.text)
 						self.mainLoop()
 				elif event.type == KEYDOWN:
 					ipEntry.keyPressed(event.key, pygame.key.get_mods() & (KMOD_CAPS | KMOD_SHIFT))
@@ -433,11 +411,7 @@ class Interface:
 				colorEntry.blitMe()
 	
 	def createGame(self):
-		self.server = socket(AF_INET, SOCK_STREAM)
-		self.server.bind(('', 2300))
-		self.server.listen(2)
-		self.server.settimeout(0.0)
-		self.clients = []
+		self.server = Server(2300)
 		ok = Button("OK", self.screen, (450, 490))
 		
 		self.bg.blitMe()
@@ -446,33 +420,12 @@ class Interface:
 		
 		while True:
 			#print "waiting for connection..."
-			try:
-				clientsock, addr = self.server.accept()
-				if clientsock:
-					clientsock.settimeout(0.5)
-					data = clientsock.recv(BUFSIZE)
-					while not data:
-						data = clientsock.recv(BUFSIZE)
-					
-					cts = ClientToServer()
-					cts.ParseFromString(data)
-					if cts.HasField("player_info"):
-						playing = False
-						for c in self.clients:
-							if c[IP] == addr[0] or c[COLOR] == cts.player_info.color:
-								playing = True
-								print "Refused connection from:", cts.player_info.color, addr[0]
-						# also need to check if the received color is different from self color
-						# and if the received color is valid
-						if not playing:
-							print cts.player_info.color, "connected from", addr[0]
-							self.clients.append((clientsock, addr[0], cts.player_info.color))
-							self.clearArea((400, 720), (200, 50))
-							self.writeText("{0} - {1}".format(cts.player_info.color, addr[0]), WHITE, (400, 720))
-			except:
-				pass
-				
-			if len(self.clients) > 0 and ok.blocked: # temporary, the number of clients should be configurable
+			ip, color = self.server.listen()
+			if ip:
+				self.clearArea((400, 720), (200, 50))
+				self.writeText("{0} - {1}".format(color, ip), WHITE, (400, 720))
+			
+			if len(self.server.clients()) > 0 and ok.blocked: # temporary, the number of clients should be configurable
 				ok.unblock()
 			
 			button = ok.mouseEvent(pygame.mouse.get_pos())
@@ -483,9 +436,7 @@ class Interface:
 				elif event.type == MOUSEBUTTONDOWN and pygame.mouse.get_pressed()[0]:
 					if button == "OK":
 						self.mainLoop()
-				
-		self.mainLoop()
-			
+	
 	def menu(self):
 		self.bg = GameSprite(None, self.screen, pygame.image.load("images/menu_bg.png").convert_alpha(), (0, 0))
 		logo_img = pygame.image.load("images/logo.png").convert_alpha()
@@ -501,22 +452,20 @@ class Interface:
 		pygame.display.update()
 		
 		while True:
-			button = newgame.mouseEvent(pygame.mouse.get_pos())
-			button = button or entergame.mouseEvent(pygame.mouse.get_pos())
 			for event in pygame.event.get():
 				if event.type == QUIT:
 					pygame.quit()
 					exit()
 				elif event.type == MOUSEBUTTONDOWN and pygame.mouse.get_pressed()[0]:
+					button = newgame.mouseEvent(pygame.mouse.get_pos()) \
+					    or entergame.mouseEvent(pygame.mouse.get_pos())
+					print button
 					if button == "Novo Jogo":
 						self.type = "Server"
 						self.createGame()
 					elif button == "Entrar em Jogo":
 						self.type = "Client"
 						self.enterGame()
-						
-						
-			
 
 a = Interface()
 a.menu()

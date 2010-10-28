@@ -39,6 +39,10 @@ message ClientToServer {
 }
 
 message ServerToClient {
+	message PlayersInfo {
+		repeated string colors = 1;
+	}
+	
 	message TerritoryInfo {
 		required string name = 1;
 		required string owner = 2;
@@ -47,8 +51,8 @@ message ServerToClient {
 	
 	message AttackReply {
 		required bool success = 1;
-		repeated uint32 red_dices = 2;
-		repeated uint32 yellow_dices = 3;
+		repeated uint32 red_dice = 2;
+		repeated uint32 yellow_dice = 3;
 	}
 	
 	message TurnInfo {
@@ -61,6 +65,5 @@ message ServerToClient {
 	optional AttackReply attack_reply = 3;
 	optional TurnInfo turn_info = 4;
 	repeated Card cards = 5;
-	
-	// include game history, error message, objectives, victory message, map?
+	optional PlayersInfo players = 6;
 }

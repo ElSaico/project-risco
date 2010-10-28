@@ -19,7 +19,7 @@ class Entry(GameSprite):
 		self.timer = time.time()
 		pygame.init()
 		if not Entry.font:
-			Entry.font = pygame.font.Font("arial.ttf", Entry.font_size)
+			Entry.font = pygame.font.Font(None, Entry.font_size)
 		
 		if not Entry.img:
 			Entry.img = pygame.image.load("images/text-area.png").convert_alpha()

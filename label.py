@@ -14,9 +14,8 @@ class Label(GameSprite):
 	smaxLen = 4
 	def __init__(self, screen, position, type=None):
 		self.text = ""
-		pygame.init()
 		if not Label.font:
-			Label.font = pygame.font.Font("arial.ttf", Label.font_size)
+			Label.font = pygame.font.Font(None, Label.font_size)
 		
 		if type == "small":
 			if not Label.simg:
