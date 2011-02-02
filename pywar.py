@@ -10,8 +10,7 @@ from gameSprite import GameSprite
 from button import Button
 from entry import Entry
 from label import Label
-from server import Server
-from client import Client
+from network import Client, Server
 from worldmap import ClientMap
 
 BLACK, WHITE = (0, 0, 0), (255, 255, 255)
