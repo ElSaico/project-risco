@@ -1,6 +1,6 @@
 from random import shuffle
 from itertools import cycle
-from servermap import ServerMap
+from worldmap import ServerMap
 
 class Game:
 	players = []

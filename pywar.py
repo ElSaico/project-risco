@@ -12,7 +12,7 @@ from entry import Entry
 from label import Label
 from server import Server
 from client import Client
-from clientmap import ClientMap
+from worldmap import ClientMap
 
 BLACK, WHITE = (0, 0, 0), (255, 255, 255)
 BG_COLOR = BLACK
