@@ -16,12 +16,15 @@ class PlayerTerritory(db.EmbeddedDocument):
 
 class Player(db.EmbeddedDocument):
 	user = db.ReferenceField(User)
-	color = db.StringField(unique_with='user')
-	territories = db.ListField(db.EmbeddedDocumentField(PlayerTerritory))
-	cards = db.ListField(db.ReferenceField(Card))
+	color = db.StringField()
+	playing = db.BooleanField(default=True)
+	territories = db.ListField(db.EmbeddedDocumentField(PlayerTerritory), default=[])
+	cards = db.ListField(db.ReferenceField(Card), default=[])
 
 class Game(db.Document):
 	running = db.BooleanField(default=False)
+	name = db.StringField(unique=True)
+	password = db.StringField(min_length=4)
 	players = db.ListField(db.EmbeddedDocumentField(Player))
 	board = db.ReferenceField(Board)
 	turn = db.IntField(min_value=1)
