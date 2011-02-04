@@ -9,16 +9,19 @@ class Card(db.EmbeddedDocument):
 	shape = db.StringField()
 	wild_card = db.BooleanField(default=False)
 
+class PlayerTerritory(db.EmbeddedDocument):
+	territory = db.ReferenceField(Territory)
+	army = db.IntField(default=1, min_length=1)
+	relocations = db.IntField(default=0, min_length=0)
+
+class Player(db.EmbeddedDocument):
+	user = db.ReferenceField(User)
+	color = db.StringField(unique_with='user')
+	territories = db.ListField(db.EmbeddedDocumentField(PlayerTerritory))
+	cards = db.ListField(db.ReferenceField(Card))
+
 class Game(db.Document):
-	class PlayerTerritory(db.EmbeddedDocument):
-		territory = db.ReferenceField(Territory)
-		army = db.IntField(default=1, min_length=1)
-		relocations = db.IntField(default=0, min_length=0)
-	class Player(db.EmbeddedDocument):
-		user = db.ReferenceField(User)
-		color = db.StringField(unique_with='user')
-		territories = db.ListField(db.EmbeddedDocumentField(PlayerTerritory))
-		cards = db.ListField(db.ReferenceField(Card))
+	running = db.BooleanField(default=False)
 	players = db.ListField(db.EmbeddedDocumentField(Player))
 	board = db.ReferenceField(Board)
 	turn = db.IntField(min_value=1)
