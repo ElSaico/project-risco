@@ -1,13 +1,14 @@
 from django.conf.urls.defaults import *
+from jsonrpc import jsonrpc_site
 
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
 # admin.autodiscover()
 
 urlpatterns = patterns('',
-    # Example:
-    # (r'^pywar/', include('pywar.foo.urls')),
-
+    url(r'^call/browse/', 'jsonrpc.views.browse', name='jsonrpc_browser'),
+    url(r'^call/', jsonrpc_site.dispatch, name='jsonrpc_mountpoint'),
+    
     # Uncomment the admin/doc line below and add 'django.contrib.admindocs' 
     # to INSTALLED_APPS to enable admin documentation:
     # (r'^admin/doc/', include('django.contrib.admindocs.urls')),
