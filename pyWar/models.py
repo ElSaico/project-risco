@@ -1,5 +1,14 @@
 import mongoengine as db
 
+class Territory(db.EmbeddedDocument):
+	name = db.StringField()
+	borders = db.ListField(db.ReferenceField('self'))
+
+class Card(db.EmbeddedDocument):
+	territory = db.ReferenceField(Territory)
+	shape = db.StringField()
+	wild_card = db.BooleanField(default=False)
+
 class Game(db.Document):
 	class PlayerTerritory(db.EmbeddedDocument):
 		territory = db.ReferenceField(Territory)
@@ -17,14 +26,7 @@ class Game(db.Document):
 	global_trade = db.BooleanField()
 	step = db.StringField(regex="[DAR]")
 
-class Board(db.Document): # TODO: implement VictoryCondition as an EmbeddedDocument
-	class Territory(db.EmbeddedDocument):
-		name = db.StringField()
-		borders = db.ListField(db.ReferenceField('self'))
-	class Card(db.EmbeddedDocument):
-		territory = db.ReferenceField(Territory)
-		shape = db.StringField()
-		wild_card = db.BooleanField(default=False)
+class Board(db.Document):
 	class Continent(db.EmbeddedDocument):
 		territories = db.ListField(db.ReferenceField(Territory))
 		bonus = db.IntField()
@@ -35,3 +37,4 @@ class Board(db.Document): # TODO: implement VictoryCondition as an EmbeddedDocum
 	continents = db.ListField(db.EmbeddedDocumentField(Continent))
 	early_trades = db.ListField(db.IntField)
 	late_trades = db.IntField()
+	victory_conditions = db.ListField(db.DictField) # very loose structure
