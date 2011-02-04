@@ -1,8 +1,16 @@
 import mongoengine as db
 
+class Draft(db.EmbeddedDocument)
+	continent = db.ReferenceField(Continent)
+	army = db.IntField()
+
 class Territory(db.EmbeddedDocument):
 	name = db.StringField()
 	borders = db.ListField(db.ReferenceField('self'))
+
+class Continent(db.EmbeddedDocument):
+	territories = db.ListField(db.ReferenceField(Territory))
+	bonus = db.IntField()
 
 class Card(db.EmbeddedDocument):
 	territory = db.ReferenceField(Territory)
@@ -20,6 +28,7 @@ class Player(db.EmbeddedDocument):
 	playing = db.BooleanField(default=True)
 	territories = db.ListField(db.EmbeddedDocumentField(PlayerTerritory), default=[])
 	cards = db.ListField(db.ReferenceField(Card), default=[])
+	drafts = db.ListField(db.EmbeddedDocumentField(Draft))
 
 class Game(db.Document):
 	running = db.BooleanField(default=False)
@@ -33,9 +42,6 @@ class Game(db.Document):
 	step = db.StringField(regex="[DAR]")
 
 class Board(db.Document):
-	class Continent(db.EmbeddedDocument):
-		territories = db.ListField(db.ReferenceField(Territory))
-		bonus = db.IntField()
 	name = db.StringField(unique=True)
 	colors = db.ListField(db.StringField)
 	shapes = db.ListField(db.StringField)
