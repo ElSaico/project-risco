@@ -1,14 +1,11 @@
 import mongoengine as db
 
-class Draft(db.EmbeddedDocument)
-	continent = db.ReferenceField(Continent)
-	army = db.IntField()
-
 class Territory(db.EmbeddedDocument):
 	name = db.StringField()
 	borders = db.ListField(db.ReferenceField('self'))
 
 class Continent(db.EmbeddedDocument):
+	name = db.StringField()
 	territories = db.ListField(db.ReferenceField(Territory))
 	bonus = db.IntField()
 
@@ -24,11 +21,13 @@ class PlayerTerritory(db.EmbeddedDocument):
 
 class Player(db.EmbeddedDocument):
 	user = db.ReferenceField(User)
+	game = db.ReferenceField(Game) # backreference needed to fetch some info
 	color = db.StringField()
 	playing = db.BooleanField(default=True)
 	territories = db.ListField(db.EmbeddedDocumentField(PlayerTerritory), default=[])
 	cards = db.ListField(db.ReferenceField(Card), default=[])
-	drafts = db.ListField(db.EmbeddedDocumentField(Draft))
+	draft = db.IntField()
+	victory_condition = db.DictField()
 
 class Game(db.Document):
 	running = db.BooleanField(default=False)
@@ -43,10 +42,10 @@ class Game(db.Document):
 
 class Board(db.Document):
 	name = db.StringField(unique=True)
-	colors = db.ListField(db.StringField)
-	shapes = db.ListField(db.StringField)
+	colors = db.ListField(db.StringField())
+	shapes = db.ListField(db.StringField())
 	cards = db.ListField(db.EmbeddedDocumentField(Card))
 	continents = db.ListField(db.EmbeddedDocumentField(Continent))
-	early_trades = db.ListField(db.IntField)
+	early_trades = db.ListField(db.IntField())
 	late_trades = db.IntField()
-	victory_conditions = db.ListField(db.DictField) # very loose structure
+	victory_conditions = db.ListField(db.DictField()) # very loose structure
