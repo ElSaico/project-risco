@@ -1,7 +1,7 @@
 from django.conf.urls.defaults import *
 from jsonrpc import jsonrpc_site
 
-import pyWar.remote
+import game.remote
 
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
@@ -10,11 +10,7 @@ import pyWar.remote
 urlpatterns = patterns('',
     url(r'^call/browse/', 'jsonrpc.views.browse', name='jsonrpc_browser'),
     url(r'^call/', jsonrpc_site.dispatch, name='jsonrpc_mountpoint'),
-    
-    # Uncomment the admin/doc line below and add 'django.contrib.admindocs' 
-    # to INSTALLED_APPS to enable admin documentation:
+    url(r'^auth/', include('django_openid_auth.urls')),
     # (r'^admin/doc/', include('django.contrib.admindocs.urls')),
-
-    # Uncomment the next line to enable the admin:
     # (r'^admin/(.*)', admin.site.root),
 )
