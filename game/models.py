@@ -34,8 +34,8 @@ class Game(models.Model):
 	name = models.CharField(unique=True, max_length=30)
 	password = models.CharField(min_length=4)
 	board = models.ForeignKey(Board)
-	turn = models.IntegerField()
-	turn_player = models.ForeignKey(Player)
+	turn = models.IntegerField(default=1)
+	turn_player = models.IntegerField(default=0) # an index, to facilitate iteration
 	global_trade = models.BooleanField()
 	step = models.CharField(max_length=10)
 
