@@ -2,6 +2,7 @@ from django.db import models
 
 class Territory(models.Model):
 	name = models.CharField(max_length=30)
+	continent = models.ForeignKey(Continent)
 	board = models.ForeignKey(Board)
 	borders = models.ManyToManyField('self')
 
@@ -16,14 +17,15 @@ class Card(models.Model):
 
 class GameTerritory(models.Model):
 	territory = models.ForeignKey(Territory)
-	game = models.ForeignKey(Game)
-	owner = models.ForeignKey(Player)
+	game = models.ForeignKey(Game, related_name="territory_list")
+	owner = models.ForeignKey(Player, related_name="territory_list")
 	army = models.IntegerField(default=1)
 	relocated_army = models.IntegerField(default=0)
 
 class Player(models.Model):
 	user = models.ForeignKey(User)
 	game = models.ForeignKey(Game)
+	cards = models.ManyToManyField(Card)
 	color = models.CharField(max_length=10)
 	playing = models.BooleanField(default=True)
 	draft = models.IntegerField()
