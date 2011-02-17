@@ -30,6 +30,9 @@ class Player(models.Model):
 	playing = models.BooleanField(default=True)
 	draft = models.IntegerField()
 	#victory_condition = models.ForeignKey(VictoryCondition)
+	
+	class Meta:
+		ordering = ['?']
 
 class Game(models.Model):
 	running = models.BooleanField(default=False)
