@@ -22,13 +22,13 @@ def create_game(request, name, password, color, board_name, global_trade=False):
 	return True
 
 @jsonrpc_method('pyWar.join', authenticated=True)
-def join_game(request, name, color, password=None):
+def join_game(request, name, color, password=None): # TODO: maximum 6 players! (or Board-defined?)
 	game = _get_obj(name, Game, Error)
 	player = game.player_set.filter(user=None)
-	if player.count() > 0:
-		return False # same as above
-	color = game.player_set.filter(color=color)
-	if color.count() > 0:
+	if player.exists():
+		return False # replace with exception
+	game_color = game.player_set.filter(color=color)
+	if game_color.exists():
 		return False # same as above
 	if game.password and password != game.password:
 		raise InvalidPasswordError
@@ -36,17 +36,35 @@ def join_game(request, name, color, password=None):
 	return True
 
 @jsonrpc_method('pyWar.start', authenticated=True)
-def start_game(request, name):
+def start_game(request, name): # TODO: minimum 2 players! (or Board-defined?)
 	game = _get_obj(name, Game, Error)
 	player = game.player_set.filter(user=None)
-	if player.count() == 0:
+	if not player.exists():
 		return False
 	game.running = True
 	game.save()
-	_next_turn(game, player)
+	_set_territory_owners(game)
+	_next_step(game, player[0])
 	return True
 
-def _next_turn(game, player):
+def _set_territory_owners(game):
+	territories = game.board.territory_set.order_by('?')
+	i = 0
+	for ter in territories:
+		players = game.player_set.all()
+		GameTerritory.objects.create(game=game, territory=ter, owner=players[i])
+		i = (i+1) % players.count()
+
+def _next_step(game, player):
+	next_step = {'Draft': 'Attack', 'Attack': 'Relocate', 'Relocate': 'Draft'}
 	if player != game.player_set.all()[game.turn_player]: # TODO: shorten it, or encapsulate it.
 		raise Error
-	# yada yada...
+	game.step = next_step[game.step]
+	if game.step == "Draft":
+		for t in player.territory_list.all():
+			t.army += t.relocated_army
+			t.relocated_army = 0
+			t.save()
+		game.turn_player = (game.turn_player + 1) % game.player_set.all().count()
+		# turning cards goes first?
+		_calculate_draft(game, player)
