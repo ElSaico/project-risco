@@ -58,7 +58,7 @@ class Game(models.Model):
 	turn = models.IntegerField(default=1)
 	turn_player = models.IntegerField(default=0) # an index, to facilitate iteration
 	global_trade = models.BooleanField()
-	step = models.CharField(max_length=10)
+	step = models.CharField(max_length=10, default="Relocate") # first action is setting to 'Draft'
 
 class Board(models.Model):
 	name = models.CharField(unique=True, max_length=30)
