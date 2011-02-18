@@ -1,7 +1,7 @@
 from jsonrpc import jsonrpc_method
 from jsonrpc.exceptions import Error
 
-from pyWar.models import *
+from game.models import *
 
 class InvalidPasswordError(Error):
 	message = "Invalid password."
