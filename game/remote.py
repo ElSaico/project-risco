@@ -17,14 +17,14 @@ def create_game(request, name, password, color, board_name, global_trade=False):
 	board = _get_obj(board_name, Board, Error)
 	game = Game.objects.create(name=name, password=password,
 	                           board=board, global_trade=global_trade)
-	Player.objects.create(user=None, game=game, color=color)
+	Player.objects.create(user=request.user, game=game, color=color)
 	# TODO: add user data
 	return True
 
 @jsonrpc_method('pyWar.join', authenticated=True)
 def join_game(request, name, color, password=None): # TODO: maximum 6 players! (or Board-defined?)
 	game = _get_obj(name, Game, Error)
-	player = game.player_set.filter(user=None)
+	player = game.player_set.filter(user=request.user)
 	if player.exists():
 		return False # replace with exception
 	game_color = game.player_set.filter(color=color)
@@ -32,13 +32,13 @@ def join_game(request, name, color, password=None): # TODO: maximum 6 players! (
 		return False # same as above
 	if game.password and password != game.password:
 		raise InvalidPasswordError
-	Player.objects.create(user=None, game=game, color=color)
+	Player.objects.create(user=request.user, game=game, color=color)
 	return True
 
 @jsonrpc_method('pyWar.start', authenticated=True)
 def start_game(request, name): # TODO: minimum 2 players! (or Board-defined?)
 	game = _get_obj(name, Game, Error)
-	player = game.player_set.filter(user=None)
+	player = game.player_set.filter(user=request.user)
 	if not player.exists():
 		return False
 	game.running = True
