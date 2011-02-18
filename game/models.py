@@ -38,7 +38,7 @@ class Player(models.Model):
 class Game(models.Model):
 	running = models.BooleanField(default=False)
 	name = models.CharField(unique=True, max_length=30)
-	password = models.CharField(max_length=20)
+	password = models.CharField(max_length=20, blank=True)
 	board = models.ForeignKey('Board')
 	turn = models.IntegerField(default=1)
 	turn_player = models.IntegerField(default=0) # an index, to facilitate iteration
