@@ -102,6 +102,7 @@ AUTHENTICATION_BACKENDS = (
 )
 
 OPENID_CREATE_USERS = True
+OPENID_SSO_SERVER_URL = 'https://www.google.com/accounts/o8/id'
 
 LOGIN_URL = '/auth/login/'
 LOGIN_REDIRECT_URL = '/'
