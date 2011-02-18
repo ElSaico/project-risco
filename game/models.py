@@ -6,6 +6,9 @@ class Territory(models.Model):
 	continent = models.ForeignKey('Continent')
 	board = models.ForeignKey('Board')
 	borders = models.ManyToManyField('self')
+	
+	class Meta:
+		verbose_name_plural = "territories"
 
 class Continent(models.Model):
 	name = models.CharField(max_length=30)
