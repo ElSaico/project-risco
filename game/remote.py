@@ -3,49 +3,42 @@ from jsonrpc.exceptions import Error
 
 from game.models import *
 
-class InvalidPasswordError(Error):
-	message = "Invalid password."
-
-def _get_obj(name, cls, error):
+def _get_obj(name, cls, error_msg):
 	try:
 		return cls.objects.get(name=name)
-	except Board.DoesNotExist:
-		raise e
+	except cls.DoesNotExist:
+		raise Error, error_msg
 
 @jsonrpc_method('pyWar.create', authenticated=True)
-def create_game(request, name, password, color, board_name, global_trade=False):
-	board = _get_obj(board_name, Board, Error)
+def create_game(request, game_name, game_password, board_name, global_trade, color):
+	board = _get_obj(board_name, Board, "Board doesn't exist")
 	game = Game.objects.create(name=name, password=password,
 	                           board=board, global_trade=global_trade)
 	Player.objects.create(user=request.user, game=game, color=color)
-	# TODO: add user data
-	return True
 
 @jsonrpc_method('pyWar.join', authenticated=True)
-def join_game(request, name, color, password=None): # TODO: maximum 6 players! (or Board-defined?)
-	game = _get_obj(name, Game, Error)
+def join_game(request, name, color, password): # TODO: maximum 6 players! (or Board-defined?)
+	game = _get_obj(name, Game, "Game doesn't exist")
 	player = game.player_set.filter(user=request.user)
 	if player.exists():
-		return False # replace with exception
+		raise Error, "Player already in game"
 	game_color = game.player_set.filter(color=color)
 	if game_color.exists():
-		return False # same as above
+		raise Error, "Color already in use"
 	if game.password and password != game.password:
-		raise InvalidPasswordError
+		raise Error, "Invalid password"
 	Player.objects.create(user=request.user, game=game, color=color)
-	return True
 
 @jsonrpc_method('pyWar.start', authenticated=True)
 def start_game(request, name): # TODO: minimum 2 players! (or Board-defined?)
-	game = _get_obj(name, Game, Error)
+	game = _get_obj(name, Game, "Game doesn't exist")
 	player = game.player_set.filter(user=request.user)
 	if not player.exists():
-		return False
+		raise Error, "Player not in game"
 	game.running = True
 	game.save()
 	_set_territory_owners(game)
 	_next_step(game, player[0])
-	return True
 
 def _set_territory_owners(game):
 	territories = game.board.territory_set.order_by('?')
@@ -58,7 +51,7 @@ def _set_territory_owners(game):
 def _next_step(game, player):
 	next_step = {'Draft': 'Attack', 'Attack': 'Relocate', 'Relocate': 'Draft'}
 	if player != game.player_set.all()[game.turn_player]: # TODO: shorten it, or encapsulate it.
-		raise Error
+		raise Error, "Turn is for another player"
 	game.step = next_step[game.step]
 	if game.step == "Draft":
 		for t in player.territory_list.all():
