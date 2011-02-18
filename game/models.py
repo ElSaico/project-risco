@@ -9,15 +9,27 @@ class Territory(models.Model):
 	
 	class Meta:
 		verbose_name_plural = "territories"
+	
+	def __unicode__(self):
+		return u"%s - %s" % (self.continent, self.name)
 
 class Continent(models.Model):
 	name = models.CharField(max_length=30)
+	board = models.ForeignKey('Board')
 	draft = models.IntegerField()
+	
+	def __unicode__(self):
+		return u"%s - %s" % (self.board, self.name)
 
 class Card(models.Model):
 	territory = models.OneToOneField(Territory)
 	shape = models.CharField(max_length=20)
 	wild_card = models.BooleanField(default=False)
+	
+	def __unicode__(self):
+		if self.wild_card:
+			return "Wild card"
+		return u"%s card (%s)" % (self.territory, self.shape)
 
 class GameTerritory(models.Model):
 	territory = models.ForeignKey(Territory)
@@ -52,3 +64,6 @@ class Board(models.Model):
 	name = models.CharField(unique=True, max_length=30)
 	early_trades = models.CommaSeparatedIntegerField(max_length=30)
 	late_trades = models.IntegerField()
+	
+	def __unicode__(self):
+		return self.name
