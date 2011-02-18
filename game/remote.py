@@ -19,6 +19,8 @@ def create_game(request, game_name, game_password, board_name, global_trade, col
 @jsonrpc_method('pyWar.join', authenticated=True)
 def join_game(request, color, game_name, game_password): # TODO: maximum 6 players! (or Board-defined?)
 	game = _get_obj(game_name, Game, "Game doesn't exist")
+	if game.running:
+		raise Error, "Game is already running"
 	player = game.player_set.filter(user=request.user)
 	if player.exists():
 		raise Error, "Player already in game"
@@ -32,6 +34,8 @@ def join_game(request, color, game_name, game_password): # TODO: maximum 6 playe
 @jsonrpc_method('pyWar.start', authenticated=True)
 def start_game(request, game_name): # TODO: minimum 2 players! (or Board-defined?)
 	game = _get_obj(game_name, Game, "Game doesn't exist")
+	if game.running:
+		raise Error, "Game is already running"
 	player = game.player_set.filter(user=request.user)
 	if not player.exists():
 		raise Error, "Player not in game"
