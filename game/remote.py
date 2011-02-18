@@ -12,26 +12,26 @@ def _get_obj(name, cls, error_msg):
 @jsonrpc_method('pyWar.create', authenticated=True)
 def create_game(request, game_name, game_password, board_name, global_trade, color):
 	board = _get_obj(board_name, Board, "Board doesn't exist")
-	game = Game.objects.create(name=name, password=password,
+	game = Game.objects.create(name=game_name, password=game_password,
 	                           board=board, global_trade=global_trade)
 	Player.objects.create(user=request.user, game=game, color=color)
 
 @jsonrpc_method('pyWar.join', authenticated=True)
-def join_game(request, name, color, password): # TODO: maximum 6 players! (or Board-defined?)
-	game = _get_obj(name, Game, "Game doesn't exist")
+def join_game(request, color, game_name, game_password): # TODO: maximum 6 players! (or Board-defined?)
+	game = _get_obj(game_name, Game, "Game doesn't exist")
 	player = game.player_set.filter(user=request.user)
 	if player.exists():
 		raise Error, "Player already in game"
 	game_color = game.player_set.filter(color=color)
 	if game_color.exists():
 		raise Error, "Color already in use"
-	if game.password and password != game.password:
+	if game.password and game_password != game.password:
 		raise Error, "Invalid password"
 	Player.objects.create(user=request.user, game=game, color=color)
 
 @jsonrpc_method('pyWar.start', authenticated=True)
-def start_game(request, name): # TODO: minimum 2 players! (or Board-defined?)
-	game = _get_obj(name, Game, "Game doesn't exist")
+def start_game(request, game_name): # TODO: minimum 2 players! (or Board-defined?)
+	game = _get_obj(game_name, Game, "Game doesn't exist")
 	player = game.player_set.filter(user=request.user)
 	if not player.exists():
 		raise Error, "Player not in game"
