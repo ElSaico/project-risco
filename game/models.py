@@ -38,7 +38,7 @@ class Player(models.Model):
 class Game(models.Model):
 	running = models.BooleanField(default=False)
 	name = models.CharField(unique=True, max_length=30)
-	password = models.CharField()
+	password = models.CharField(max_length=20)
 	board = models.ForeignKey('Board')
 	turn = models.IntegerField(default=1)
 	turn_player = models.IntegerField(default=0) # an index, to facilitate iteration
@@ -46,6 +46,6 @@ class Game(models.Model):
 	step = models.CharField(max_length=10)
 
 class Board(models.Model):
-	name = models.CharField(unique=True)
+	name = models.CharField(unique=True, max_length=30)
 	early_trades = models.CommaSeparatedIntegerField(max_length=30)
 	late_trades = models.IntegerField()
