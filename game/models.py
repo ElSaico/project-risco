@@ -44,7 +44,7 @@ class Player(models.Model):
 	cards = models.ManyToManyField(Card)
 	color = models.CharField(max_length=10)
 	playing = models.BooleanField(default=True)
-	draft = models.IntegerField()
+	draft = models.IntegerField(default=0)
 	#victory_condition = models.ForeignKey(VictoryCondition)
 	
 	class Meta:
