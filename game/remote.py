@@ -10,11 +10,13 @@ def _get_obj(name, cls, error_msg):
 		raise Error, error_msg
 
 @jsonrpc_method('pyWar.create', authenticated=True)
-def create_game(request, game_name, game_password, board_name, global_trade, color):
+def create_game(request, game_name, game_password, board_name, objectives, global_trade, player_color):
+	if objectives:
+		raise Error, "Objectives not implemented yet"
 	board = _get_obj(board_name, Board, "Board doesn't exist")
-	game = Game.objects.create(name=game_name, password=game_password,
-	                           board=board, global_trade=global_trade)
-	Player.objects.create(user=request.user, game=game, color=color)
+	game = Game.objects.create(name=game_name, password=game_password, board=board,
+	                           objectives=objectives, global_trade=global_trade)
+	Player.objects.create(user=request.user, game=game, color=player_color)
 
 @jsonrpc_method('pyWar.join', authenticated=True)
 def join_game(request, color, game_name, game_password): # TODO: maximum 6 players! (or Board-defined?)
@@ -63,5 +65,11 @@ def _next_step(game, player):
 			t.relocated_army = 0
 			t.save()
 		game.turn_player = (game.turn_player + 1) % game.player_set.all().count()
+		game.save()
 		# turning cards goes first?
 		_calculate_draft(game, player)
+
+def _calculate_draft(game, player):
+	# TODO: add continental bonus (GameContinent?)
+	player.draft = player.territory_list.count() / 2
+	player.save()

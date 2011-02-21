@@ -45,6 +45,7 @@ class Player(models.Model):
 	color = models.CharField(max_length=10)
 	playing = models.BooleanField(default=True)
 	draft = models.IntegerField(default=0)
+	trade = models.IntegerField(default=0)
 	#victory_condition = models.ForeignKey(VictoryCondition)
 	
 	class Meta:
@@ -57,6 +58,7 @@ class Game(models.Model):
 	board = models.ForeignKey('Board')
 	turn = models.IntegerField(default=1)
 	turn_player = models.IntegerField(default=0) # an index, to facilitate iteration
+	objectives = models.BooleanField()
 	global_trade = models.BooleanField()
 	step = models.CharField(max_length=10, default="Relocate") # first action is setting to 'Draft'
 
