@@ -34,13 +34,15 @@ def create_game(request, game_name, game_password, board_name, objectives, globa
 	Player.objects.create(user=request.user, game=game, color=player_color)
 
 @jsonrpc_method('pyWar.join', authenticated=True)
-def join_game(request, color, game_name, game_password): # TODO: maximum 6 players! (or Board-defined?)
+def join_game(request, color, game_name, game_password):
 	game = _get_obj(game_name, Game, "Game doesn't exist")
 	if game.running:
 		raise Error, "Game is already running"
 	player = game.player_set.filter(user=request.user)
 	if player.exists():
 		raise Error, "Player already in game"
+	if game.player_set.count() >= game.board.max_players:
+		raise Error, "Limit of players reached"
 	game_color = game.player_set.filter(color=color)
 	if game_color.exists():
 		raise Error, "Color already in use"
@@ -49,42 +51,16 @@ def join_game(request, color, game_name, game_password): # TODO: maximum 6 playe
 	Player.objects.create(user=request.user, game=game, color=color)
 
 @jsonrpc_method('pyWar.start', authenticated=True)
-def start_game(request, game_name): # TODO: minimum 2 players! (or Board-defined?)
+def start_game(request, game_name):
 	game = _get_obj(game_name, Game, "Game doesn't exist")
 	if game.running:
 		raise Error, "Game is already running"
 	player = game.player_set.filter(user=request.user)
 	if not player.exists():
 		raise Error, "Player not in game"
-	game.running = True
-	game.save()
-	_set_territory_owners(game)
-	_next_step(game, player[0])
-
-def _set_territory_owners(game):
-	territories = game.board.territory_set.order_by('?')
-	i = 0
-	for ter in territories:
-		players = game.player_set.all()
-		GameTerritory.objects.create(game=game, territory=ter, owner=players[i])
-		i = (i+1) % players.count()
-
-def _next_step(game, player):
-	next_step = {'Draft': 'Attack', 'Attack': 'Relocate', 'Relocate': 'Draft'}
-	if player != game.player_set.all()[game.turn_player]: # TODO: shorten it, or encapsulate it.
-		raise Error, "Turn is for another player"
-	game.step = next_step[game.step]
-	if game.step == "Draft":
-		for t in player.territory_list.all():
-			t.army += t.relocated_army
-			t.relocated_army = 0
-			t.save()
-		game.turn_player = (game.turn_player + 1) % game.player_set.all().count()
-		game.save()
-		# turning cards goes first?
-		_calculate_draft(game, player)
-
-def _calculate_draft(game, player):
-	# TODO: add continental bonus (GameContinent?)
-	player.draft = player.territory_list.count() / 2
-	player.save()
+	if game.player_set.count() < game.board.min_players:
+		raise Error, "Too few players"
+	try:
+		game.start()
+	except e, msg:
+		return Error, msg

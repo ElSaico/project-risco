@@ -50,6 +50,11 @@ class Player(models.Model):
 	
 	class Meta:
 		ordering = ['?']
+	
+	def calculate_draft(self):
+		# TODO: add continental bonus (GameContinent?)
+		self.draft = self.territory_list.count() / 2
+		self.save()
 
 class Game(models.Model):
 	running = models.BooleanField(default=False)
@@ -57,13 +62,45 @@ class Game(models.Model):
 	password = models.CharField(max_length=20, blank=True)
 	board = models.ForeignKey('Board')
 	turn = models.IntegerField(default=1)
-	turn_player = models.IntegerField(default=0) # an index, to facilitate iteration
+	_turn_player = models.IntegerField(default=0)
 	objectives = models.BooleanField()
 	global_trade = models.BooleanField()
 	step = models.CharField(max_length=10, default="Relocate") # first action is setting to 'Draft'
+	
+	def start(self):
+		self.running = True
+		territories = self.board.territory_set.order_by('?')
+		i = 0
+		for ter in territories:
+			players = self.player_set.all()
+			GameTerritory.objects.create(game=self, territory=ter, owner=players[i])
+			i = (i+1) % players.count()
+		self.save()
+		self.next_step(players[0])
+	
+	def next_step(self, player):
+		_next_step = {'Draft': 'Attack', 'Attack': 'Relocate', 'Relocate': 'Draft'}
+		if player != self.turn_player():
+			raise Exception, "Turn is for another player"
+		self.step = _next_step[self.step]
+		if self.step == "Draft":
+			for t in player.territory_list.all():
+				t.army += t.relocated_army
+				t.relocated_army = 0
+				t.save()
+			while not self.turn_player().playing:
+				self._turn_player = (self._turn_player + 1) % self.player_set.count()
+			self.save()
+			# turning cards goes first?
+			self.calculate_draft(player)
+	
+	def turn_player(self):
+		return self.player_set.all()[self._turn_player]
 
 class Board(models.Model):
 	name = models.CharField(unique=True, max_length=30)
+	min_players = models.IntegerField()
+	max_players = models.IntegerField()
 	early_trades = models.CommaSeparatedIntegerField(max_length=30)
 	late_trades = models.IntegerField()
 	
