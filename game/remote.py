@@ -9,7 +9,7 @@ def _get_obj(name, cls, error_msg):
 	except cls.DoesNotExist:
 		raise Error, error_msg
 
-@jsonrpc_method('pyWar.list', authenticated=True)
+@jsonrpc_method('pyWar.list')
 def list_games(request, filters=None):
 	if filters:
 		games = Game.objects.filter(**filters)
