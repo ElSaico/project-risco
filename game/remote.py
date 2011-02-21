@@ -9,6 +9,21 @@ def _get_obj(name, cls, error_msg):
 	except cls.DoesNotExist:
 		raise Error, error_msg
 
+@jsonrpc_method('pyWar.list', authenticated=True)
+def list_games(request, filters=None):
+	if filters:
+		games = Game.objects.filter(**filters)
+	else:
+		games = Game.objects.all()
+	return [ {"name": game.name,
+	         "board": str(game.board),
+	   "num_players": game.player_set.count(),
+	  "has_password": bool(game.password),
+	  "global_trade": game.global_trade,
+	    "objectives": game.objectives,
+	       "running": game.running,
+	         } for game in games ]
+
 @jsonrpc_method('pyWar.create', authenticated=True)
 def create_game(request, game_name, game_password, board_name, objectives, global_trade, player_color):
 	if objectives:
