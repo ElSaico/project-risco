@@ -9,7 +9,7 @@ def _get_obj(name, cls, error_msg):
 	except cls.DoesNotExist:
 		raise Error, error_msg
 
-@jsonrpc_method('pyWar.list')
+@jsonrpc_method('pyWar.games')
 def list_games(request, filters=None):
 	if filters:
 		games = Game.objects.filter(**filters)
@@ -24,6 +24,18 @@ def list_games(request, filters=None):
 	       "running": game.running,
 	         } for game in games ]
 
+@jsonrpc_method('pyWar.userGames', authenticated=True)
+def user_games(request):
+	user_players = Player.objects.filter(user=request.user)
+	return [ {"name": p.game.name,
+	         "board": str(p.game.board),
+	   "num_players": p.game.player_set.count(),
+	  "has_password": bool(p.game.password),
+	  "global_trade": p.game.global_trade,
+	    "objectives": p.game.objectives,
+	       "running": p.game.running,
+	         } for p in user_players ]
+	
 @jsonrpc_method('pyWar.create', authenticated=True)
 def create_game(request, game_name, game_password, board_name, objectives, global_trade, player_color):
 	if objectives:
@@ -62,5 +74,5 @@ def start_game(request, game_name):
 		raise Error, "Too few players"
 	try:
 		game.start()
-	except e, msg:
+	except Exception, msg:
 		return Error, msg
