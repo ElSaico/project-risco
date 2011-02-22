@@ -24,7 +24,7 @@ def list_games(request, filters=None):
 	       "running": game.running,
 	         } for game in games ]
 
-@jsonrpc_method('pyWar.userGames', authenticated=True)
+@jsonrpc_method('pyWar.user.games', authenticated=True)
 def user_games(request):
 	user_players = Player.objects.filter(user=request.user)
 	return [ {"name": p.game.name,
@@ -36,7 +36,7 @@ def user_games(request):
 	       "running": p.game.running,
 	         } for p in user_players ]
 	
-@jsonrpc_method('pyWar.create', authenticated=True)
+@jsonrpc_method('pyWar.game.create', authenticated=True)
 def create_game(request, game_name, game_password, board_name, objectives, global_trade, player_color):
 	if objectives:
 		raise Error, "Objectives not implemented yet"
@@ -45,7 +45,7 @@ def create_game(request, game_name, game_password, board_name, objectives, globa
 	                           objectives=objectives, global_trade=global_trade)
 	Player.objects.create(user=request.user, game=game, color=player_color)
 
-@jsonrpc_method('pyWar.join', authenticated=True)
+@jsonrpc_method('pyWar.game.join', authenticated=True)
 def join_game(request, color, game_name, game_password):
 	game = _get_obj(game_name, Game, "Game doesn't exist")
 	if game.running:
@@ -62,7 +62,7 @@ def join_game(request, color, game_name, game_password):
 		raise Error, "Invalid password"
 	Player.objects.create(user=request.user, game=game, color=color)
 
-@jsonrpc_method('pyWar.start', authenticated=True)
+@jsonrpc_method('pyWar.game.start', authenticated=True)
 def start_game(request, game_name):
 	game = _get_obj(game_name, Game, "Game doesn't exist")
 	if game.running:
