@@ -94,6 +94,7 @@ INSTALLED_APPS = (
     'django_openid_auth',
     'game',
     'jsonrpc',
+    'gunicorn',
 )
 
 AUTHENTICATION_BACKENDS = (
