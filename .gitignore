@@ -2,7 +2,6 @@
 *.swp
 pyWar.db
 *.pid
-*.json
 media/admin
 env
 *~
