@@ -10,11 +10,8 @@ def _get_obj(name, cls, error_msg):
 		raise Error, error_msg
 
 @jsonrpc_method('pyWar.games')
-def list_games(request, filters=None):
-	if filters:
-		games = Game.objects.filter(**filters)
-	else:
-		games = Game.objects.all()
+def list_games(request, filters={}):
+	games = Game.objects.filter(**filters)
 	return [ {"name": game.name,
 	         "board": str(game.board),
 	   "num_players": game.player_set.count(),
@@ -26,15 +23,15 @@ def list_games(request, filters=None):
 
 @jsonrpc_method('pyWar.user.games', authenticated=True)
 def user_games(request):
-	user_players = Player.objects.filter(user=request.user)
-	return [ {"name": p.game.name,
-	         "board": str(p.game.board),
-	   "num_players": p.game.player_set.count(),
-	  "has_password": bool(p.game.password),
-	  "global_trade": p.game.global_trade,
-	    "objectives": p.game.objectives,
-	       "running": p.game.running,
-	         } for p in user_players ]
+	games = Game.objects.filter(players__user=request.user)
+	return [ {"name": game.name,
+	         "board": str(game.board),
+	   "num_players": game.players.count(),
+	  "has_password": bool(game.password),
+	  "global_trade": game.global_trade,
+	    "objectives": game.objectives,
+	       "running": game.running,
+	         } for game in games ]
 	
 @jsonrpc_method('pyWar.game.create', authenticated=True)
 def create_game(request, game_name, game_password, board_name, objectives, global_trade, player_color):

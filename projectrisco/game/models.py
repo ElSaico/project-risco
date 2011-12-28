@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 
 class Territory(models.Model):
 	name = models.CharField(max_length=30)
-	continent = models.ForeignKey('Continent')
+	continent = models.ForeignKey('Continent', related_name='territories')
 	board = models.ForeignKey('Board')
 	borders = models.ManyToManyField('self')
 	
@@ -15,7 +15,7 @@ class Territory(models.Model):
 
 class Continent(models.Model):
 	name = models.CharField(max_length=30)
-	board = models.ForeignKey('Board')
+	board = models.ForeignKey('Board', related_name='continents')
 	draft = models.IntegerField()
 	
 	def __unicode__(self):
@@ -40,7 +40,7 @@ class GameTerritory(models.Model):
 
 class Player(models.Model):
 	user = models.ForeignKey(User)
-	game = models.ForeignKey('Game')
+	game = models.ForeignKey('Game', related_name='players')
 	cards = models.ManyToManyField(Card)
 	color = models.CharField(max_length=10)
 	playing = models.BooleanField(default=True)
