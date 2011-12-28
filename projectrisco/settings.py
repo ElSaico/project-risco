@@ -91,19 +91,30 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.admin',
     'django.contrib.admindocs',
-    'django_openid_auth',
+    'social_auth',
     'game',
     'jsonrpc',
     'gunicorn',
 )
 
 AUTHENTICATION_BACKENDS = (
-    'django_openid_auth.auth.OpenIDBackend',
+    'social_auth.backends.twitter.TwitterBackend',
+    'social_auth.backends.facebook.FacebookBackend',
+    #'social_auth.backends.google.GoogleOAuthBackend',
+    #'social_auth.backends.google.GoogleOAuth2Backend',
+    'social_auth.backends.google.GoogleBackend',
+    'social_auth.backends.yahoo.YahooBackend',
+    'social_auth.backends.contrib.linkedin.LinkedinBackend',
+    'social_auth.backends.contrib.livejournal.LiveJournalBackend',
+    #'social_auth.backends.contrib.orkut.OrkutBackend',
+    'social_auth.backends.contrib.foursquare.FoursquareBackend',
+    'social_auth.backends.contrib.github.GithubBackend',
+    'social_auth.backends.OpenIDBackend',
     'django.contrib.auth.backends.ModelBackend',
 )
 
-OPENID_CREATE_USERS = True
-OPENID_SSO_SERVER_URL = 'https://www.google.com/accounts/o8/id'
+SOCIAL_AUTH_ASSOCIATE_BY_MAIL = True
 
 LOGIN_URL = '/auth/login/'
 LOGIN_REDIRECT_URL = '/'
+LOGIN_ERROR_URL = '/auth/login/'
