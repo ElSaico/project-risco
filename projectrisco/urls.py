@@ -7,4 +7,6 @@ urlpatterns = patterns('',
     url(r'^call/browse/', 'jsonrpc.views.browse', name='jsonrpc_browser'),
     url(r'^call/', jsonrpc_site.dispatch, name='jsonrpc_mountpoint'),
     url(r'^auth/', include('social_auth.urls')),
+    url(r'^auth/logout$', 'game.views.logout', name='logout'),
+    url(r'^$', 'game.views.home'),
 )
