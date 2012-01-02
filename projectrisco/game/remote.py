@@ -1,3 +1,4 @@
+from django.core.urlresolvers import reverse
 from jsonrpc import jsonrpc_method
 from jsonrpc.exceptions import Error
 
@@ -20,6 +21,20 @@ def list_games(request, filters={}):
 	    "objectives": game.objectives,
 	       "running": game.running,
 	         } for game in games ]
+
+@jsonrpc_method('pyWar.user.data')
+def user(request):
+   response = {'logged': request.user.is_authenticated()}
+   if not response['logged']:
+      response['login_url'] = {
+         'Google':   reverse('socialauth_begin', args=['google']),
+         'Yahoo':    reverse('socialauth_begin', args=['yahoo']),
+         'Facebook': reverse('socialauth_begin', args=['facebook']),
+         'Twitter':  reverse('socialauth_begin', args=['twitter']),
+      }
+   else:
+      response['logout_url'] = reverse('logout')
+   return response
 
 @jsonrpc_method('pyWar.user.games', authenticated=True)
 def user_games(request):
