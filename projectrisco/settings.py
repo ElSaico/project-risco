@@ -1,7 +1,10 @@
 # Django settings for pyWar project.
 
-DEBUG = False
+import socket
+DEBUG = socket.gethostname() == 'lancre'
 TEMPLATE_DEBUG = DEBUG
+
+INTERNAL_IPS = (socket.gethostbyname(socket.gethostname()), )
 
 ADMINS = (
     # ('Your Name', 'your_email@domain.com'),
@@ -73,6 +76,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
 
 ROOT_URLCONF = 'projectrisco.urls'
@@ -95,6 +99,7 @@ INSTALLED_APPS = (
     'game',
     'jsonrpc',
     'gunicorn',
+    'debug_toolbar',
 )
 
 AUTHENTICATION_BACKENDS = (
