@@ -32,7 +32,7 @@ def list_games(request, with_user=False, filters={}):
 			raise Error, "Option restricted to logged users"
 	return [game.public_data() for game in games]
 	
-@jsonrpc_method('game.create(str, str, str, Any, bool, str) -> dict', authenticated=True)
+@jsonrpc_method('game.create(str, str, str, bool, bool, str) -> dict', authenticated=True)
 def create_game(request, game_name, game_password, board_name, objectives, global_trade, player_color):
 	if objectives:
 		raise Error, "Objectives not implemented yet"
