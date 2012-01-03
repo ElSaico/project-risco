@@ -96,6 +96,15 @@ class Game(models.Model):
 	
 	def turn_player(self):
 		return self.player_set.all()[self._turn_player]
+	
+	def public_data(self):
+		return {'name': self.name,
+	           "board": str(self.board),
+	     "num_players": self.players.count(),
+	    "has_password": bool(self.password),
+	    "global_trade": self.global_trade,
+	      "objectives": self.objectives,
+	         "running": self.running }
 
 class Board(models.Model):
 	name = models.CharField(unique=True, max_length=30)

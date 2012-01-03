@@ -28,14 +28,7 @@ def list_games(request, with_user=False, filters={}):
 			games = games.filter(players__user=request.user)
 		else:
 			raise Error, "Option restricted to logged users"
-	return [ {"name": game.name,
-	         "board": str(game.board),
-	   "num_players": game.players.count(),
-	  "has_password": bool(game.password),
-	  "global_trade": game.global_trade,
-	    "objectives": game.objectives,
-	       "running": game.running,
-	         } for game in games ]
+	return [game.public_data() for game in games]
 	
 @jsonrpc_method('game.create', authenticated=True)
 def create_game(request, game_name, game_password, board_name, objectives, global_trade, player_color):
@@ -45,6 +38,7 @@ def create_game(request, game_name, game_password, board_name, objectives, globa
 	game = Game.objects.create(name=game_name, password=game_password, board=board,
 	                           objectives=objectives, global_trade=global_trade)
 	Player.objects.create(user=request.user, game=game, color=player_color)
+	return game.public_data()
 
 @jsonrpc_method('game.join', authenticated=True)
 def join_game(request, color, game_name, game_password):
@@ -62,6 +56,7 @@ def join_game(request, color, game_name, game_password):
 	if game.password and game_password != game.password:
 		raise Error, "Invalid password"
 	Player.objects.create(user=request.user, game=game, color=color)
+	return game.public_data()
 
 @jsonrpc_method('game.start', authenticated=True)
 def start_game(request, game_name):
@@ -77,3 +72,4 @@ def start_game(request, game_name):
 		game.start()
 	except Exception, msg:
 		return Error, msg
+	return game.public_data()
