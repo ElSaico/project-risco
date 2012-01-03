@@ -123,5 +123,3 @@ SOCIAL_AUTH_ASSOCIATE_BY_MAIL = True
 LOGIN_URL = '/auth/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGIN_ERROR_URL = '/auth/login/'
-
-STATIC_URL = 'http://c274552.r52.cf1.rackcdn.com/'
