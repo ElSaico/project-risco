@@ -12,7 +12,7 @@ def _get_obj(name, cls, error_msg):
 	except cls.DoesNotExist:
 		raise Error, error_msg
 
-@jsonrpc_method('user.status')
+@jsonrpc_method('user.status() -> dict', safe=True)
 def user_data(request):
 	response = {'logged': request.user.is_authenticated()}
 	if not response['logged']:
@@ -22,7 +22,7 @@ def user_data(request):
 		response['logout_url'] = reverse('logout')
 	return response
 
-@jsonrpc_method('game.list')
+@jsonrpc_method('game.list(bool, dict) -> list', safe=True)
 def list_games(request, with_user=False, filters={}):
 	games = Game.objects.filter(**filters)
 	if with_user:
@@ -32,7 +32,7 @@ def list_games(request, with_user=False, filters={}):
 			raise Error, "Option restricted to logged users"
 	return [game.public_data() for game in games]
 	
-@jsonrpc_method('game.create', authenticated=True)
+@jsonrpc_method('game.create(str, str, str, Any, bool, str) -> dict', authenticated=True)
 def create_game(request, game_name, game_password, board_name, objectives, global_trade, player_color):
 	if objectives:
 		raise Error, "Objectives not implemented yet"
@@ -47,7 +47,7 @@ def create_game(request, game_name, game_password, board_name, objectives, globa
 		raise Error, "Player or color already in game"
 	return game.public_data()
 
-@jsonrpc_method('game.join', authenticated=True)
+@jsonrpc_method('game.join(str, str, str) -> dict', authenticated=True)
 def join_game(request, game_name, color, game_password):
 	game = _get_obj(game_name, Game, "Game doesn't exist")
 	try:
@@ -58,7 +58,7 @@ def join_game(request, game_name, color, game_password):
 		raise Error, "Player or color already in game"
 	return game.public_data()
 
-@jsonrpc_method('game.start', authenticated=True)
+@jsonrpc_method('game.start(str) -> dict', authenticated=True)
 def start_game(request, game_name):
 	game = _get_obj(game_name, Game, "Game doesn't exist")
 	if game.running:
