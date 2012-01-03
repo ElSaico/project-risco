@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.exceptions import PermissionDenied
 
 class Territory(models.Model):
 	name = models.CharField(max_length=30)
@@ -50,6 +51,7 @@ class Player(models.Model):
 	
 	class Meta:
 		ordering = ['?']
+		unique_together = (('game', 'color'), ('game', 'user'))
 	
 	def calculate_draft(self):
 		# TODO: add continental bonus (GameContinent?)
@@ -66,6 +68,15 @@ class Game(models.Model):
 	objectives = models.BooleanField()
 	global_trade = models.BooleanField()
 	step = models.CharField(max_length=10, default="Relocate") # first action is setting to 'Draft'
+	
+	def new_player(self, user, color, password):
+		if self.running:
+			raise PermissionDenied, "Game is already running"
+		if self.players.count() >= self.board.max_players:
+			raise PermissionDenied, "Limit of players reached"
+		if self.password and password != self.password:
+			raise PermissionDenied, "Invalid password"
+		return Player.objects.create(user=user, game=self, color=color)
 	
 	def start(self):
 		self.running = True

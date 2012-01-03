@@ -1,4 +1,6 @@
 from django.core.urlresolvers import reverse
+from django.core.exceptions import PermissionDenied
+from django.db import IntegrityError
 from jsonrpc import jsonrpc_method
 from jsonrpc.exceptions import Error
 
@@ -37,25 +39,23 @@ def create_game(request, game_name, game_password, board_name, objectives, globa
 	board = _get_obj(board_name, Board, "Board doesn't exist")
 	game = Game.objects.create(name=game_name, password=game_password, board=board,
 	                           objectives=objectives, global_trade=global_trade)
-	Player.objects.create(user=request.user, game=game, color=player_color)
+	try:
+		game.new_player(request.user, player_color, game_password)
+	except PermissionDenied as msg:
+		raise Error, msg
+	except IntegrityError:
+		raise Error, "Player or color already in game"
 	return game.public_data()
 
 @jsonrpc_method('game.join', authenticated=True)
-def join_game(request, color, game_name, game_password):
+def join_game(request, game_name, color, game_password):
 	game = _get_obj(game_name, Game, "Game doesn't exist")
-	if game.running:
-		raise Error, "Game is already running"
-	player = game.players.filter(user=request.user)
-	if player.exists():
-		raise Error, "Player already in game"
-	if game.players.count() >= game.board.max_players:
-		raise Error, "Limit of players reached"
-	game_color = game.players.filter(color=color)
-	if game_color.exists():
-		raise Error, "Color already in use"
-	if game.password and game_password != game.password:
-		raise Error, "Invalid password"
-	Player.objects.create(user=request.user, game=game, color=color)
+	try:
+		game.new_player(request.user, color, game_password)
+	except PermissionDenied as msg:
+		raise Error, msg
+	except IntegrityError:
+		raise Error, "Player or color already in game"
 	return game.public_data()
 
 @jsonrpc_method('game.start', authenticated=True)
@@ -70,6 +70,6 @@ def start_game(request, game_name):
 		raise Error, "Too few players"
 	try:
 		game.start()
-	except Exception, msg:
+	except Exception as msg:
 		return Error, msg
 	return game.public_data()
