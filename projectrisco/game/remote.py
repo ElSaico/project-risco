@@ -14,7 +14,7 @@ def _get_obj(name, cls, error_msg):
 def user_data(request):
 	response = {'logged': request.user.is_authenticated()}
 	if not response['logged']:
-		response['login_url'] = {backend.title(): reverse('socialauth_login', args=[backend])
+		response['login_url'] = {backend.title(): reverse('socialauth_begin', args=[backend])
 		                         for backend in ('twitter', 'facebook', 'google', 'yahoo')}
 	else:
 		response['logout_url'] = reverse('logout')
@@ -24,7 +24,10 @@ def user_data(request):
 def list_games(request, with_user=False, filters={}):
 	games = Game.objects.filter(**filters)
 	if with_user:
-		games = games.filter(players__user=request.user)
+		if request.user.is_authenticated():
+			games = games.filter(players__user=request.user)
+		else:
+			raise Error, "Option restricted to logged users"
 	return [ {"name": game.name,
 	         "board": str(game.board),
 	   "num_players": game.players.count(),
