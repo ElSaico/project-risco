@@ -3,7 +3,7 @@ from tornado.ioloop import IOLoop
 from tornado.web import Application
 from tornado.options import parse_config_file, define, options
 
-#import auth
+import auth
 import remote
 
 define("debug", type=bool, default=True)
@@ -12,7 +12,7 @@ define("cookie")
 parse_config_file("server.conf")
 
 application = Application([
-	#(r"/login/google", auth.GoogleHandler),
+	(r"/login/google", auth.GoogleHandler),
 	(r"/resource/board", remote.BoardRESTHandler),
 	(r"/resource/board/([0-9a-f]+)", remote.BoardRESTHandler),
 ], cookie_secret=options.cookie, debug=options.debug)

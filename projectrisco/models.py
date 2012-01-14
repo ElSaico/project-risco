@@ -41,3 +41,13 @@ class Territory(Document):
 class Card(Document):
 	territory = ReferenceField(Territory)
 	shape = StringField(choices=('Any', 'Square', 'Triangle', 'Circle'))
+
+class User(Document):
+	pass
+
+class GoogleUser(User):
+	email = StringField(unique=True)
+	name = StringField()
+	first_name = StringField()
+	last_name = StringField()
+	locale = StringField()
