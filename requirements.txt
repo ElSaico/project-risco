@@ -1,4 +1,5 @@
-anyjson==0.3.1
+gunicorn==0.13.4
+lovely.jsonrpc==0.2.1
 mongoengine==0.5.2
 pymongo==2.1.1
 tornado==2.1.1

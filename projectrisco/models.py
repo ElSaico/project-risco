@@ -3,6 +3,8 @@ from mongoengine import *
 connect('risco')
 
 class Board(Document):
+	meta = {'indexes': ['name']}
+	
 	name = StringField(unique=True)
 	min_players = IntField()
 	max_players = IntField()
@@ -10,7 +12,15 @@ class Board(Document):
 	late_trades = IntField()
 	continents = ListField(ReferenceField('Continent'))
 	cards = ListField(ReferenceField('Card'))
-	meta = {'indexes': ['name']}
+	
+	def public_info(self):
+		return {
+			'name': self.name,
+			'min_players': self.min_players,
+			'max_players': self.max_players,
+			'num_continents': len(self.continents),
+			'num_territories': sum([len(c.territories) for c in self.continents]),
+		}
 
 class Continent(Document):
 	name = StringField(unique=True)
