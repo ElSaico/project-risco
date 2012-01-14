@@ -1,7 +1,5 @@
 *.pyc
 *.swp
-pyWar.db
 *.pid
-media/admin
 env
 *~
