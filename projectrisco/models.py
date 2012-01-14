@@ -19,6 +19,7 @@ class Board(Document):
 	
 	def public_info(self):
 		return {
+			'id': str(self._id),
 			'name': self.name,
 			'min_players': self.min_players,
 			'max_players': self.max_players,
