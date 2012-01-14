@@ -1,6 +1,10 @@
+import os
+from pymongo.uri_parser import parse_uri
 from mongoengine import *
 
-connect('risco')
+uri = parse_uri(os.environ.get('MONGOLAB_URI', 'mongodb://localhost/risco'))
+connect(uri['database'], uri['username'], uri['password'],
+        host=uri['nodelist'][0][0], port=uri['nodelist'][0][1])
 
 class Board(Document):
 	meta = {'indexes': ['name']}
