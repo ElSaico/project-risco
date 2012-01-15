@@ -13,6 +13,7 @@ parse_config_file("server.conf")
 
 application = Application([
 	(r"/login/google", auth.GoogleHandler),
+	(r"/resource/user", remote.UserRESTHandler),
 	(r"/resource/board", remote.BoardRESTHandler),
 	(r"/resource/board/([0-9a-f]+)", remote.BoardRESTHandler),
 ], cookie_secret=options.cookie, debug=options.debug)
