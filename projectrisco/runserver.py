@@ -16,6 +16,8 @@ application = Application([
 	(r"/resource/user", remote.UserRESTHandler),
 	(r"/resource/board", remote.BoardRESTHandler),
 	(r"/resource/board/([0-9a-f]+)", remote.BoardRESTHandler),
+	(r"/resource/game", remote.GameRESTHandler),
+	#(r"/resource/game/([0-9a-f]+)", remote.GameRESTHandler),
 ], cookie_secret=options.cookie, debug=options.debug)
 
 if __name__ == "__main__":
