@@ -1,10 +1,8 @@
 import os
-from pymongo.uri_parser import parse_uri
 from mongoengine import *
 
-uri = parse_uri(os.environ.get('MONGOLAB_URI', 'mongodb://localhost/risco'))
-connect(uri['database'], uri['username'], uri['password'],
-        host=uri['nodelist'][0][0], port=uri['nodelist'][0][1])
+uri = os.environ.get('MONGOLAB_URI', 'mongodb://localhost/risco')
+connect('risco', host=uri)
 
 class Board(Document):
 	meta = {'indexes': ['name']}
@@ -19,7 +17,7 @@ class Board(Document):
 	
 	def public_info(self):
 		return {
-			'id': str(self._id),
+			'id': str(self.id),
 			'name': self.name,
 			'min_players': self.min_players,
 			'max_players': self.max_players,
@@ -43,7 +41,7 @@ class Card(Document):
 	shape = StringField(choices=('Any', 'Square', 'Triangle', 'Circle'))
 
 class User(Document):
-	pass
+	meta = {'allow_inheritance': True}
 
 class GoogleUser(User):
 	email = StringField(unique=True)

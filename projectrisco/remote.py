@@ -1,9 +1,10 @@
 from tornado.web import RequestHandler, HTTPError
-from tornado.escape import json_encode, json_decode
+from tornado.escape import json_decode
 from mongoengine import ValidationError
 
 import models
 
+# TODO: move this to a more generic location (the web interface will use it as well)
 class RESTHandler(RequestHandler):
 	def get_current_user(self):
 		data = self.get_secure_cookie("auth")
@@ -20,17 +21,15 @@ class BoardRESTHandler(RESTHandler):
 			except ValidationError:
 				raise HTTPError(404)
 		else:
-			response = [b.public_info() for b in models.Board.objects]
-		self.set_header("Content-Type", "application/json")
-		self.write(json_encode(response))
+			response = {'boards': [b.public_info() for b in models.Board.objects]}
+		self.write(response)
 
 class UserRESTHandler(RESTHandler):
 	def get(self):
 		response = {'logged': bool(self.current_user)}
 		if response['logged']:
 			response['user'] = self.current_user
-		self.set_header("Content-Type", "application/json")
-		self.write(json_encode(response))
+		self.write(response)
 
 class GameRESTHandler(RESTHandler):
 	def post(self):
@@ -55,5 +54,4 @@ class GameRESTHandler(RESTHandler):
 		
 		self.set_status(201)
 		# TODO: set the Location header to the game's resource URL
-		self.set_header("Content-Type", "application/json")
-		self.write(json_encode(new_game.public_info()))
+		self.write(new_game.public_info())

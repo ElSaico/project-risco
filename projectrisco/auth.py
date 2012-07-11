@@ -19,7 +19,7 @@ class GoogleHandler(RequestHandler, GoogleMixin):
 		for field, value in user.items():
 			setattr(user_obj, field, value)
 		user_obj.save()
-		user['id'] = str(user_obj._id)
+		user['id'] = str(user_obj.id)
 		user['identity'] = self.get_argument('openid.identity', None)
 		self.set_secure_cookie('auth', json_encode(user))
 		self.redirect('/')
