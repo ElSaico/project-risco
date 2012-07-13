@@ -1,8 +1,7 @@
-import os
+from common import options
 from mongoengine import *
 
-uri = os.environ.get('MONGOLAB_URI', 'mongodb://localhost/risco')
-connect('risco', host=uri)
+connect(options.database_name, host=options.database_uri)
 
 class Board(Document):
 	meta = {'indexes': ['name']}
