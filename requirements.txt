@@ -1,7 +1,6 @@
 argparse==1.2.1
 distribute==0.6.24
 gunicorn==0.14.5
-mongoengine==0.6.13
 pymongo==2.2.1
 tornado==2.3
 wsgiref==0.1.2

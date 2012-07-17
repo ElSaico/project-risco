@@ -1,77 +1,69 @@
+import pymongo
+from bson.objectid import ObjectId
+
 from common import options
-from mongoengine import *
 
-connect(options.database_name, host=options.database_uri)
+c = pymongo.Connection(options.database_uri)
 
-class Board(Document):
-	meta = {'indexes': ['name']}
-	
-	name = StringField(unique=True)
-	min_players = IntField()
-	max_players = IntField()
-	early_trades = ListField(IntField())
-	late_trades = IntField()
-	continents = ListField(ReferenceField('Continent'))
-	cards = ListField(ReferenceField('Card'))
-	
-	def public_info(self):
-		return {
-			'id': str(self.id),
-			'name': self.name,
-			'min_players': self.min_players,
-			'max_players': self.max_players,
-			'num_continents': len(self.continents),
-			'num_territories': sum([len(c.territories) for c in self.continents]),
-		}
+# TODO: add 'bootstrap' file with indexes, etc.
+class RiscoCollection(object):
+	def __init__(self, database=options.database_name):
+		self.database = c[database]
+		self.collection = c[database][self.collection_name]
 
-class Continent(Document):
-	name = StringField(unique=True)
-	draft = IntField()
-	territories = ListField(ReferenceField('Territory'))
-	meta = {'indexes': ['name']}
+class Boards(RiscoCollection):
+	collection_name = 'board'
 
-class Territory(Document):
-	name = StringField(unique=True)
-	borders = ListField(ReferenceField('self'))
-	meta = {'indexes': ['name']}
+	def _extract_public_info(self, board):
+		board['id'] = str(board['_id'])
+		del board['_id']
+		board['num_continents'] = len(board['continents'])
+		board['num_territories'] = self.database.territory.find(
+			{'continent': {'$in': board['continents']}}
+		).count()
+		del board['continents']
+		return board
 
-class Card(Document):
-	territory = ReferenceField(Territory)
-	shape = StringField(choices=('Any', 'Square', 'Triangle', 'Circle'))
+	def public_info(self, bid=None):
+		if bid:
+			board = self.collection.find_one(ObjectId(bid))
+			if board is None:
+				raise Exception # TODO: something more customized
+			return self._extract_public_info(board)
+		else:
+			boards = self.collection.find()
+			return {'boards': [self._extract_public_info(board) for board in boards]}
 
-class User(Document):
-	meta = {'allow_inheritance': True}
+#class GoogleUser(User):
+#	email = StringField(unique=True)
+#	name = StringField()
+#	first_name = StringField()
+#	last_name = StringField()
+#	locale = StringField()
 
-class GoogleUser(User):
-	email = StringField(unique=True)
-	name = StringField()
-	first_name = StringField()
-	last_name = StringField()
-	locale = StringField()
+#class PlayerArmy(EmbeddedDocument):
+#	territory = ReferenceField(Territory)
+#	soldiers = IntField()
 
-class PlayerArmy(EmbeddedDocument):
-	territory = ReferenceField(Territory)
-	soldiers = IntField()
+#class Player(Document):
+#	user = ReferenceField(User)
+#	cards = ListField(ReferenceField(Card))
+#	color = StringField() # needs restrictions
+#	playing = BooleanField(default=True)
+#	trade = IntField(default=0)
+#	armies = ListField(EmbeddedDocumentField(PlayerArmy))
 
-class Player(Document):
-	user = ReferenceField(User)
-	cards = ListField(ReferenceField(Card))
-	color = StringField() # needs restrictions
-	playing = BooleanField(default=True)
-	trade = IntField(default=0)
-	armies = ListField(EmbeddedDocumentField(PlayerArmy))
-
-class Game(Document):
-	board = ReferenceField(Board)
-	name = StringField(unique=True, required=True)
-	password = StringField()
-	creator = ReferenceField(User, required=True)
-	players = ListField(ReferenceField(Player))
-	player_objectives = BooleanField(required=True)
-	global_trade = BooleanField(required=True)
-	round = IntField(default=0)
-	current_player = ObjectIdField()
-	turn_step = IntField(default=0)
-	running = BooleanField(default=False)
-	finished = BooleanField(default=False)
-	winner = ReferenceField(Player)
+#class Game(Document):
+#	board = ReferenceField(Board)
+#	name = StringField(unique=True, required=True)
+#	password = StringField()
+#	creator = ReferenceField(User, required=True)
+#	players = ListField(ReferenceField(Player))
+#	player_objectives = BooleanField(required=True)
+#	global_trade = BooleanField(required=True)
+#	round = IntField(default=0)
+#	current_player = ObjectIdField()
+#	turn_step = IntField(default=0)
+#	running = BooleanField(default=False)
+#	finished = BooleanField(default=False)
+#	winner = ReferenceField(Player)

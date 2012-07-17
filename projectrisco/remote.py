@@ -1,6 +1,5 @@
 from tornado.web import RequestHandler, HTTPError
 from tornado.escape import json_decode
-from mongoengine import ValidationError
 
 import models
 
@@ -13,15 +12,14 @@ class RESTHandler(RequestHandler):
 		else:
 			return data
 
+# TODO: instanciar Board() na preparacao do handler
 class BoardRESTHandler(RESTHandler):
+	boards = models.Boards()
 	def get(self, board_id=None):
-		if board_id:
-			try:
-				response = models.Board.objects.get(id=board_id).public_info()
-			except ValidationError:
-				raise HTTPError(404)
-		else:
-			response = {'boards': [b.public_info() for b in models.Board.objects]}
+		try:
+			response = self.boards.public_info(board_id)
+		except:
+			raise HTTPError(404)
 		self.write(response)
 
 class UserRESTHandler(RESTHandler):
@@ -38,12 +36,12 @@ class GameRESTHandler(RESTHandler):
 			raise HTTPError(403)
 		
 		POST = self.get_argument
-		user = models.User.objects.get(id=self.current_user['id'])
+		user = models.User(id=self.current_user['id'])
 		try:
-			new_game = models.Game.objects.create(
+			new_game = models.Game.create(
 				name = POST("name"),
 				password = POST("password", ""),
-				board = models.Board.objects.get(id=POST("board")),
+				board = POST("board"),
 				player_objectives = POST("player_objectives") == 'true',
 				global_trade = POST("global_trade") == 'true',
 				creator = user,
