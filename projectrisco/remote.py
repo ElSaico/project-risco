@@ -2,6 +2,7 @@ from tornado.web import RequestHandler, HTTPError
 from tornado.escape import json_decode
 
 import models
+from common import options
 
 # TODO: move this to a more generic location (the web interface will use it as well)
 class RESTHandler(RequestHandler):
@@ -12,9 +13,10 @@ class RESTHandler(RequestHandler):
 		else:
 			return data
 
-# TODO: instanciar Board() na preparacao do handler
 class BoardRESTHandler(RESTHandler):
-	boards = models.Boards()
+	def initialize(self):
+		self.boards = models.Boards(self.settings['database'])
+
 	def get(self, board_id=None):
 		try:
 			response = self.boards.public_info(board_id)

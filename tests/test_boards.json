@@ -1,0 +1,14 @@
+[   {
+        "_id": {"$oid": "4f10c7f05565b6711b000030"},
+        "cards": [],
+        "continents": [   {"$ref": "continent", "$id": "4f10c7f05565b6711b00002a"},
+                          {"$ref": "continent", "$id": "4f10c7f05565b6711b00002b"},
+                          {"$ref": "continent", "$id": "4f10c7f05565b6711b00002c"},
+                          {"$ref": "continent", "$id": "4f10c7f05565b6711b00002d"},
+                          {"$ref": "continent", "$id": "4f10c7f05565b6711b00002e"},
+                          {"$ref": "continent", "$id": "4f10c7f05565b6711b00002f"}],
+        "early_trades": [4, 6, 8, 10, 12, 15],
+        "late_trades": 5,
+        "max_players": 6,
+        "min_players": 2,
+        "name": "War"}]

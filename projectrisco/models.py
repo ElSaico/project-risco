@@ -16,12 +16,13 @@ class Boards(RiscoCollection):
 
 	def _extract_public_info(self, board):
 		board['id'] = str(board['_id'])
-		del board['_id']
 		board['num_continents'] = len(board['continents'])
 		board['num_territories'] = self.database.territory.find(
 			{'continent': {'$in': board['continents']}}
 		).count()
+		del board['_id']
 		del board['continents']
+		del board['cards']
 		return board
 
 	def public_info(self, bid=None):
