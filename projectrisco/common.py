@@ -39,3 +39,4 @@ def load_collection_file(filename, collection):
 		collection.remove()
 		data = json.loads(dump.read(), object_hook=json_util.object_hook)
 		collection.insert(data)
+		return data

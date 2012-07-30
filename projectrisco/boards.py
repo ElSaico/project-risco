@@ -49,18 +49,52 @@ class BoardTest(common.RiscoVows):
 	def topic(self):
 		common.load_collection_file('tests/test_territories.json', self.database.territory)
 		common.load_collection_file('tests/test_continents.json', self.database.continent)
-		common.load_collection_file('tests/test_boards.json', self.database.board)
-		return Boards(self.database)
+		boards = common.load_collection_file('tests/test_boards.json', self.database.board)
+		return boards, Boards(self.database)
 
 	class WhenViewingBoardsByREST(TornadoHTTPContext):
-		def topic(self, boards):
-			return boards, self.get("/resource/board")
+		def topic(self, topic):
+			data, boards = topic
+			return data, boards, self.get("/resource/board")
 
 		def should_be_a_valid_resource(self, topic):
-			boards, response = topic
+			data, boards, response = topic
 			expect(response.code).to_equal(200)
 
 		def should_show_consistent_data(self, topic):
-			boards, response = topic
-			data = json.loads(response.body)
-			expect(data).to_equal(boards.public_info())
+			data, boards, response = topic
+			response_data = json.loads(response.body)
+			expect(response_data).to_equal(boards.public_info())
+
+		def should_show_correct_amount(self, topic):
+			data, boards, response = topic
+			response_data = json.loads(response.body)
+			expect(response_data['boards']).to_length(len(data))
+
+	class WhenViewingABoardByREST(TornadoHTTPContext):
+		def topic(self, topic):
+			data, boards = topic
+			board = data[0]
+			board['_id'] = str(board['_id'])
+			return board, boards, self.get("/resource/board/"+board['_id'])
+
+		def should_be_a_valid_resource(self, topic):
+			data, boards, response = topic
+			expect(response.code).to_equal(200)
+
+		def should_show_consistent_data(self, topic):
+			data, boards, response = topic
+			response_data = json.loads(response.body)
+			expect(response_data).to_equal(boards.public_info(data['_id']))
+
+		def should_show_correct_fields(self, topic):
+			data, boards, response = topic
+			response_data = json.loads(response.body)
+			expect(response_data).to_include('id')
+			expect(response_data).to_include('name')
+			expect(response_data).to_include('min_players')
+			expect(response_data).to_include('max_players')
+			expect(response_data).to_include('num_continents')
+			expect(response_data).to_include('num_territories')
+			expect(response_data).to_include('early_trades')
+			expect(response_data).to_include('late_trades')
