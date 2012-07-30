@@ -2,7 +2,7 @@ from tornado.ioloop import IOLoop
 from tornado.web import Application
 
 import auth
-import remote
+import games
 import boards
 import users
 #import webclient
@@ -14,8 +14,8 @@ urls = [
 	(r"/resource/user", users.UserRESTHandler),
 	(r"/resource/board", boards.BoardRESTHandler),
 	(r"/resource/board/([0-9a-f]+)", boards.BoardRESTHandler),
-	(r"/resource/game", remote.GameRESTHandler),
-	#(r"/resource/game/([0-9a-f]+)", remote.GameRESTHandler),
+	(r"/resource/game", games.GameRESTHandler),
+	#(r"/resource/game/([0-9a-f]+)", games.GameRESTHandler),
 ]
 
 application = Application(urls, cookie_secret=options.cookie, debug=options.debug, database_name=options.database_name)
