@@ -11,6 +11,7 @@ class Games(object):
 
 	def create(self, **parms):
 		parms['creator'] = self.user['_id']
+		# TODO: transformar parms['board'] em ObjectId
 		return self.games.insert(parms)
 
 	def join(self, game_id, color, password):
