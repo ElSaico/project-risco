@@ -1,20 +1,7 @@
 from tornado.web import HTTPError
-from tornado.escape import json_decode
 
 import models
 from common import RiscoHandler
-
-class BoardRESTHandler(RiscoHandler):
-	def initialize(self, *args, **kw):
-		super(BoardRESTHandler, self).initialize()
-		self.boards = models.Boards(self.database)
-
-	def get(self, board_id=None):
-		try:
-			response = self.boards.public_info(board_id)
-		except:
-			raise HTTPError(404)
-		self.write(response)
 
 class UserRESTHandler(RiscoHandler):
 	def get(self):
