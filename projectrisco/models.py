@@ -1,15 +1,10 @@
-import pymongo
 from bson.objectid import ObjectId
-
-from common import options
-
-c = pymongo.Connection(options.database_uri)
 
 # TODO: add 'bootstrap' file with indexes, etc.
 class RiscoCollection(object):
-	def __init__(self, database=options.database_name):
-		self.database = c[database]
-		self.collection = c[database][self.collection_name]
+	def __init__(self, database):
+		self.database = database
+		self.collection = database[self.collection_name]
 
 class Boards(RiscoCollection):
 	collection_name = 'board'

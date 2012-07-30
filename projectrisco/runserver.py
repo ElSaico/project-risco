@@ -17,7 +17,7 @@ urls = [
 	#(r"/resource/game/([0-9a-f]+)", remote.GameRESTHandler),
 ]
 
-application = Application(urls, cookie_secret=options.cookie, debug=options.debug)
+application = Application(urls, cookie_secret=options.cookie, debug=options.debug, database_name=options.database_name)
 
 if __name__ == "__main__":
 	application.listen(options.port)

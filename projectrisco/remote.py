@@ -1,21 +1,13 @@
-from tornado.web import RequestHandler, HTTPError
+from tornado.web import HTTPError
 from tornado.escape import json_decode
 
 import models
-from common import options
+from common import RiscoHandler
 
-# TODO: move this to a more generic location (the web interface will use it as well)
-class RESTHandler(RequestHandler):
-	def get_current_user(self):
-		data = self.get_secure_cookie("auth")
-		if data:
-			return json_decode(data)
-		else:
-			return data
-
-class BoardRESTHandler(RESTHandler):
-	def initialize(self):
-		self.boards = models.Boards(self.settings['database'])
+class BoardRESTHandler(RiscoHandler):
+	def initialize(self, *args, **kw):
+		super(BoardRESTHandler, self).initialize()
+		self.boards = models.Boards(self.database)
 
 	def get(self, board_id=None):
 		try:
@@ -24,14 +16,14 @@ class BoardRESTHandler(RESTHandler):
 			raise HTTPError(404)
 		self.write(response)
 
-class UserRESTHandler(RESTHandler):
+class UserRESTHandler(RiscoHandler):
 	def get(self):
 		response = {'logged': bool(self.current_user)}
 		if response['logged']:
 			response['user'] = self.current_user
 		self.write(response)
 
-class GameRESTHandler(RESTHandler):
+class GameRESTHandler(RiscoHandler):
 	def post(self):
 		# TODO: descriptive error messages
 		if not self.current_user:

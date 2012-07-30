@@ -10,7 +10,7 @@ class Boards(tools.RiscoVows):
 		tools.load_collection_file('tests/test_territories.json', tools.database.territory)
 		tools.load_collection_file('tests/test_continents.json', tools.database.continent)
 		tools.load_collection_file('tests/test_boards.json', tools.database.board)
-		return tools.models.Boards(tools.database_name)
+		return tools.models.Boards(tools.database)
 
 	class WhenViewingBoardsByREST(TornadoHTTPContext):
 		def topic(self, boards):
