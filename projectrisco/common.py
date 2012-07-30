@@ -3,6 +3,7 @@ import json
 from bson import json_util
 from tornado.web import Application, RequestHandler
 from tornado.options import parse_config_file, define, options
+from tornado.escape import json_decode
 from tornado_pyvows import TornadoHTTPContext
 
 define("debug", type=bool, default=True)

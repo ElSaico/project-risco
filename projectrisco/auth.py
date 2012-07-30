@@ -1,10 +1,10 @@
-from tornado.web import asynchronous, HTTPError, RequestHandler
+from tornado.web import asynchronous, HTTPError
 from tornado.auth import GoogleMixin
 from tornado.escape import json_encode
 
-import models
+from common import RiscoHandler
 
-class GoogleHandler(RequestHandler, GoogleMixin):
+class GoogleHandler(RiscoHandler, GoogleMixin):
 	@asynchronous
 	def get(self):
 		if self.get_argument("openid.mode", None):
@@ -15,11 +15,9 @@ class GoogleHandler(RequestHandler, GoogleMixin):
 	def _on_auth(self, user):
 		if not user:
 			raise HTTPError(500, "Google auth failed")
-		user_obj, created = models.GoogleUser.objects.get_or_create(email=user['email'])
-		for field, value in user.items():
-			setattr(user_obj, field, value)
-		user_obj.save()
-		user['id'] = str(user_obj.id)
+		self.database.users.update({'email': user['email']}, user, upsert=True)
+		user_obj = self.database.users.find_one({'email': user['email']})
+		user['id'] = str(user_obj['_id'])
 		user['identity'] = self.get_argument('openid.identity', None)
 		self.set_secure_cookie('auth', json_encode(user))
 		self.redirect('/')
