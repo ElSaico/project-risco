@@ -11,11 +11,11 @@ from common import options
 urls = [
 	#(r"/", webclient.IndexHandler),
 	(r"/login/google", auth.GoogleHandler),
-	(r"/resource/user", users.UserRESTHandler),
-	(r"/resource/board", boards.BoardRESTHandler),
-	(r"/resource/board/([0-9a-f]+)", boards.BoardRESTHandler),
-	(r"/resource/game", games.GameRESTHandler),
-	#(r"/resource/game/([0-9a-f]+)", games.GameRESTHandler),
+	(r"/resource/user", users.RESTHandler),
+	(r"/resource/board", boards.RESTHandler),
+	(r"/resource/board/([0-9a-f]+)", boards.RESTHandler),
+	(r"/resource/game", games.RESTHandler),
+	#(r"/resource/game/([0-9a-f]+)", games.RESTHandler),
 ]
 
 application = Application(urls, cookie_secret=options.cookie, debug=options.debug, database_name=options.database_name)

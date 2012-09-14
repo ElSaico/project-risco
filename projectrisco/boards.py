@@ -32,9 +32,9 @@ class Boards(object):
 			boards = self.boards.find()
 			return {'boards': [self._extract_public_info(board) for board in boards]}
 
-class BoardRESTHandler(common.RiscoHandler):
+class RESTHandler(common.RiscoHandler):
 	def initialize(self):
-		super(BoardRESTHandler, self).initialize()
+		super(RESTHandler, self).initialize()
 		self.boards = Boards(self.database)
 
 	def get(self, board_id=None):

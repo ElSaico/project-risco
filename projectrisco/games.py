@@ -19,9 +19,9 @@ class Games(object):
 	def public_info(self, game_id):
 		pass
 
-class GameRESTHandler(RiscoHandler):
+class RESTHandler(RiscoHandler):
 	def initialize(self):
-		super(GameRESTHandler, self).initialize()
+		super(RESTHandler, self).initialize()
 		self.games = Games(self.database, self.current_user['id'])
 
 	def post(self):
