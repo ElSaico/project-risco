@@ -44,6 +44,22 @@ class RESTHandler(common.RiscoHandler):
 			raise HTTPError(404)
 		self.write(response)
 
+class HTMLHandler(common.RiscoHandler):
+	def initialize(self):
+		super(HTMLHandler, self).initialize()
+		self.boards = Boards(self.database)
+
+	def get(self, board_id=None):
+		try:
+			data = self.boards.public_info(board_id)
+		except:
+			raise HTTPError(404)
+
+		if board_id:
+			self.render('board.html', board=data)
+		else:
+			self.render('boards.html', boards=data['boards'])
+
 @Vows.batch
 class BoardTest(common.RiscoVows):
 	def topic(self):

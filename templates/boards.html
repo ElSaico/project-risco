@@ -1,0 +1,22 @@
+{% extends "master.html" %}
+
+{% block content %}
+	<table>
+		<thead>
+			<tr>
+				<th>Nome</th>
+				<th>Jogadores</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+		{% for board in boards %}
+			<tr>
+				<td>{{ board['name'] }}</td>
+				<td>{{ board['min_players'] }} a {{ board['max_players'] }}</td>
+				<td><a href='#'>Detalhes</a></td>
+			</tr>
+		{% end %}
+		</tbody>
+	</table>
+{% end %}

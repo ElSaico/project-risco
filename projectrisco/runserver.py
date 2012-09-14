@@ -10,6 +10,8 @@ from common import options
 
 urls = [
 	#(r"/", webclient.IndexHandler),
+	(r"/boards", boards.HTMLHandler),
+	#(r"/boards/([0-9a-f]+)", boards.HTMLHandler),
 	(r"/login/google", auth.GoogleHandler),
 	(r"/resource/user", users.RESTHandler),
 	(r"/resource/board", boards.RESTHandler),
@@ -18,7 +20,12 @@ urls = [
 	#(r"/resource/game/([0-9a-f]+)", games.RESTHandler),
 ]
 
-application = Application(urls, cookie_secret=options.cookie, debug=options.debug, database_name=options.database_name)
+application = Application(urls,
+	cookie_secret=options.cookie,
+	debug=options.debug,
+	database_name=options.database_name,
+	template_path='templates/'
+)
 
 if __name__ == "__main__":
 	application.listen(options.port)
