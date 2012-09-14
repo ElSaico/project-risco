@@ -1,7 +1,6 @@
 from tornado.web import HTTPError
 from pymongo.errors import OperationFailure
 
-import models
 from common import RiscoHandler
 
 class Games(object):
