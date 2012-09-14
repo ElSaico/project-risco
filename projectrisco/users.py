@@ -1,6 +1,6 @@
 from common import RiscoHandler
 
-class UserRESTHandler(RiscoHandler):
+class RESTHandler(RiscoHandler):
 	def get(self):
 		response = {'logged': bool(self.current_user)}
 		if response['logged']:
