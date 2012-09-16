@@ -14,7 +14,7 @@
 			<tr>
 				<td>{{ board['name'] }}</td>
 				<td>{{ board['min_players'] }} a {{ board['max_players'] }}</td>
-				<td><a href='#'>Detalhes</a></td>
+				<td><a href='{{ reverse_url('board', board['id']) }}'>Detalhes</a></td>
 			</tr>
 		{% end %}
 		</tbody>
