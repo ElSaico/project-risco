@@ -71,6 +71,22 @@
 
 		<div class="container">
 			<header class='jumbotron subhead'>
+				{% if breadcrumbs %}
+				<ul class='breadcrumb'>
+					{% for title, url in breadcrumbs.items() %}
+					{% if loop.last %}
+					<li class='active'>
+						{{ title }}
+					</li>
+					{% else %}
+					<li>
+						<a href='{{ url }}'>{{ title }}</a>
+						<span class="divider">&rarr;</span>
+					</li>
+					{% endif %}
+					{% endfor %}
+				</ul>
+				{% endif %}
 				<h1>{% block title %}{% endblock %}</h1>
 				<p class='lead'>{% block description %}{% endblock %}</p>
 			</header>
