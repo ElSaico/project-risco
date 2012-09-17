@@ -5,6 +5,7 @@ from tornado.web import Application, RequestHandler
 from tornado.options import parse_config_file, define, options
 from tornado.escape import json_decode
 from tornado_pyvows import TornadoHTTPContext
+from jinja2 import Environment, FileSystemLoader
 
 define("debug", type=bool, default=True)
 define("port", type=int, default=8888)
@@ -19,6 +20,9 @@ class RiscoHandler(RequestHandler):
 	def initialize(self, collection_name=None):
 		connection = pymongo.Connection(options.database_uri)
 		self.database = connection[self.settings['database_name']]
+		self.templates = Environment(loader=FileSystemLoader('templates/'))
+		for attr in ('reverse_url', 'static_url', 'current_user'):
+			self.templates.globals[attr] = getattr(self, attr)
 		if collection_name:
 			self.collection = self.database[collection_name]
 

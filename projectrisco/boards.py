@@ -56,9 +56,11 @@ class HTMLHandler(common.RiscoHandler):
 			raise HTTPError(404)
 
 		if board_id:
-			self.render('board.html', board=data)
+			template = self.templates.get_template('board.html')
+			self.write(template.render(board=data))
 		else:
-			self.render('boards.html', boards=data['boards'])
+			template = self.templates.get_template('boards.html')
+			self.write(template.render(boards=data['boards']))
 
 @Vows.batch
 class BoardTest(common.RiscoVows):
