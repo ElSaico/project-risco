@@ -21,3 +21,8 @@ class GoogleHandler(RiscoHandler, GoogleMixin):
 		user['identity'] = self.get_argument('openid.identity', None)
 		self.set_secure_cookie('auth', json_encode(user))
 		self.redirect('/')
+
+class LogoutHandler(RiscoHandler):
+	def get(self):
+		self.clear_cookie('auth')
+		self.redirect('/')

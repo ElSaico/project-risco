@@ -1,5 +1,6 @@
 from tornado.web import HTTPError
 from pymongo.errors import OperationFailure
+from bson.objectid import ObjectId
 
 from common import RiscoHandler
 
@@ -10,7 +11,7 @@ class Games(object):
 
 	def create(self, **parms):
 		parms['creator'] = self.user['_id']
-		# TODO: transformar parms['board'] em ObjectId
+		parms['board'] = ObjectId(parms['board'])
 		return self.games.insert(parms)
 
 	def join(self, game_id, color, password):
