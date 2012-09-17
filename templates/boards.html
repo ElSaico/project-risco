@@ -1,12 +1,21 @@
 {% extends "master.html" %}
 
+{% block title %}
+Mapas
+{% end %}
+
+{% block description %}
+Conquiste o mundo, a sua cidade ou o cenário do seu filme favorito.
+{% end %}
+
 {% block content %}
-	<table>
+	<table class='table table-striped span8 offset2'>
 		<thead>
 			<tr>
 				<th>Nome</th>
-				<th>Jogadores</th>
-				<th></th>
+				<th class='span1'>Jogadores</th>
+				<th class='span2'>Criador</th>
+				<th class='span1'></th>
 			</tr>
 		</thead>
 		<tbody>
@@ -14,6 +23,7 @@
 			<tr>
 				<td>{{ board['name'] }}</td>
 				<td>{{ board['min_players'] }} a {{ board['max_players'] }}</td>
+				<td>{{ board.get('creator', 'Desconhecido') }}</td>
 				<td><a href='{{ reverse_url('board', board['id']) }}'>Detalhes</a></td>
 			</tr>
 		{% end %}

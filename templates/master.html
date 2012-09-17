@@ -69,6 +69,10 @@
 		</div>
 
 		<div class="container">
+			<header class='jumbotron subhead'>
+				<h1>{% block title %}{% end %}</h1>
+				<p class='lead'>{% block description %}{% end %}</p>
+			</header>
 			{% block content %}{% end %}
 			{% comment 
 			<hr>
