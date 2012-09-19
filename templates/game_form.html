@@ -1,0 +1,9 @@
+{% extends "master.html" %}
+
+{% block content %}
+	<form action='{{ reverse_url('games') }}' method='POST' class='form-horizontal well'>
+	<fieldset>
+		<legend>Criar novo jogo</legend>
+	</fieldset>
+	</form>
+{% endblock %}

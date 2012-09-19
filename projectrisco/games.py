@@ -49,3 +49,16 @@ class RESTHandler(RiscoHandler):
 			self.write(self.games.public_info(new_game))
 		else:
 			self.redirect(self.reverse_url('games'))
+
+class FormHandler(RiscoHandler):
+	def initialize(self):
+		super(FormHandler, self).initialize()
+		self.games = Games(self.database, self.current_user['id'])
+
+	def get(self):
+		if not self.current_user:
+			raise HTTPError(403)
+		
+		breadcrumbs = {'Home': '/', 'Jogos': self.reverse_url('games'), 'Criar jogo': '#'}
+		template = self.templates.get_template('game_form.html')
+		self.write(template.render(breadcrumbs=breadcrumbs))
