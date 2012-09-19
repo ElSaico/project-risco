@@ -37,8 +37,8 @@ class RESTHandler(RiscoHandler):
 				name = POST("name"),
 				password = POST("password", ""),
 				board = POST("board"),
-				player_objectives = POST("player_objectives") == 'true',
-				global_trade = POST("global_trade") == 'true',
+				player_objectives = bool(POST("player_objectives", False)),
+				global_trade = bool(POST("global_trade", False)),
 			)
 			self.games.join(new_game, POST("player_color"), POST("password"))
 		except OperationFailure:

@@ -15,10 +15,10 @@
 		<fieldset>
 			<legend>Criar novo jogo</legend>
 			{% call form_field('name', 'Nome do jogo') %} {# validação instantânea? #}
-				<input id='name' class='input-xlarge' type='text' />
+				<input name='name' class='input-xlarge' type='text' />
 			{% endcall %}
 			{% call form_field('password', 'Senha do jogo') %}
-				<input id='password' class='input-xlarge' type='password' />
+				<input name='password' class='input-xlarge' type='password' />
 			{% endcall %}
 			{% call form_field('board', 'Mapa') %}
 				<select name='board'>
@@ -32,13 +32,13 @@
 			{% endcall %}
 			{% call form_field('player_objectives', 'Objetivos individuais?') %}
 				<label type='checkbox'>
-					<input id='player_objectives' type='checkbox' />
+					<input name='player_objectives' type='checkbox' />
 					Se não for habilitado, todos os jogadores terão o objetivo "conquistar o mundo".
 				</label>
 			{% endcall %}
 			{% call form_field('global_trade', 'Contagem global de trocas?') %}
 				<label type='checkbox'>
-					<input id='global_trade' type='checkbox' />
+					<input name='global_trade' type='checkbox' />
 					Define se o número de exércitos disponíveis por troca é contado globalmente ou por jogador.
 				</label>
 			{% endcall %}
