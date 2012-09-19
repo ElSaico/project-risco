@@ -73,7 +73,7 @@
 			<header class='jumbotron subhead'>
 				{% if breadcrumbs %}
 				<ul class='breadcrumb'>
-					{% for title, url in breadcrumbs.items() %}
+					{% for title, url in breadcrumbs %}
 					{% if loop.last %}
 					<li class='active'>
 						{{ title }}

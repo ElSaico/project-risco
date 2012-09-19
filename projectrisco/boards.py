@@ -46,9 +46,9 @@ class RESTHandler(common.RiscoHandler):
 		if self.request.headers['Accept'] == 'application/json':
 			self.write(data)
 		else:
-			breadcrumbs = {'Home': '/', 'Mapas': self.reverse_url('boards')}
+			breadcrumbs = [('Home', '/'), ('Mapas', self.reverse_url('boards'))]
 			if board_id:
-				breadcrumbs[data['name']] = self.reverse_url('board', data['id'])
+				breadcrumbs.append((data['name'], self.reverse_url('board', data['id'])))
 				template = self.templates.get_template('board.html')
 				self.write(template.render(board=data, breadcrumbs=breadcrumbs))
 			else:
