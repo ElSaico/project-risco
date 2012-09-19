@@ -20,6 +20,16 @@
 			{% call form_field('password', 'Senha do jogo') %}
 				<input id='password' class='input-xlarge' type='password' />
 			{% endcall %}
+			{% call form_field('board', 'Mapa') %}
+				<select name='board'>
+					{% for board in boards %}
+					<option value='{{ board['id'] }}'>
+						{{ board['name'] }}
+						({{ board['min_players'] }} a {{ board['max_players'] }} jogadores)
+					</option>
+					{% endfor %}
+				</select>
+			{% endcall %}
 			{% call form_field('player_objectives', 'Objetivos individuais?') %}
 				<label type='checkbox'>
 					<input id='player_objectives' type='checkbox' />

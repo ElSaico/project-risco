@@ -3,6 +3,7 @@ from pymongo.errors import OperationFailure
 from bson.objectid import ObjectId
 
 from common import RiscoHandler
+from boards import Boards
 
 class Games(object):
 	def __init__(self, database, user_id):
@@ -54,6 +55,7 @@ class FormHandler(RiscoHandler):
 	def initialize(self):
 		super(FormHandler, self).initialize()
 		self.games = Games(self.database, self.current_user['id'])
+		self.boards = Boards(self.database)
 
 	def get(self):
 		if not self.current_user:
@@ -61,4 +63,4 @@ class FormHandler(RiscoHandler):
 		
 		breadcrumbs = [('Home', '/'), ('Jogos', self.reverse_url('games')), ('Criar jogo', '#')]
 		template = self.templates.get_template('game_form.html')
-		self.write(template.render(breadcrumbs=breadcrumbs))
+		self.write(template.render(breadcrumbs=breadcrumbs, boards=self.boards.public_info()['boards']))
