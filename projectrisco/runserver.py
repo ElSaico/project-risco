@@ -10,15 +10,14 @@ from common import options
 
 urls = [
 	#url(r"/", webclient.IndexHandler, name='index'),
-	url(r"/boards", boards.HTMLHandler, name='boards'),
-	url(r"/boards/([0-9a-f]+)", boards.HTMLHandler, name='board'),
+	url(r"/boards", boards.RESTHandler, name='boards'),
+	url(r"/boards/([0-9a-f]+)", boards.RESTHandler, name='board'),
+	url(r"/games", games.RESTHandler, name='games'),
+	url(r"/games/([0-9a-f]+)", games.RESTHandler, name='game'),
+	#url(r"/games/new", games.FormHandler, name='game-create'),
 	url(r"/login/google", auth.GoogleHandler, name='google'),
 	url(r"/logout", auth.LogoutHandler, name='logout'),
-	(r"/resource/user", users.RESTHandler),
-	(r"/resource/board", boards.RESTHandler),
-	(r"/resource/board/([0-9a-f]+)", boards.RESTHandler),
-	(r"/resource/game", games.RESTHandler),
-	#(r"/resource/game/([0-9a-f]+)", games.RESTHandler),
+	url(r"/user", users.RESTHandler, name='current-user'),
 ]
 
 application = Application(urls,

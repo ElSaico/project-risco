@@ -10,7 +10,7 @@ class Games(object):
 		self.user = database.user.find_one(user_id)
 
 	def create(self, **parms):
-		parms['creator'] = self.user['_id']
+		parms['creator'] = self.user['id']
 		parms['board'] = ObjectId(parms['board'])
 		return self.games.insert(parms)
 
@@ -45,4 +45,7 @@ class RESTHandler(RiscoHandler):
 		
 		self.set_status(201)
 		# TODO: set the Location header to the game's resource URL
-		self.write(self.games.public_info(new_game))
+		if self.request.headers['Accept'] == 'application/json':
+			self.write(self.games.public_info(new_game))
+		else:
+			self.redirect(self.reverse_url('games'))
