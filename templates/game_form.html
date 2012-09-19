@@ -11,13 +11,13 @@
 {% endmacro %}
 
 {% block content %}
-	<form action='{{ reverse_url('games') }}' method='POST' class='form-horizontal well span6 offset2'>
+	<form action='{{ reverse_url('games') }}' method='POST' class='form-horizontal well span6 offset1'>
 		<fieldset>
 			<legend>Criar novo jogo</legend>
 			{% call form_field('name', 'Nome do jogo') %} {# validação instantânea? #}
 				<input name='name' class='input-xlarge' type='text' />
 			{% endcall %}
-			{% call form_field('password', 'Senha do jogo') %}
+			{% call form_field('password', 'Senha do jogo', 'Opcional; mantenha em branco para criar um jogo público.') %}
 				<input name='password' class='input-xlarge' type='password' />
 			{% endcall %}
 			{% call form_field('board', 'Mapa') %}
@@ -39,11 +39,11 @@
 			{% call form_field('global_trade', 'Contagem global de trocas?') %}
 				<label type='checkbox'>
 					<input name='global_trade' type='checkbox' />
-					Define se o número de exércitos disponíveis por troca é contado globalmente ou por jogador.
+					Define se o número de exércitos disponíveis por troca é aumentado globalmente, e não por jogador.
 				</label>
 			{% endcall %}
 			<div class='form-actions'>
-				<button class='btn btn-primary'>Salvar jogo</button>
+				<button class='btn btn-primary'>Criar jogo</button>
 			</div>
 		</fieldset>
 	</form>
