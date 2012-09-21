@@ -43,15 +43,12 @@ class CreateForm(formencode.Schema):
 	player_color = validators.String(not_empty=True) # VALID_COLORS ou algo assim?
 
 class RESTHandler(RiscoHandler):
-	def initialize(self):
-		super(RESTHandler, self).initialize()
+	def prepare(self):
+		if not self.current_user:
+			raise HTTPError(403)
 		self.games = Games(self.database, self.current_user['id'])
 
 	def post(self):
-		# TODO: descriptive error messages
-		if not self.current_user:
-			raise HTTPError(403)
-		
 		try:
 			parms = self.validate(CreateForm)
 			new_game = self.games.create(parms)
@@ -72,18 +69,17 @@ class RESTHandler(RiscoHandler):
 				self.write({'errors': errors})
 			else:
 				self.set_secure_cookie('errors', json_encode(errors))
+				self.set_secure_cookie('form', json_encode(e.value))
 				self.redirect(self.reverse_url('game-create'))
 
 class FormHandler(RiscoHandler):
-	def initialize(self):
-		super(FormHandler, self).initialize()
+	def prepare(self):
+		if not self.current_user:
+			raise HTTPError(403)
 		self.games = Games(self.database, self.current_user['id'])
 		self.boards = Boards(self.database)
 
 	def get(self):
-		if not self.current_user:
-			raise HTTPError(403)
-		
 		breadcrumbs = [('Jogos', self.reverse_url('games')), ('Criar jogo', '#')]
 		data = self.boards.public_info()
 		self.render('game_form.html', breadcrumbs, boards=data['boards'])
