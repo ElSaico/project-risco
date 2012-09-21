@@ -21,7 +21,7 @@ Conquiste o mundo, a sua cidade ou o cenário do seu filme favorito.
 		<tbody>
 		{% for board in boards %}
 			<tr>
-				<td>{{ board['name'] }}</td>
+				<td>{{ board['name']|e }}</td>
 				<td>{{ board['min_players'] }} a {{ board['max_players'] }}</td>
 				<td>{{ board.get('creator', 'Desconhecido') }}</td>
 				<td><a href='{{ reverse_url('board', board['id']) }}'>Detalhes</a></td>

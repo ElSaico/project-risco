@@ -9,7 +9,7 @@
 			{{ input('name', 'Nome do jogo') }}
 			{{ input('password', 'Senha do jogo', type='password', help='Opcional; mantenha em branco para criar um jogo público.') }}
 			{% call(board) select('board', 'Mapa', boards) %}
-				{{ board['name'] }}
+				{{ board['name']|e }}
 				({{ board['min_players'] }} a {{ board['max_players'] }} jogadores)
 			{% endcall %}
 			{% call checkbox('player_objectives', 'Objetivos individuais?') %}

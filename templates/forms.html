@@ -13,7 +13,7 @@
 
 {% macro input(name, label, type='text', help='', cls='input-xlarge') %}
 	{% call form_field(name, label, help) %}
-		<input name='{{ name }}' class='{{ cls }}' type='{{ type }}' value='{{ form.get(name, '') }}' />
+		<input name='{{ name }}' class='{{ cls }}' type='{{ type }}' value='{{ form.get(name, '')|e }}' />
 	{% endcall %}
 {% endmacro %}
 

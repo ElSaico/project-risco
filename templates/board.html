@@ -1,7 +1,7 @@
 {% extends "master.html" %}
 
 {% block content %}
-	<strong>Nome:</strong> {{ board['name'] }}
+	<strong>Nome:</strong> {{ board['name']|e }}
 	<br>
 	<strong>Número de jogadores:</strong> {{ board['min_players'] }} a {{ board['max_players'] }}
 {% endblock %}
