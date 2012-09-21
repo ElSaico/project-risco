@@ -50,14 +50,12 @@ class RESTHandler(common.RiscoHandler):
 		if self.request.headers['Accept'] == 'application/json':
 			self.write(data)
 		else:
-			breadcrumbs = [('Home', '/'), ('Mapas', self.reverse_url('boards'))]
+			breadcrumbs = [('Mapas', self.reverse_url('boards'))]
 			if board_id:
 				breadcrumbs.append((data['name'], self.reverse_url('board', data['id'])))
-				template = self.templates.get_template('board.html')
-				self.write(template.render(board=data, breadcrumbs=breadcrumbs))
+				self.render('board.html', breadcrumbs, board=data)
 			else:
-				template = self.templates.get_template('boards.html')
-				self.write(template.render(boards=data['boards'], breadcrumbs=breadcrumbs))
+				self.render('boards.html', breadcrumbs, boards=data['boards'])
 
 @Vows.batch
 class BoardTest(common.RiscoVows):

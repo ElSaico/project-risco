@@ -84,8 +84,6 @@ class FormHandler(RiscoHandler):
 		if not self.current_user:
 			raise HTTPError(403)
 		
-		errors = self.get_secure_cookie('errors') or '{}'
-		self.clear_cookie('errors')
-		breadcrumbs = [('Home', '/'), ('Jogos', self.reverse_url('games')), ('Criar jogo', '#')]
-		template = self.templates.get_template('game_form.html')
-		self.write(template.render(breadcrumbs=breadcrumbs, errors=json_decode(errors), boards=self.boards.public_info()['boards']))
+		breadcrumbs = [('Jogos', self.reverse_url('games')), ('Criar jogo', '#')]
+		data = self.boards.public_info()
+		self.render('game_form.html', breadcrumbs, boards=data['boards'])

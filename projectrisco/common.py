@@ -39,6 +39,15 @@ class RiscoHandler(RequestHandler):
 		args = dict([(field, values[-1]) for field, values in self.request.arguments.iteritems()])
 		return validator.to_python(args, state=State())
 
+	def render(self, template_name, breadcrumbs=None, **vars):
+		errors = self.get_secure_cookie('errors') or '{}'
+		self.clear_cookie('errors')
+		vars['errors'] = json_decode(errors)
+		if breadcrumbs:
+			vars['breadcrumbs'] = [('Home', '/')] + breadcrumbs
+		template = self.templates.get_template(template_name)
+		self.write(template.render(**vars))
+
 class RiscoVows(TornadoHTTPContext):
 	database = pymongo.Connection(options.database_uri)[options.database_name_test]
 	def get_app(self):
