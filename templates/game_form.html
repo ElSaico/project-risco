@@ -1,49 +1,22 @@
 {% extends "master.html" %}
 
-{% macro form_field(id, label, help='') %}
-	<div class='control-group {% if id in errors %}error{% endif %}'>
-		<label class='control-label' for='{{ id }}'>{{ label }}</label>
-		<div class='controls'>
-			{{ caller() }}
-			{% if id in errors %}
-			<span class='help-inline'>{{ errors[id] }}</span>
-			{% endif %}
-			<p class='help-block'>{{ help }}</p>
-		</div>
-	</div>
-{% endmacro %}
+{% from "forms.html" import input, select, checkbox with context %}
 
 {% block content %}
 	<form action='{{ reverse_url('games') }}' method='POST' class='form-horizontal well span6 offset1'>
 		<fieldset>
 			<legend>Criar novo jogo</legend>
-			{% call form_field('name', 'Nome do jogo') %} {# validação instantânea? #}
-				<input name='name' class='input-xlarge' type='text' />
+			{{ input('name', 'Nome do jogo') }}
+			{{ input('password', 'Senha do jogo', type='password', help='Opcional; mantenha em branco para criar um jogo público.') }}
+			{% call(board) select('board', 'Mapa', boards) %}
+				{{ board['name'] }}
+				({{ board['min_players'] }} a {{ board['max_players'] }} jogadores)
 			{% endcall %}
-			{% call form_field('password', 'Senha do jogo', 'Opcional; mantenha em branco para criar um jogo público.') %}
-				<input name='password' class='input-xlarge' type='password' />
+			{% call checkbox('player_objectives', 'Objetivos individuais?') %}
+				Se não for habilitado, todos os jogadores terão o objetivo "conquistar o mundo".
 			{% endcall %}
-			{% call form_field('board', 'Mapa') %}
-				<select name='board'>
-					{% for board in boards %}
-					<option value='{{ board['id'] }}'>
-						{{ board['name'] }}
-						({{ board['min_players'] }} a {{ board['max_players'] }} jogadores)
-					</option>
-					{% endfor %}
-				</select>
-			{% endcall %}
-			{% call form_field('player_objectives', 'Objetivos individuais?') %}
-				<label type='checkbox'>
-					<input name='player_objectives' type='checkbox' />
-					Se não for habilitado, todos os jogadores terão o objetivo "conquistar o mundo".
-				</label>
-			{% endcall %}
-			{% call form_field('global_trade', 'Contagem global de trocas?') %}
-				<label type='checkbox'>
-					<input name='global_trade' type='checkbox' />
-					Define se o número de exércitos disponíveis por troca é aumentado globalmente, e não por jogador.
-				</label>
+			{% call checkbox('global_trade', 'Contagem global de trocas?') %}
+				Define se o número de exércitos disponíveis por troca é aumentado globalmente, e não por jogador.
 			{% endcall %}
 			<div class='form-actions'>
 				<button class='btn btn-primary'>Criar jogo</button>

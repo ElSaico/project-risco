@@ -1,0 +1,41 @@
+{% macro form_field(id, label, help='') %}
+	<div class='control-group {% if id in errors %}error{% endif %}'>
+		<label class='control-label' for='{{ id }}'>{{ label }}</label>
+		<div class='controls'>
+			{{ caller() }}
+			{% if id in errors %}
+			<span class='help-inline'>{{ errors[id] }}</span>
+			{% endif %}
+			<p class='help-block'>{{ help }}</p>
+		</div>
+	</div>
+{% endmacro %}
+
+{% macro input(name, label, type='text', help='', cls='input-xlarge') %}
+	{% call form_field(name, label, help) %}
+		<input name='{{ name }}' class='{{ cls }}' type='{{ type }}' value='{{ form.get(name, '') }}' />
+	{% endcall %}
+{% endmacro %}
+
+{% macro checkbox(name, label) %}
+	{% set description = caller() %}
+	{% call form_field(name, label) %}
+		<label type='checkbox'>
+			<input name='{{ name }}' type='checkbox' {% if name in form %}checked{% endif %} />
+			{{ description }}
+		</label>
+	{% endcall %}
+{% endmacro %}
+
+{% macro select(name, label, options) %}
+	{% set description = caller %}
+	{% call form_field(name, label) %}
+		<select name='{{ name }}'>
+			{% for option in options %}
+			<option value='{{ option['id'] }}' {% if form.get(name, '') == option['id'] %}selected{% endif %}>
+				{{ description(option) }}
+			</option>
+			{% endfor %}
+		</select>
+	{% endcall %}
+{% endmacro %}

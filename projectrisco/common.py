@@ -43,6 +43,9 @@ class RiscoHandler(RequestHandler):
 		errors = self.get_secure_cookie('errors') or '{}'
 		self.clear_cookie('errors')
 		vars['errors'] = json_decode(errors)
+		form = self.get_secure_cookie('form') or '{}'
+		self.clear_cookie('form')
+		vars['form'] = json_decode(form)
 		if breadcrumbs:
 			vars['breadcrumbs'] = [('Home', '/')] + breadcrumbs
 		template = self.templates.get_template(template_name)
