@@ -23,7 +23,7 @@ class Boards(object):
 		return board
 
 	def exists(self, bid):
-		res = self.boards.find({'_id': bid})
+		res = self.boards.find({'_id': ObjectId(bid)})
 		return res.count() > 0
 
 	def public_info(self, bid=None):
