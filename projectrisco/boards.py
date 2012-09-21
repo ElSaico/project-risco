@@ -22,6 +22,10 @@ class Boards(object):
 		del board['cards']
 		return board
 
+	def exists(self, bid):
+		res = self.boards.find({'_id': bid})
+		return res.count() > 0
+
 	def public_info(self, bid=None):
 		if bid:
 			board = self.boards.find_one(ObjectId(bid))

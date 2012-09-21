@@ -1,10 +1,13 @@
 {% extends "master.html" %}
 
 {% macro form_field(id, label, help='') %}
-	<div class='control-group'>
+	<div class='control-group {% if id in errors %}error{% endif %}'>
 		<label class='control-label' for='{{ id }}'>{{ label }}</label>
 		<div class='controls'>
 			{{ caller() }}
+			{% if id in errors %}
+			<span class='help-inline'>{{ errors[id] }}</span>
+			{% endif %}
 			<p class='help-block'>{{ help }}</p>
 		</div>
 	</div>

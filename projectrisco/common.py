@@ -33,6 +33,12 @@ class RiscoHandler(RequestHandler):
 		else:
 			return data
 
+	def validate(self, validator):
+		class State(object):
+			db = self.database
+		args = dict([(field, values[-1]) for field, values in self.request.arguments.iteritems()])
+		return validator.to_python(args, state=State())
+
 class RiscoVows(TornadoHTTPContext):
 	database = pymongo.Connection(options.database_uri)[options.database_name_test]
 	def get_app(self):
