@@ -15,8 +15,8 @@ class GoogleHandler(RiscoHandler, GoogleMixin):
 	def _on_auth(self, user):
 		if not user:
 			raise HTTPError(500, "Google auth failed")
-		self.database.users.update({'email': user['email']}, user, upsert=True)
-		user_obj = self.database.users.find_one({'email': user['email']})
+		self.database.user.update({'email': user['email']}, user, upsert=True)
+		user_obj = self.database.user.find_one({'email': user['email']})
 		user['id'] = str(user_obj['_id'])
 		user['identity'] = self.get_argument('openid.identity', None)
 		self.set_secure_cookie('auth', json_encode(user))
