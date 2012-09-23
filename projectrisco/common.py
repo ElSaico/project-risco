@@ -36,6 +36,7 @@ class RiscoHandler(RequestHandler):
 	def validate(self, validator):
 		class State(object):
 			db = self.database
+			user = self.current_user
 		args = dict([(field, values[-1]) for field, values in self.request.arguments.iteritems()])
 		return validator.to_python(args, state=State())
 
