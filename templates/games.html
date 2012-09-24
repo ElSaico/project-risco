@@ -1,0 +1,37 @@
+{% extends "master.html" %}
+
+{% block title %}
+Jogos
+{% endblock %}
+
+{% block content %}
+	<table class='table table-striped span8 offset2'>
+		<thead>
+			<tr>
+				<th>Nome</th>
+				<th class='span2'>Criador</th>
+				<th class='span2'>Jogadores</th>
+				<th class='span2'>Mapa</th>
+				<th class='span1'>Privado?</th>
+				<th class='span1'></th>
+			</tr>
+		</thead>
+		<tbody>
+		{% for game in games %}
+			<tr>
+				<td>{{ game['name']|e }}</td>
+				<td>{{ game['creator']['name']|e }}</td>
+				<td>
+					{% for player in game['players'] %}
+					{{ player['name'] }}
+					{% if not loop.last %}<br />{% endif %}
+					{% endfor %}
+				</td>
+				<td><a href='{{ reverse_url('board', game['board']['id']) }}'>{{ game['board']['name']|e }}</td>
+				<td>{% if game['private'] %}Sim{% else %}Não{% endif %}</td>
+				<td><a href='{{ reverse_url('game', game['id']) }}'>Detalhes</a></td>
+			</tr>
+		{% endfor %}
+		</tbody>
+	</table>
+{% endblock %}

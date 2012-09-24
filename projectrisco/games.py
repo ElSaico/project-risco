@@ -15,6 +15,17 @@ class Games(object):
 		self.db = database
 		self.user = database.user.find_one(ObjectId(user_id))
 
+	def _extract_public_info(self, game):
+		game['id'] = str(game['_id'])
+		board = self.db.dereference(game['board'])
+		game['board'] = {'id': str(board['_id']), 'name': board['name']}
+		creator = self.db.dereference(game['creator'])
+		game['creator'] = {'id': str(creator['_id']), 'name': creator['name']}
+		game['private'] = game['password'] != ''
+		del game['password']
+		del game['_id']
+		return game
+
 	def create(self, **parms):
 		parms['creator'] = DBRef('user', self.user['_id'])
 		parms['board'] = DBRef('board', ObjectId(parms['board']))
@@ -32,7 +43,14 @@ class Games(object):
 		return self.db.player.insert(player)
 
 	def public_info(self, game_id):
-		pass
+		if game_id:
+			game = self.db.game.find_one(ObjectId(game_id))
+			if game is None:
+				raise Exception # TODO: something more customized
+			return self._extract_public_info(game)
+		else:
+			games = self.db.game.find()
+			return {'games': [self._extract_public_info(game) for game in games]}
 
 class NameValidator(validators.FancyValidator):
 	messages = {
@@ -64,6 +82,22 @@ class RESTHandler(RiscoHandler):
 		if not self.current_user:
 			raise HTTPError(403)
 		self.games = Games(self.database, self.current_user['id'])
+
+	def get(self, game_id=None):
+		try:
+			data = self.games.public_info(game_id)
+		except:
+			raise HTTPError(404)
+		
+		if self.request.headers['Accept'] == 'application/json':
+			self.write(data)
+		else:
+			breadcrumbs = [('Jogos', self.reverse_url('games'))]
+			if game_id:
+				breadcrumbs.append((data['name'], self.reverse_url('game', data['id'])))
+				self.render('game.html', breadcrumbs, game=data)
+			else:
+				self.render('games.html', breadcrumbs, games=data['games'])
 
 	def post(self):
 		try:
