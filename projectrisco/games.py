@@ -22,6 +22,11 @@ class Games(object):
 		creator = self.db.dereference(game['creator'])
 		game['creator'] = {'id': str(creator['_id']), 'name': creator['name']}
 		game['private'] = game['password'] != ''
+		players = []
+		for player in game['players']:
+			user = self.db.dereference(player['user'])
+			players.append({'id': str(user['_id']), 'name': user['name']})
+		game['players'] = players
 		del game['password']
 		del game['_id']
 		return game
@@ -36,11 +41,8 @@ class Games(object):
 		return res.count() > 0
 
 	def join(self, game_id):
-		player = {
-			'user': DBRef('user', self.user['_id']),
-			'game': DBRef('game', ObjectId(game_id)),
-		}
-		return self.db.player.insert(player)
+		player = {'user': DBRef('user', self.user['_id'])}
+		return self.db.game.update({'_id': ObjectId(game_id)}, {'$push': {'players': player}})
 
 	def public_info(self, game_id):
 		if game_id:
