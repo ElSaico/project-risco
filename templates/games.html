@@ -29,7 +29,7 @@ Jogos
 				</td>
 				<td><a href='{{ reverse_url('board', game['board']['id']) }}'>{{ game['board']['name']|e }}</td>
 				<td>{% if game['private'] %}Sim{% else %}Não{% endif %}</td>
-				<td><a href='{{ reverse_url('game', game['id']) }}'>Detalhes</a></td>
+				<td><a href='{{ reverse_url('game', game['id']) }}' class='btn'>Detalhes</a></td>
 			</tr>
 		{% endfor %}
 		</tbody>
