@@ -3,7 +3,7 @@ argparse==1.2.1
 distribute==0.6.24
 gevent==0.13.7
 greenlet==0.4.0
-gunicorn==0.14.5
+gunicorn==19.5.0
 pyVows==1.1.0
 pycurl==7.19.0
 pymongo==2.2.1
